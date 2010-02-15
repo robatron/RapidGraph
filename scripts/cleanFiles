@@ -1,0 +1,7 @@
+#!/bin/sh
+
+# recursively remove *.pyc and *~ files from the project tree
+
+find .. -name "*.pyc" -exec rm '{}' ';'
+find .. -name "*~" -exec rm '{}' ';'
+

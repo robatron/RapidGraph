@@ -1,0 +1,5 @@
+# Patterns of files for git to ignore
+
+*.pyc
+*.~
+
