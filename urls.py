@@ -15,6 +15,6 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     # (r'^admin/', include(admin.site.urls)),
 
-    # Root view of application
-    (r'^/*$', 'core.views.index'),
+    # Pass urls on to core urls
+    (r'^/*', include('core.urls')),
 )
