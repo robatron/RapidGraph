@@ -1,0 +1,10 @@
+#workspace{
+    height: 480px;
+    width: 480px;
+    left: 50%;
+    margin: -240px 0 0 -320px;
+    position: absolute;
+    top: 50%;
+    background:black;
+    border:1px solid red;
+}

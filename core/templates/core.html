@@ -9,15 +9,28 @@
         
         <!-- Include all of the core javascript code files -->
         <script type='text/javascript'>
-            {% include "rapidgraph_core.js" %}
             {% include "rapidgraph_ui.js" %}
             {% include "graph.js" %}
+            {% include "core.js" %}
+            
+            // run core's preload
+            core.preload();
+            
+            // run core's main once the document is ready
+            $(document).ready(function(){ core.main() });
         </script>
-
+        
+        <!-- Include CSS styles -->
+        <style>
+            {% include "core.css" %}
+        </style>
     </head>
+    
     <body>
 
         <h1>Hello! Whoa...</h1>
+        
+        <div id='workspace'></div>
 
     </body>
 </html>
