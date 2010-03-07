@@ -2,4 +2,4 @@
 
 *.pyc
 *.~
-/core/static/js
+core/static/js/
