@@ -30,6 +30,17 @@ function safelog( msg ){
             ":" + date.getSeconds() + " " + msg );
 }
 
+// include a js file from within another js file. By Michael Sharman
+// http://www.chapter31.com/2006/12/07/including-js-files-from-within-js-files
+function include( file )
+{
+    var script  = document.createElement('script');
+    script.src  = file;
+    script.type = 'text/javascript';
+    script.defer = true;
+    document.getElementsByTagName('head').item(0).appendChild(script);
+}
+
 // Determine if an object is an array
 function isArray(o) {
 	return (o!=null && typeof(o)=="object" && typeof(o.length)=="number" && (o.length==0 || defined(o[0])));

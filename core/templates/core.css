@@ -1,16 +1,19 @@
 *{
     color:white;
     background:black;
+    font-family:monospace;
     -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
 }
 
 #workspace{
     height: 480px;
     width: 640px;
     left: 50%;
-    margin: -240px 0 0 -320px;
-    position: absolute;
     top: 50%;
+    margin: -240px 0 0 -320px;
+    
+    position: absolute;
     background:black;
     border:1px solid green;
 }

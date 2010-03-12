@@ -4,8 +4,11 @@ function core()
 {
     this.preload = function()
     {
-        Raphael.fn.connection = function( obj1, obj2, line, bg ) 
+        Raphael.fn.edge = function( obj1, obj2, line, bg ) 
         {
+            // prevent self-connections
+            //if( obj1 == obj2 ) return -1;
+            
             if( obj1.line && obj1.from && obj1.to ){
                 line = obj1;
                 obj1 = line.from;
@@ -29,11 +32,19 @@ function core()
             var d = {};
             var dis = [];
             
-            for (var i = 0; i < 4; i++) {
-                for (var j = 4; j < 8; j++) {
-                    var dx = Math.abs(p[i].x - p[j].x),
-                        dy = Math.abs(p[i].y - p[j].y);
-                    if ((i == j - 4) || (((i != 3 && j != 6) || p[i].x < p[j].x) && ((i != 2 && j != 7) || p[i].x > p[j].x) && ((i != 0 && j != 5) || p[i].y > p[j].y) && ((i != 1 && j != 4) || p[i].y < p[j].y))) {
+            for( var i = 0; i < 4; i++ ){
+                
+                for( var j = 4; j < 8; j++ ){
+                    
+                    var dx = Math.abs(p[i].x - p[j].x);
+                    var dy = Math.abs(p[i].y - p[j].y);
+                    
+                    if( (i == j - 4) 
+                        || (((i != 3 && j != 6) || p[i].x < p[j].x) 
+                        && ((i != 2 && j != 7) || p[i].x > p[j].x) 
+                        && ((i != 0 && j != 5) || p[i].y > p[j].y) 
+                        && ((i != 1 && j != 4) || p[i].y < p[j].y))){
+                            
                         dis.push(dx + dy);
                         d[dis[dis.length - 1]] = [i, j];
                     }
@@ -102,53 +113,79 @@ function core()
     
     this.main = function()
     {
+        //////////////
+        // SETTINGS //
+        //////////////
+        
+        // global
+        var height = 480;
+        var width = 640;
+        
+        // node settings
+        var nodeRadius = 20;
+        var nodeColor = "green" //Raphael.getColor();
+        
+        // edge settings
+        
+        /////////////////
+        // MEMBER DATA //
+        /////////////////
+        
         var el;
         var isDrag = false;
         
-        var dragger = function(e) 
-        {
-            this.dx = e.clientX;
-            this.dy = e.clientY;
-            isDrag = this;
-            this.animate({"fill-opacity": .2}, 500);
-            e.preventDefault && e.preventDefault();
-        };
-        
         // create a new raphael SVG in the "workspace" div
-        var r = Raphael("workspace", 640, 480);
+        var r = Raphael("workspace", width, height);
         
-        var connections = new Array();
+        // collections of edges and nodes
+        var edges = new Array();
+        var nodes = new Array();
         
-        var shapes = [
-            r.circle(190, 100, 30),
-            r.circle(290, 80, 30),
-            r.circle(290, 180, 30),
-            r.circle(450, 100, 30)
-        ];
+        //////////////////
+        // INITIALIZERS //
+        //////////////////
+        
+        // generate a random number of nodes
+        function randx(){return Math.floor(Math.random()*(width-nodeRadius*2))+nodeRadius};
+        function randy(){return Math.floor(Math.random()*(height-nodeRadius*2))+nodeRadius};
+        var nr_nodes = randInt(3,10);
+        for( var i = 0; i<nr_nodes; i++ ){
+            console.log( "creating new node" );
+            nodes.push( r.circle(randx(), randy(), nodeRadius) );
+        }
                     
-        for( var i = 0; i < shapes.length; i++ ){
+        // setup properties of nodes
+        for( var i = 0; i < nodes.length; i++ ){
             
-            var color = "green" //Raphael.getColor();
-            
-            shapes[i].attr({
+            nodes[i].attr({
                 
-                fill: color, 
-                stroke: color, 
+                fill: nodeColor, 
+                stroke: nodeColor, 
                 "fill-opacity": 0, 
                 "stroke-width": 2
             });
             
-            shapes[i].node.style.cursor = "move";
+            nodes[i].node.style.cursor = "move";
             
-            shapes[i].mousedown(dragger);
+            nodes[i].mousedown( function(e)
+            {                
+                dragger( this, e );
+                select( this );
+            });
         }
         
+        // make a random number of connections
         var edgeFG = "black";
         var edgeBG = "white";
+        var nr_edges = randInt(3,15);
+        for( var i = 0; i<nr_edges; i++ ){
+            console.log( "creating new edge" );
+            edges.push( r.edge( nodes[randInt(0, nodes.length)], nodes[randInt(0, nodes.length)], edgeFG, edgeBG ) );
+        }
         
-        connections.push(r.connection(shapes[0], shapes[1], edgeFG, edgeBG));
-        connections.push(r.connection(shapes[1], shapes[2], edgeFG, edgeBG));
-        connections.push(r.connection(shapes[1], shapes[3], edgeFG, edgeBG));        
+        ////////////
+        // EVENTS //
+        ////////////
         
         $(document).mousemove( function( e )
         {
@@ -158,9 +195,9 @@ function core()
                 
                 isDrag.translate(e.clientX - isDrag.dx, e.clientY - isDrag.dy);
                 
-                for( var i = connections.length; i--; ) {
+                for( var i = edges.length; i--; ) {
                 
-                    r.connection(connections[i]);
+                    r.edge(edges[i]);
                 }
                 
                 r.safari();
@@ -172,9 +209,38 @@ function core()
         
         $(document).mouseup( function()
         {
-            isDrag && isDrag.animate({"fill-opacity": 0}, 500);
+            isDrag && isDrag.animate({"fill-opacity": 0}, 250);
             isDrag = false;
         });
+        
+        //////////////////////
+        // HELPER FUNCTIONS //
+        //////////////////////
+        
+        // responsible for dragging around nodes
+        function dragger( o, e ) 
+        {
+            o.dx = e.clientX;
+            o.dy = e.clientY;
+            isDrag = o;
+            o.animate({"fill-opacity": .60}, 50);
+            e.preventDefault && e.preventDefault();
+        }
+        
+        // selects and outlines nodes in red; deselects others
+        function select( o )
+        {   
+            for( var i = 0; i<nodes.length; i++ )
+                nodes[i].attr("stroke", "green");
+                
+            o.attr( "stroke", "red" );
+        }
+        
+        // find a random integer between the first and second number
+        function randInt( first, second )
+        {
+            return Math.floor(Math.random()*(second-first))+first;
+        }
     }
     
 } core = new core();

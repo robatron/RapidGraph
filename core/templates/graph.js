@@ -2,14 +2,17 @@
 //   By Rob McGuire-Dale, Feb. 2010
 
 function graph()
-{
-    /////////////////
-    // member data //
-    /////////////////
+{    
+    // nodes in the graph
+    var nodes = null;
+    
+    // edges in the graph
+    var edges = null;
     
     // a node object
     function node()
     {
+        this.selected = false;
         this.label = null;
         this.position = { 
             'x': null, 
@@ -17,21 +20,16 @@ function graph()
         };
     }
     
-    // nodes in the graph
-    var nodes = null;
-    
     // an edge object
     function edge()
-    {
-        this.label = null;
-        this.weight = null;
-        this.isDirected = null;
+    {        
         this.nodeA = null;
         this.nodeB = null;
+        
+        this.label = null;
+        this.selected = false;
+        
+        this.weight = null;
+        this.isDirected = null;
     }
-    
-    // edges in the graph
-    var edges = null;
-    
-    
 }
