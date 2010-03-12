@@ -124,8 +124,12 @@ function core()
         // node settings
         var nodeRadius = 20;
         var nodeColor = "green" //Raphael.getColor();
+        var nrNodesLowBound = 3;
+        var nrNodesUpBound = 10;
         
         // edge settings
+        var nrEdgesLowBound = 3;
+        var nrEdgesUpBound = 20;
         
         /////////////////
         // MEMBER DATA //
@@ -148,7 +152,7 @@ function core()
         // generate a random number of nodes
         function randx(){return Math.floor(Math.random()*(width-nodeRadius*2))+nodeRadius};
         function randy(){return Math.floor(Math.random()*(height-nodeRadius*2))+nodeRadius};
-        var nr_nodes = randInt(3,10);
+        var nr_nodes = randInt(nrNodesLowBound,nrNodesUpBound);
         for( var i = 0; i<nr_nodes; i++ ){
             console.log( "creating new node" );
             nodes.push( r.circle(randx(), randy(), nodeRadius) );
@@ -177,10 +181,17 @@ function core()
         // make a random number of connections
         var edgeFG = "black";
         var edgeBG = "white";
-        var nr_edges = randInt(3,15);
+        var nr_edges = randInt(nrEdgesLowBound,nrEdgesUpBound);
         for( var i = 0; i<nr_edges; i++ ){
             console.log( "creating new edge" );
-            edges.push( r.edge( nodes[randInt(0, nodes.length)], nodes[randInt(0, nodes.length)], edgeFG, edgeBG ) );
+            
+            var node1, node2;
+            do{
+                node1 = nodes[randInt(0, nodes.length)];
+                node2 = nodes[randInt(0, nodes.length)];
+            } while(node1 == node2);
+            
+            edges.push( r.edge( node1, node2, edgeFG, edgeBG ) );
         }
         
         ////////////
