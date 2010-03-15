@@ -1,7 +1,151 @@
 // core.js
 
 function core()
-{
+{    
+    this.main = function()
+    {
+        //////////////
+        // SETTINGS //
+        //////////////
+        
+        // global
+        var height = 480;
+        var width = 640;
+        
+        // node settings
+        var nodeRadius = 20;
+        var nodeColor = "green" //Raphael.getColor();
+        var nrNodesLowBound = 3;
+        var nrNodesUpBound = 10;
+        
+        // edge settings
+        var nrEdgesLowBound = 3;
+        var nrEdgesUpBound = 20;
+        
+        /////////////////
+        // MEMBER DATA //
+        /////////////////
+        
+        var el;
+        var isDrag = false;
+        
+        // create a new raphael SVG in the "workspace" div
+        var r = Raphael("workspace", width, height);
+        
+        // collections of edges and nodes
+        var edges = new Array();
+        var nodes = new Array();
+        
+        //////////////////
+        // INITIALIZERS //
+        //////////////////
+        
+        // generate a random number of nodes
+        function randx(){return Math.floor(Math.random()*(width-nodeRadius*2))+nodeRadius};
+        function randy(){return Math.floor(Math.random()*(height-nodeRadius*2))+nodeRadius};
+        var nr_nodes = randInt(nrNodesLowBound,nrNodesUpBound);
+        for( var i = 0; i<nr_nodes; i++ ){
+            console.log( "creating new node" );
+            nodes.push( r.circle(randx(), randy(), nodeRadius) );
+        }
+                    
+        // setup properties of nodes
+        for( var i = 0; i < nodes.length; i++ ){
+            
+            nodes[i].attr({
+                
+                fill: nodeColor, 
+                stroke: nodeColor, 
+                "fill-opacity": 0, 
+                "stroke-width": 2
+            });
+            
+            nodes[i].node.style.cursor = "move";
+            
+            nodes[i].mousedown( function(e)
+            {                
+                dragger( this, e );
+                select( this );
+            });
+        }
+        
+        // make a random number of connections
+        var edgeFG = "black";
+        var edgeBG = "white";
+        var nr_edges = randInt(nrEdgesLowBound,nrEdgesUpBound);
+        for( var i = 0; i<nr_edges; i++ ){
+            console.log( "creating new edge" );
+            
+            var node1, node2;
+            do{
+                node1 = nodes[randInt(0, nodes.length)];
+                node2 = nodes[randInt(0, nodes.length)];
+            } while( node1 == node2);
+            
+            edges.push( r.edge( node1, node2, edgeFG, edgeBG ) );
+        }
+        
+        ////////////
+        // EVENTS //
+        ////////////
+        
+        $(document).mousemove( function( e )
+        {
+            e = e || window.event;
+            
+            if( isDrag ){
+                
+                isDrag.translate(e.clientX - isDrag.dx, e.clientY - isDrag.dy);
+                
+                for( var i = edges.length; i--; ) {
+                
+                    r.edge(edges[i]);
+                }
+                
+                r.safari();
+                
+                isDrag.dx = e.clientX;
+                isDrag.dy = e.clientY;
+            }
+        });
+        
+        $(document).mouseup( function()
+        {
+            isDrag && isDrag.animate({"fill-opacity": 0}, 250);
+            isDrag = false;
+        });
+        
+        //////////////////////
+        // HELPER FUNCTIONS //
+        //////////////////////
+        
+        // responsible for dragging around nodes
+        function dragger( o, e ) 
+        {
+            o.dx = e.clientX;
+            o.dy = e.clientY;
+            isDrag = o;
+            o.animate({"fill-opacity": .60}, 50);
+            e.preventDefault && e.preventDefault();
+        }
+        
+        // selects and outlines nodes in red; deselects others
+        function select( o )
+        {   
+            for( var i = 0; i<nodes.length; i++ )
+                nodes[i].attr("stroke", "green");
+                
+            o.attr( "stroke", "red" );
+        }
+        
+        // find a random integer between the first and second number
+        function randInt( first, second )
+        {
+            return Math.floor(Math.random()*(second-first))+first;
+        }
+    }
+    
+    // preloader
     this.preload = function()
     {
         Raphael.fn.edge = function( obj1, obj2, line, bg ) 
@@ -109,149 +253,6 @@ function core()
                 };
             }
         };
-    }
-    
-    this.main = function()
-    {
-        //////////////
-        // SETTINGS //
-        //////////////
-        
-        // global
-        var height = 480;
-        var width = 640;
-        
-        // node settings
-        var nodeRadius = 20;
-        var nodeColor = "green" //Raphael.getColor();
-        var nrNodesLowBound = 3;
-        var nrNodesUpBound = 10;
-        
-        // edge settings
-        var nrEdgesLowBound = 3;
-        var nrEdgesUpBound = 20;
-        
-        /////////////////
-        // MEMBER DATA //
-        /////////////////
-        
-        var el;
-        var isDrag = false;
-        
-        // create a new raphael SVG in the "workspace" div
-        var r = Raphael("workspace", width, height);
-        
-        // collections of edges and nodes
-        var edges = new Array();
-        var nodes = new Array();
-        
-        //////////////////
-        // INITIALIZERS //
-        //////////////////
-        
-        // generate a random number of nodes
-        function randx(){return Math.floor(Math.random()*(width-nodeRadius*2))+nodeRadius};
-        function randy(){return Math.floor(Math.random()*(height-nodeRadius*2))+nodeRadius};
-        var nr_nodes = randInt(nrNodesLowBound,nrNodesUpBound);
-        for( var i = 0; i<nr_nodes; i++ ){
-            console.log( "creating new node" );
-            nodes.push( r.circle(randx(), randy(), nodeRadius) );
-        }
-                    
-        // setup properties of nodes
-        for( var i = 0; i < nodes.length; i++ ){
-            
-            nodes[i].attr({
-                
-                fill: nodeColor, 
-                stroke: nodeColor, 
-                "fill-opacity": 0, 
-                "stroke-width": 2
-            });
-            
-            nodes[i].node.style.cursor = "move";
-            
-            nodes[i].mousedown( function(e)
-            {                
-                dragger( this, e );
-                select( this );
-            });
-        }
-        
-        // make a random number of connections
-        var edgeFG = "black";
-        var edgeBG = "white";
-        var nr_edges = randInt(nrEdgesLowBound,nrEdgesUpBound);
-        for( var i = 0; i<nr_edges; i++ ){
-            console.log( "creating new edge" );
-            
-            var node1, node2;
-            do{
-                node1 = nodes[randInt(0, nodes.length)];
-                node2 = nodes[randInt(0, nodes.length)];
-            } while(node1 == node2);
-            
-            edges.push( r.edge( node1, node2, edgeFG, edgeBG ) );
-        }
-        
-        ////////////
-        // EVENTS //
-        ////////////
-        
-        $(document).mousemove( function( e )
-        {
-            e = e || window.event;
-            
-            if( isDrag ){
-                
-                isDrag.translate(e.clientX - isDrag.dx, e.clientY - isDrag.dy);
-                
-                for( var i = edges.length; i--; ) {
-                
-                    r.edge(edges[i]);
-                }
-                
-                r.safari();
-                
-                isDrag.dx = e.clientX;
-                isDrag.dy = e.clientY;
-            }
-        });
-        
-        $(document).mouseup( function()
-        {
-            isDrag && isDrag.animate({"fill-opacity": 0}, 250);
-            isDrag = false;
-        });
-        
-        //////////////////////
-        // HELPER FUNCTIONS //
-        //////////////////////
-        
-        // responsible for dragging around nodes
-        function dragger( o, e ) 
-        {
-            o.dx = e.clientX;
-            o.dy = e.clientY;
-            isDrag = o;
-            o.animate({"fill-opacity": .60}, 50);
-            e.preventDefault && e.preventDefault();
-        }
-        
-        // selects and outlines nodes in red; deselects others
-        function select( o )
-        {   
-            for( var i = 0; i<nodes.length; i++ )
-                nodes[i].attr("stroke", "green");
-                
-            o.attr( "stroke", "red" );
-        }
-        
-        // find a random integer between the first and second number
-        function randInt( first, second )
-        {
-            return Math.floor(Math.random()*(second-first))+first;
-        }
     }
     
 } core = new core();
