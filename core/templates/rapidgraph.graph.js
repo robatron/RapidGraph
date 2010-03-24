@@ -9,10 +9,9 @@ function rapidgraph_graph( surface )
     // public data
     this.surface = surface;     // Raphael SVG drawing surface for this graph
     
+    // private data
     var nodes = new Array();    // an array of the nodes
     var edges = new Array();    // an array of the edges
-    
-    // private data
     var grabbedNode = null;     // the currently grabbed node
     
     // grab the surface offset values. (For some reason the .offset() values
@@ -62,7 +61,7 @@ function rapidgraph_graph( surface )
         surface.canvas.onmousedown = function( e )
         // if no node is under the pointer, make a new node
         {
-            console.group("document.onmousedown");
+            console.group("surface.onmousedown");
             
             if( !grabbedNode ){
                 
@@ -71,7 +70,7 @@ function rapidgraph_graph( surface )
                 
                 console.log("creating new node at %d, %d", x, y);
                 
-                grabbedNode = newNode( x, y );
+                grabbedNode = new node({x:x, y:y});
             }
             
             console.groupEnd();
@@ -80,7 +79,7 @@ function rapidgraph_graph( surface )
         surface.canvas.onmouseup = function()
         // if the mouse button is lifted, clear any grabbed nodes
         { 
-            console.group("document.onmouseup");
+            console.group("surface.onmouseup");
             
             grabbedNode = null;
             
@@ -128,26 +127,15 @@ function rapidgraph_graph( surface )
             stroke: this.settings.stroke
         });
         
-        console.groupEnd();
-        
-        return this.object;
-    }
-    
-    function newNode( x, y )
-    // create a new node at x,y and push it onto the nodes stack
-    {
-        console.group("graph.newNode()");
-        console.log("pushing new node onto stack");
-        
-        // make a new node and push it onto the stack
-        nodes.push( new node({ x:x, y:y }) );
+        // push this new node onto the node stack
+        nodes.push( this );
         
         // change the mouseover cursor to the "move" symbol
-        nodes[nodes.length-1].node.style.cursor = "move";
+        this.object.node.style.cursor = "move";
         
-        // set the mousedown
-        nodes[nodes.length-1].mousedown( function(e)
-        {                
+        // set the mousedown for this new node
+        this.object.mousedown( function(e)
+        {            
             // set the grabbed node to this node
             grabbedNode = this;
             
@@ -161,6 +149,7 @@ function rapidgraph_graph( surface )
         
         console.groupEnd();
         
-        return nodes[nodes.length-1];
+        // return this new object
+        return this.object;
     }
 }
