@@ -6,13 +6,13 @@ function rapidgraph_graph( surface )
     // GRAPH DATA //
     ////////////////
     
-    // public data
-    this.surface = surface;     // Raphael SVG drawing surface for this graph
-    
     // private data
     var nodes = new Array();    // an array of the nodes
     var edges = new Array();    // an array of the edges
-    var grabbedNodeObj = null;     // the currently grabbed node
+    
+    // mouse handling data
+    var grabbedNodeObj = null;  // the currently grabbed node Raphael object
+    var hasMoved = true;        // did the object move between click & release?
     
     // grab the surface offset values. (For some reason the .offset() values
     // change after each call)
@@ -56,6 +56,9 @@ function rapidgraph_graph( surface )
                 n.translate( e.clientX - n.dx, e.clientY - n.dy );
                 n.dx = e.clientX;
                 n.dy = e.clientY;
+                
+                // clear the hasMoved flag, for the node has moved ;-)
+                hasMoved = true;
             }
         };
         
@@ -81,6 +84,9 @@ function rapidgraph_graph( surface )
         // if the mouse button is lifted, clear any grabbed nodes
         { 
             console.group("surface.onmouseup");
+            
+            if( !hasMoved )
+                alert( "yay! The currentGrabbedObj has not moved.");
             
             grabbedNodeObj = null;
             
@@ -147,6 +153,9 @@ function rapidgraph_graph( surface )
             
             // prevent the default event action
             e.preventDefault();
+            
+            // reset the hasMoved flag
+            hasMoved = false;
         });
         
         // PUBLIC FUNCTIONS
