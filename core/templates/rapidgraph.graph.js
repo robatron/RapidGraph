@@ -12,7 +12,7 @@ function rapidgraph_graph( surface )
     // private data
     var nodes = new Array();    // an array of the nodes
     var edges = new Array();    // an array of the edges
-    var grabbedNode = null;     // the currently grabbed node
+    var grabbedNodeObj = null;     // the currently grabbed node
     
     // grab the surface offset values. (For some reason the .offset() values
     // change after each call)
@@ -46,21 +46,13 @@ function rapidgraph_graph( surface )
     // initialize the graph
     {
         console.group("graph.init()");
-    
-        var temp1 = new node({x:20,y:20});
-        var temp2 = new node({x:40,y:40});
-        var temp3 = new node({x:60,y:60});
-        var temp4 = new node({x:80,y:80});
-        
-        console.log(nodes);
-        temp2.remove();
-        console.log(nodes);
         
         surface.canvas.onmousemove = function(e)
         // if there's currently a grabbed node, move it to the mouse's position
-        {            
-            if( grabbedNode ){
-                var n = grabbedNode;
+        {                     
+            if( grabbedNodeObj ){
+                
+                var n = grabbedNodeObj;
                 n.translate( e.clientX - n.dx, e.clientY - n.dy );
                 n.dx = e.clientX;
                 n.dy = e.clientY;
@@ -72,14 +64,14 @@ function rapidgraph_graph( surface )
         {
             console.group("surface.onmousedown");
             
-            if( !grabbedNode ){
+            if( !grabbedNodeObj ){
                 
                 var x = e.clientX - offset.x;
                 var y = e.clientY - offset.y;
                 
                 console.log("creating new node at %d, %d", x, y);
                 
-                grabbedNode = new node({x:x, y:y});
+                grabbedNodeObj = new node({x:x, y:y}).object;
             }
             
             console.groupEnd();
@@ -90,9 +82,9 @@ function rapidgraph_graph( surface )
         { 
             console.group("surface.onmouseup");
             
-            grabbedNode = null;
+            grabbedNodeObj = null;
             
-            console.log("Mouse lifted. grabbedNode cleared");
+            console.log("Mouse lifted. grabbedNodeObj cleared");
             console.groupEnd();
         };
         
@@ -147,11 +139,11 @@ function rapidgraph_graph( surface )
         this.object.mousedown( function(e)
         {            
             // set the grabbed node to this node
-            grabbedNode = this;
+            grabbedNodeObj = this;
             
             // set this node's position to the mouse's position
-            grabbedNode.dx = e.clientX;
-            grabbedNode.dy = e.clientY;
+            grabbedNodeObj.dx = e.clientX;
+            grabbedNodeObj.dy = e.clientY;
             
             // prevent the default event action
             e.preventDefault();

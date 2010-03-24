@@ -41,6 +41,13 @@ function rapidgraph_ui()
         surface = Raphael( "ui", width, height );
         graph = new rapidgraph_graph( surface );
         
+        /*
+        $(document).resize(function()
+        {
+            surface.setSize( screenWidth(), screenHeight() );
+        });
+        */
+        
         console.groupEnd();
     }
 }
