@@ -10,21 +10,13 @@ function rapidgraph_core()
     var ui = new rapidgraph_ui();           // the user interface
     var graph = new rapidgraph_graph();     // the main graph
     
-    //////////////////////
-    // HELPER FUNCTIONS //
-    //////////////////////
-    
-    function docReady()
-    // acts as a "document ready" flag
-    { 
-        return window.jQuery.isReady;
-    }
+    ////////////
+    // PUBLIC //
+    ////////////
     
     this.init = function()
     {
         console.group("core.init()");
-        
-        console.log("doc ready? = " + docReady());
         
         console.groupEnd();
     };
@@ -32,16 +24,6 @@ function rapidgraph_core()
     this.start = function()
     {
         console.group("core.start()");
-        
-        console.log("doc ready? = " + docReady() );
-        
-        // make sure the document is ready
-        if( !docReady() )
-            console.error("Start failed. Call me when the document is ready.");
-        
-        // otherwise, we're good. Start up core
-        else {
-        }
         
         console.groupEnd();
     };
