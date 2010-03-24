@@ -40,7 +40,6 @@ function rapidgraph_ui()
         var height = 300;
         surface = Raphael( "ui", width, height );
         graph = new rapidgraph_graph( surface );
-        surface.setSize( 500, 200 );
         
         console.groupEnd();
     }

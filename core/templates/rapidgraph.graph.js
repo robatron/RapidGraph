@@ -46,6 +46,15 @@ function rapidgraph_graph( surface )
     // initialize the graph
     {
         console.group("graph.init()");
+    
+        var temp1 = new node({x:20,y:20});
+        var temp2 = new node({x:40,y:40});
+        var temp3 = new node({x:60,y:60});
+        var temp4 = new node({x:80,y:80});
+        
+        console.log(nodes);
+        temp2.remove();
+        console.log(nodes);
         
         surface.canvas.onmousemove = function(e)
         // if there's currently a grabbed node, move it to the mouse's position
@@ -125,10 +134,11 @@ function rapidgraph_graph( surface )
         ).attr({
             fill: this.settings.fill,
             stroke: this.settings.stroke
-        });
+        }); 
         
         // push this new node onto the node stack
         nodes.push( this );
+        this.index = nodes[nodes.length-1];
         
         // change the mouseover cursor to the "move" symbol
         this.object.node.style.cursor = "move";
@@ -147,9 +157,18 @@ function rapidgraph_graph( surface )
             e.preventDefault();
         });
         
+        // PUBLIC FUNCTIONS
+        
+        // remove the node from the surface, and remove it from the nodes stack
+        this.remove = function()
+        {
+            this.object.remove();
+            nodes.splice( this.index, 1);
+        }
+        
         console.groupEnd();
         
         // return this new object
-        return this.object;
+        return this;
     }
 }
