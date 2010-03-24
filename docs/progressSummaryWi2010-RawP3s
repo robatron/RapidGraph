@@ -1,0 +1,321 @@
+Computer Science Capstone
+Team 21
+Michael Anderson
+Rob McGuire-Dale
+
+Detailed Progress Summary
+(as of the end of winter term 2010)
+
+3/15/2010 (Week 20)
+
+Progress:
+    An early prototype of the main user interface was developed
+    and for presentations. We also met with our client and demoed
+    it for her. (for more details, see our project change log:
+    http://trac.osuosl.org/trac/rapidgraph/timeline)
+
+Problems:
+    Progress was slower than we wanted this week due to dead week
+    activities.
+
+Plans:
+    Since this is the last P3 of the term, we'll include plans
+    for over spring break: Our goal is to have a functional user
+    interface and a working API by the beginning of next term so
+    we can start to do some major development with the plugins
+    along side development of a more advanced UI.
+
+
+3/1/2010 (Week 18)
+
+Progress:
+    All of the work that was done this week can be found in the
+    timeline of our project management software:
+
+    http://trac.osuosl.org/trac/rapidgraph/timeline?
+    from=03/01/10&daysback=7&ticket=on&changeset=on&milestone=on&
+    wiki=on&update=Update
+
+    The fact that we got this up and running was also a bit
+    accomplishment :)
+    
+Problems:
+    None! A lot of progress was made this week.
+
+Plans:
+    Continue to work on the javascript models for the main
+    application.
+
+
+2/21/2010 (Week 17)
+
+Progress:
+    A successful "Hello world!" was produced by the framework.
+    More work was done on the project site, including adding a
+    new plugin implementation page (not yet live)
+    
+Problems:
+    Still trying to figure out exactly how all of the components
+    will fit together.
+    
+Plans:
+    Implement the core application and get the graph object
+    written.
+
+
+2/15/2010 (Week 16)
+
+Progress:
+    Much progress was made this week. The Django framework was
+    put into place, and a plugin system design was thought out.
+    More design work went into the the core API.
+    
+Problems:
+    None.
+    
+Plans:
+    Plan to further implement the Django framework and start
+    implementing the core UI.
+
+
+2/8/2010 (Week 15)
+
+Progress:
+    Began work on the Django framework. Got in contact with
+    someone to help with the UI layout.
+
+Problems:
+    It was a lot of work to wrestle with Django to get it to
+    recognize plugins within Python packages.
+
+Plans:
+    To do more work on the Django framework.
+
+
+2/1/2010 (Week 14)
+
+Progress:
+    We've made more progress on the UI design work and
+    successfully made contact with the owner of LucidChart.com
+    who said we cannot, in fact, view the source code, but he did
+    offer some very helpful hints.
+
+Problems:
+    None this week.
+    
+Plans:
+    We plan on finishing the UI design work, and finishing the
+    API.
+
+
+1/25/2010 (Week 13)
+
+Progress:
+    Worked more on the API, worked more on the front-end design,
+    updated project site, completed presentation.
+    
+Problems:
+    This was a busy week, so not as much got done as we would
+    have liked.
+
+Plans:
+    Finish the API, finish prelimiary front-end design, begin
+    back-end design.
+
+
+1/17/2010 (Week 12)
+
+Progress:
+    Emailed LucidChart regarding obtaining documented and
+    formatted source code for UI research purposes. Updated
+    project site with new logo and project links section
+    (http://trac.osuosl.org/trac/rapidgraph/wiki). Updated API.
+    Git repo'd the project site files for backup. Started
+    serious UI design work.
+    
+Problems:
+    None this week!
+    
+Plans:
+    Finish UI design work. Finish UI API. Contact LucidChart
+    (see "progress" section). Prepare for presentation on Thursday.
+
+
+1/11/2010 (Week 11)
+
+Progress:
+    We made some more progress on hashing out the design for our
+    main front-end, using some existing web-apps as inspiration.
+    Also started talking about our presentation.
+
+Problems:
+    None to report yet this term!
+
+Plans:
+    We plan on finishing up or presentations early next week
+    (before class on Tuesday) and also finishing up our main API
+    by the end of the week.
+
+
+12/6/2009 (Week 10)
+
+Progress:
+    -Put finishing touches on our poster and TRIP documents.
+    -Further developed specifics for the API for our core
+    system.
+    -Unsuccessfully attempted to contact our sponsor.
+    -Brainstormed ideas for updating our project site.
+    
+Problems:
+    -We were very busy with end-of-term projects, and we didn't
+    get as much done as we might have liked.
+
+Plans:
+    -We plan to begin the implementation and coding of our core
+    system during this coming winter break.
+
+
+11/23/2009 (Week 08)
+
+Progress:
+    Unfortunately neither one of us was able to make much
+    progress this week on our project, due to a heavy homework
+    load and other commitments
+    
+Problems:
+    No blockers or other problems to speak of.
+
+Plans:
+    -To finish our technology review document
+    -Flush our the requirements for our API
+
+11/16/2009 (Week 07)
+
+Progress:
+    -Set up Trac and Wiki website instance
+    -Created a visual logo for our project
+    -Began to create rough specifications for our core backend
+    API
+    
+Problems:
+    -None really ... things are rapidly moving forward
+    
+Plans:
+    -Finish drawing out specifications for our the backend of
+    our API
+    -Begin coding backend API
+    -Touch bases with our sponsor to get her official approval
+    -Begin technology research
+
+
+11/9/2009 (Week 06)
+
+Progress:
+    Met with Soroush and showed him our progress with the
+    requirements document and the Gantt chart. He gave us
+    suggestions on how to complete them.
+
+    Significant progress made on the requirements document which
+    is nearing completion.
+
+    Finished the Gantt chart per the suggestions of Soroush.
+
+Problems:
+    We're still waiting on our Trac instance at the OSL.
+
+Plans:
+    Meet with Mrs. Wallace to discuss our progress and
+    requirements document.
+
+    Finish the requirements document. All that's left is the
+    dataflow diagram and any changes Mrs. Wallace requests to be
+    made.
+
+    Email Rudy at the OSL regarding our Trac instance.
+
+
+11/2/2009 (Week 05)
+
+Progress:
+    Spoke with our TA regarding the direction of our project.
+
+    Trac and Git hosting at the OSL is in-progress.
+
+    Progress was made on the Gantt chart for our requirements
+    document.
+
+    Briefly touched bases with our sponsor regarding the progress
+    of our requirements document.
+    
+Problems:
+    Trac and Git hosting was not completed this week, which is
+    hindering progress specifically regarding porting our
+    requirements document to our "living" project page.
+Plans:
+    Again, get hosting set up. We'll need to bug them some more
+    to get going on this.
+
+    Finish the Gantt chart.
+
+    Finish the requirements document.
+
+    Begin porting the requirements document to Trac.
+
+
+10/25/2009 (Week 04)
+
+Progress:
+    - Filled in most of the requirements doc skeleton provided
+    on the capstone website
+    - Decided to name our project RapidGraph
+    - Made some decisions that cemented the overall architecture
+    of our system
+    - Decided to use JavaScript/jQuery, Django, Python, and C++
+    to implement our system
+    
+Problems:
+    - We were intending to set up Trac and Git this week so that
+    we have a repo to put the work we've done so far, but we
+    were blocked because we could not decide what our project
+    name should be. Now that we have a name, this problem will
+    be solved in the coming week.
+    
+Plans:
+    - Set up Trac and Git, start populating Trac with tickets
+    - Think about requirements and flush out any that are remaining.
+    - Visualize the design of our system (Gannt chart, Use Case
+    Diagram, Dataflow Diagram)
+    - Finish filling in the requirements doc skeleton
+
+10/18/2009 (Week 03)
+
+Progress:
+    Did research into project management software. Decided on
+    Trac, as this is the industry standard.
+
+    Did research into versioning software. Decided on Git.
+
+    Talked to the powers that be at the Open Source Lab, and got
+    free trac and Git hosting.
+
+    Talked with Dr. Cull regarding potential graph theory
+    applications, and he agreed to be a resource for us as the
+    project progresses.
+
+    Discussed technology options. We're thinking about Django as
+    a framework and possibly the back-end since some of the
+    algorithms are quite processor intensive, and client-side
+    technology for the front end.
+    
+Problems:
+    We had the issue of not having any kind of project management
+    software set up yet, so ideas and plans have essentially been
+    scribbled down on scraps of paper lying around the house.
+    
+Plans:
+    We need to talk to the OSL about server slice.
+
+    Actually getting the Trac instance up and running for use.
+    Plan to do this early next week.
+
+    Start flushing out requirements and tickets on Trac.

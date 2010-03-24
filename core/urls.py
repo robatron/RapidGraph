@@ -5,7 +5,7 @@ from util import get_app_static_dirs
 
 # template pages
 urlpatterns = patterns('',
-    (r'^$', core), # go to the main view
+    (r'^$', index), # go to the main view
 )
 
 

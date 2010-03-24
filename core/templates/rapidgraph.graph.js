@@ -1,7 +1,6 @@
-// graph.js - A simple graph class
-//   By Rob McGuire-Dale, Feb. 2010
+// rapidgraph_graph.js
 
-function graph()
+function rapidgraph_graph()
 {    
     // nodes in the graph
     var nodes = null;

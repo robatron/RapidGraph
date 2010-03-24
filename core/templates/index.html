@@ -2,6 +2,11 @@
     <head>
         <title>RapidGraph</title>
         
+        <!-- Include CSS styles -->
+        <style>
+            {% include "styles.css" %}
+        </style>
+        
         <!-- Include static libraries -->
         <script type='text/javascript' src="static/core/js/jquery-1.4.2.min.js"></script>
         <script type='text/javascript' src="static/core/js/raphael-1.3.1.min.js"></script>
@@ -9,21 +14,19 @@
         
         <!-- Include all of the core javascript code files -->
         <script type='text/javascript'>
-            {% include "ui.js" %}
-            {% include "graph.js" %}
-            {% include "core.js" %}
+            {% include "rapidgraph.ui.js" %}
+            {% include "rapidgraph.graph.js" %}
+            {% include "rapidgraph.core.js" %}
             
-            // run core's preload
-            core.preload();
+            // global data
+            var core = new rapidgraph_core(); // the core application
             
-            // run core's main once the document is ready
-            $(document).ready(function(){ core.main() });
+            // initialize core (document doesn't have to be ready)
+            core.init();
+            
+            // once the document is ready...
+            $(document).ready( core.start() );
         </script>
-        
-        <!-- Include CSS styles -->
-        <style>
-            {% include "core.css" %}
-        </style>
     </head>
     
     <body>
