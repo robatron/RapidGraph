@@ -5,7 +5,7 @@ function rapidgraph_ui()
     /////////////
     // UI DATA //
     /////////////
-    var sketchpad = null;   // will be the Raphael SVG drawing space
+    var surface = null;   // will be the Raphael SVG drawing space
     var grabbedNode = null; // currently grabbed node. Null if none grabbed.
     var nodes = new Array(); // the nodes
     
@@ -36,7 +36,7 @@ function rapidgraph_ui()
         // TODO: Make these dimensions dynamically
         var width = 1000;
         var height = 300;
-        sketchpad = Raphael( "ui", width, height );
+        surface = Raphael( "ui", width, height );
         console.log("New Raphael object created of size %dx%d", width, height); 
         
         /* TODO: Figure out dynamic scaling
@@ -77,7 +77,7 @@ function rapidgraph_ui()
     {
         var radius = 10;
         
-        nodes.push( sketchpad.circle( x, y, radius ).attr({
+        nodes.push( surface.circle( x, y, radius ).attr({
             fill: "lightgreen",
             stroke: "green"
         }));

@@ -1,12 +1,16 @@
 // rapidgraph_graph.js
 
-function rapidgraph_graph()
+function rapidgraph_graph( surface )
 {    
-    // nodes in the graph
-    var nodes = null;
+    //////////
+    // DATA //
+    //////////
     
-    // edges in the graph
-    var edges = null;
+    this.surface = surface;         // Raphael SVG drawing surface for this graph
+    var grabbedNode = null;     // the currently grabbed node
+
+    var nodes = new Array();    // an array of the nodes
+    var edges = new Array();    // an array of the edges
     
     // a node object
     function node()
@@ -31,4 +35,17 @@ function rapidgraph_graph()
         this.weight = null;
         this.isDirected = null;
     }
+    
+    //////////////////////
+    // PUBLIC FUNCTIONS //
+    //////////////////////
+    
+    // initialize a new graph
+    function init()
+    {
+    }
+    
+    //////////////////////////////
+    // PRIVATE HELPER FUNCTIONS //
+    //////////////////////////////
 }
