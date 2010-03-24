@@ -6,14 +6,17 @@
     -moz-border-radius: 5px;
 }
 
-#workspace{
-    height: 480px;
-    width: 640px;
-    left: 50%;
-    top: 50%;
-    margin: -240px 0 0 -320px;
+#ui{
+    display:block;
+    position:absolute;
     
-    position: absolute;
+    margin-left:auto;
+    margin-right:auto;
+    
     background:black;
     border:1px solid green;
+}
+
+svg{
+    border:1px solid red;
 }
