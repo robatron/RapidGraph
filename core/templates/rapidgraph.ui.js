@@ -7,6 +7,7 @@ function rapidgraph_ui()
     /////////////
     var sketchpad = null;   // will be the Raphael SVG drawing space
     var grabbedNode = null; // currently grabbed node. Null if none grabbed.
+    var nodes = new Array(); // the nodes
     
     this.start = function()
     {
@@ -44,31 +45,12 @@ function rapidgraph_ui()
         });
         */
         
-        var radius = 10;
-        var x = width/2-radius;
-        var y = height/2-radius
-        var testcircle = sketchpad.circle( x, y, radius).attr({
-            fill: "lightgreen",
-            stroke: "green"
-        });
-        
-        testcircle.mousedown( function(e)
-        {                
-            // set the grabbed node to this node
-            grabbedNode = this;
-            
-            grabbedNode.dx = e.clientX;
-            grabbedNode.dy = e.clientY;
-            
-            e.preventDefault && e.preventDefault();
-        });
-        
-        $("#ui").mousemove( function( event )
+        // set up notepad
+        $("#ui").mousemove( function( e )
         {
-            e = event || window.event;
-            
+            // if there's currently a grabbed node, move the node to the mouse's
+            // position
             if( grabbedNode ){
-                
                 var n = grabbedNode;
                 n.translate( e.clientX - n.dx, e.clientY - n.dy );
                 
@@ -77,11 +59,44 @@ function rapidgraph_ui()
             }
         });
         
-        $("#ui").mouseup( function()
-        {
-            grabbedNode = null;
+        // if the mouse button is lifted, clear any grabbed nodes
+        $("#ui").mouseup( function(){ grabbedNode = null });
+        
+        $("#ui").mousedown( function(e){
+            if( !grabbedNode ){
+                var x = e.clientX - this.offsetLeft;
+                var y = e.clientY - this.offsetTop;
+                grabbedNode = newNode( x, y );
+            }
         });
         
         console.groupEnd();
+    }
+    
+    function newNode( x, y )
+    {
+        var radius = 10;
+        
+        nodes.push( sketchpad.circle( x, y, radius ).attr({
+            fill: "lightgreen",
+            stroke: "green"
+        }));
+        
+        nodes[nodes.length-1].node.style.cursor = "move";
+        
+        nodes[nodes.length-1].mousedown( function(e)
+        {                
+            // set the grabbed node to this node
+            grabbedNode = this;
+            
+            // set this node's position to the mouse's position
+            grabbedNode.dx = e.clientX;
+            grabbedNode.dy = e.clientY;
+            
+            // prevent the default event action
+            e.preventDefault();
+        });
+        
+        return nodes[nodes.length-1];
     }
 }
