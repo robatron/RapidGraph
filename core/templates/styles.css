@@ -6,16 +6,37 @@
     -moz-border-radius: 5px;
 }
 
-#ui{
+/* user interface panels */
+.panel{
     display:block;
     position:absolute;
-    
+
+    border: 1px solid green;
+}
+
+#panelMain{    
     margin-left:auto;
     margin-right:auto;
     
     background:black;
     border:1px solid green;
 }
+
+#left{
+    left:0;
+    width:15%;
+}
+
+#right{
+    right:0;
+    width:15%;
+}
+
+#bottom{
+    bottom:0;
+    height:20%;
+}
+
 
 svg{
     border:1px solid red;

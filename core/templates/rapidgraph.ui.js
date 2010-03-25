@@ -11,35 +11,17 @@ function rapidgraph_ui()
     
     var graph = null;
     
-    this.start = function()
-    {
-        console.group("ui.start()");
-        
-        // make sure the "ui" element exists, and error out if not
-        var uiReady = $("#ui").length != 0;
-        if( !uiReady )
-            console.error("ui element not found. Is the document fully loaded?");
-        
-        // if the "ui" element exists, we're good to go
-        else {
-            
-            // initialize the ui
-            init();
-            
-        }
-        
-        console.groupEnd();
-    }
-
-    function init()
+    this.init = function()
     {
         console.group("ui.init()");
-        
+            
         // TODO: Make these dimensions dynamically
-        var width = 1000;
+        var width = 300;
         var height = 300;
-        surface = Raphael( "ui", width, height );
+        surface = Raphael( "main", width, height );
         graph = new rapidgraph_graph( surface );
+        
+        initPanels();
         
         /*
         $(document).resize(function()
@@ -49,5 +31,37 @@ function rapidgraph_ui()
         */
         
         console.groupEnd();
+    }
+    
+    // init panel 
+    function initPanels()
+    {
+        // make all of the buttons buttons
+        $('.ui-button').button();
+        
+        $('#newnode').click(function()
+        {
+            new graph.node();
+        });
+        $('#deletenodes').click(function()
+        {
+            graph.selectedNodes.remove();
+        });
+        $('#clearall').click(function()
+        {
+            graph.clear();
+        });
+        
+        positionPanels();
+        $(window).resize( function(){ positionPanels() });
+    }
+    
+    function positionPanels()
+    {
+        // center main panel
+        $('#main').offset({
+            top: screenHeight()/2 - $('#main').outerHeight(true)/2,
+            left: screenWidth()/2 - $('#main').outerWidth(true)/2,
+        });
     }
 }

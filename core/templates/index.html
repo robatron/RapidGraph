@@ -7,12 +7,17 @@
             {% include "styles.css" %}
         </style>
         
-        <!-- Include static libraries -->
+        <!-- Include general javascript libraries -->
         <script type='text/javascript' src="static/core/js/jquery-1.4.2.min.js"></script>
         <script type='text/javascript' src="static/core/js/raphael-1.3.1.min.js"></script>
         <script type='text/javascript' src="static/core/js/jquery.scale.js"></script>
         <script type='text/javascript' src="static/core/js/util.js"></script>
         
+        <!-- Include jQuery UI components (library and css stylesheet) -->
+        <script type='text/javascript' src="static/core/js/jquery-ui-1.8.min.js"></script>
+        <link type="text/css" href="static/core/css/jquery-ui-darkness/theme.css" rel="stylesheet" />
+        
+        <!-- main js code -->
         <script type='text/javascript'>
             //////////////
             // INCLUDES //
@@ -38,15 +43,33 @@
             ///////////
             
             // once the document is ready, start the user interface
-            $(document).ready( function(){ ui.start() });
+            $(document).ready( function(){ ui.init() });
         </script>
     </head>
     
-    <body>
-
-        <h1>RapidGraph Super-Early Prototype</h1>
+    <body>        
+        <div id='main' class='panel'></div>
         
-        <div id='ui'></div>
+        <div id='left' class='panel'>
+            <button id='newnode' class="ui-button ui-widget ui-state-default ui-corner-all">
+               <span class="ui-button-text">Create New Node</span>
+            </button>
+            
+            <button id='connectnodes' class="ui-button ui-widget ui-state-default ui-corner-all">
+               <span class="ui-button-text">Connect Selected</span>
+            </button>
+            
+            <button id='deletenodes' class="ui-button ui-widget ui-state-default ui-corner-all">
+               <span class="ui-button-text">Delete Selected</span>
+            </button>
+            
+            <button id='clearall' class="ui-button ui-widget ui-state-default ui-corner-all">
+               <span class="ui-button-text">Clear All</span>
+            </button>
+        </div>
+        
+        <div id='right' class='panel'>right</div>
+        <div id='bottom' class='panel'>bottom</div>
 
     </body>
 </html>
