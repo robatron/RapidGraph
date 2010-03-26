@@ -41,11 +41,11 @@ function rapidgraph_ui()
         
         $('#newnode').click(function()
         {
-            new graph.node();
+            graph.nodes.createNew();
         });
         $('#deletenodes').click(function()
         {
-            graph.selectedNodes.remove();
+            graph.remove( graph.nodes.getSelected() );
         });
         $('#clearall').click(function()
         {

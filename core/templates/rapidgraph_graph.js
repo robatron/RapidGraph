@@ -1,5 +1,67 @@
 // rapidgraph_graph.js
 
+/* Rough graph class structure
+ * 
+ *  // TOTAL GRAPH FUNCTIONS ---------------------------------------------------
+ * 
+ *  .clear() // clear the entire graph
+ * 
+ *  // THE NODE SETS FUNCTIONS -------------------------------------------------
+ * 
+ *  .nodes
+ *      .createNew({new attributes})    // create a new node
+ * 
+ *      .remove(node)                   // remove specified node
+ * 
+ *      .all
+ *          .get()      // return an array of all nodes
+ * 
+ *          .remove()   // remove all selected nodes
+ * 
+ *          .select()   // select all nodes
+ * 
+ *          .deselect() // deselect all nodes
+ * 
+ *      .selected
+ *          .get()      // return an array of selected nodes
+ * 
+ *          .remove()   // remove selected nodes
+ * 
+ *  // THE EDGE SETS FUNCTIONS -------------------------------------------------
+ * 
+ *  .edges
+ *      .createNew({new attributes})    // create a new edge
+ * 
+ *      .remove(edge)                   // removes a specified edge
+ * 
+ *      .all
+ *          .get()      // return an array of all edges
+ * 
+ *          .remove()   // remove all selected edges
+ * 
+ *          .select()   // select all edges
+ * 
+ *          .deselect() // deselect all edges
+ * 
+ *      .selected
+ *          .get()      // return an array of selected edges
+ * 
+ *          .remove()   // remove selected edges
+ * 
+ *  // GRAPH OBJECTS -------------------------------------------------------
+ * 
+ *      node                            // a node object
+ * 
+ *      .attr({changed attributes}) // change the attributes of the node
+ *          
+ *      .toggleSelect()             // toggle selection of the node
+ * 
+ *   edge
+ *      .attr({changed attributes})
+ * 
+ *      .toggleSelect()
+*/
+
 function rapidgraph_graph( surface )
 {    
     ////////////////
@@ -7,8 +69,8 @@ function rapidgraph_graph( surface )
     ////////////////
     
     // nodes and edges arrays
-    var nodes = new Array();    // an array of the nodes
-    var edges = new Array();    // an array of the edges
+    var nodes = [];    // an array of the nodes
+    var edges = [];    // an array of the edges
     
     // mouse handling data
     var grabbedNodeObj = null;  // the currently grabbed node Raphael object
@@ -27,37 +89,15 @@ function rapidgraph_graph( surface )
     // run init as soon as a graph object is instantiated
     init();
     
-    //////////////////////
-    // PUBLIC FUNCTIONS //
-    //////////////////////
-    
-    this.clear = function()
-    {
-        console.group("graph.clear()");
-
-        surface.clear();
-        nodes = new Array();
-        
-        console.log("surface cleared");
-        console.groupEnd();
-    }
-    
-    //////////
-    // INIT //
-    //////////
+    //////////.////////////////
+    // WHOLE GRAPH FUNCTIONS //
+    ///////////////////////////
     
     function init()
     // initialize the graph
     {
         console.group("graph.init()");
         
-        initSurfaceMouseEvents();
-        
-        console.groupEnd();
-    }
-    
-    function initSurfaceMouseEvents()
-    {
         surface.canvas.onmousemove = function(e)
         // if there's currently a grabbed node, move it to the mouse's position
         {                     
@@ -111,14 +151,106 @@ function rapidgraph_graph( surface )
             
             //console.groupEnd();
         };
+        
+        console.groupEnd();
     }
     
-    ////////////////////
-    // NODE FUNCTIONS //
-    ////////////////////
+    this.clear = function()
+    // clear all elements from the graph
+    {
+        console.group("graph.clear()");
+
+        console.log("clearing Raphael surface");
+        surface.clear();
+        
+        console.log("purging the nodes set");
+        nodes = [];
+        
+        console.groupEnd();
+    }
+
+    ///////////////////////
+    // ELEMENT FUNCTIONS //
+    ///////////////////////
+
+    this.remove = function( element )
+    // remove the specified node, nodes, edge, or edges
+    {
+    };
+    
+    this.select = function()
+    // select the specified node, nodes, edge, or edges
+    {
+    };
+    
+    this.deselect = function()
+    // deselectthe specified node, nodes, edge, or edges
+    {
+    };
+    
+    ////////////////////////////
+    // ELEMENT SETS FUNCTIONS //
+    ////////////////////////////
+    
+    this.nodes = 
+    {
+        createNew: function( attr )
+        // create a new node
+        {            
+            console.log("nodes.createNew");
+            
+            // create the new node with the specified attributes
+            var newNode = new node( attr );
+            
+            // push the new node onto the nodes stack
+            nodes.push( newNode );
+            
+            // return the new node
+            return newNode;   
+        },
+        
+        getAll: function()
+        // return all of the nodes in an array
+        {
+            console.log("fetching all of the nodes");
+            return nodes;
+        },
+            
+        getSelected: function()
+        // return the selected nodes in an array
+        {
+            console.log("fetching the selected nodes");
+            
+            var selected = [];
+            
+            for( var i = 0; i<nodes.length; i++ )
+                if( nodes[i].attr.selected )
+                    selected.push( nodes[i] );
+                    
+            return selected;
+        },
+            
+        getUnselected: function()
+        // return the unselected nodes in an array
+        {
+            console.log("fetching the unselected nodes");
+            
+            var unselected = [];
+            
+            for( var i = 0; i<nodes.length; i++ )
+                if( !nodes[i].attr.selected )
+                    selected.push( nodes[i] );
+                    
+            return unselected;
+        }
+    };
+    
+    ////////////////////////////////
+    // ELEMENT OBJECT DEFINITIONS //
+    ////////////////////////////////
     
     // a node object
-    this.node = function( attr )
+    function node( attr )
     {   
         console.group("graph.node");
 
@@ -162,9 +294,6 @@ function rapidgraph_graph( surface )
         // attach this node to the Raphael object
         $(this.object).data("node", this);
         
-        // push this new node onto the node stack
-        nodes.push( this );
-        
         // change the mouseover cursor to the "move" symbol
         this.object.node.style.cursor = "move";
         
@@ -189,27 +318,6 @@ function rapidgraph_graph( surface )
             "new node %d created at %d, %d", 
             this.id, this.attr.x, this.attr.y
         );
-        
-        // NODE REMOVAL --------------------------------------------------------
-        
-        this.remove = function()
-        // remove the node from the surface, and from the nodes stack
-        {
-            console.log("removing node %d", this.id);
-            
-            // remove the node's object from the Raphael surface
-            this.object.remove();
-            
-            // find this node in the stack, and remove it
-            var thisIndex = null
-            for( var i = 0; i<nodes.length; i++)
-                if( nodes[i] == this )
-                    thisIndex = i;
-            nodes.splice( thisIndex, 1);
-            
-            // finally, delete this node from memory
-            delete this;
-        }
         
         // SELECTION ----------------------------------------------------------- 
         
@@ -244,39 +352,5 @@ function rapidgraph_graph( surface )
         
         // return this newly created node
         return this;
-    }
-
-    this.selectedNodes = 
-    // functions related to the set of selected nodes
-    {
-        get: function()
-        // return an array of the selected nodes
-        {
-            var selectedNodes = [];
-        
-            for( var i = 0; i<nodes.length; i++ )
-                if( nodes[i].attr.selected == true )
-                    selectedNodes.push( nodes[i] );
-                    
-            return selectedNodes;
-        },
-        
-        remove: function()
-        // remove the selected nodes
-        {
-            var selectedNodes = this.get();
-        
-            for( var i = 0; i<selectedNodes.length; i++ )
-                selectedNodes[i].remove();
-        },
-        
-        deselect: function()
-        // deselect all selected nodes
-        {
-            var selectedNodes = this.get();
-            
-            for( var i = 0; i<selectedNodes.length; i++ )
-                selectedNodes[i].deselect();
-        }
     }
 }
