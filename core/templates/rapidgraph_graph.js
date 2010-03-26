@@ -1,65 +1,18 @@
 // rapidgraph_graph.js
 
-/* Rough graph class structure
- * 
- *  // TOTAL GRAPH FUNCTIONS ---------------------------------------------------
- * 
- *  .clear() // clear the entire graph
- * 
- *  // THE NODE SETS FUNCTIONS -------------------------------------------------
- * 
- *  .nodes
- *      .createNew({new attributes})    // create a new node
- * 
- *      .remove(node)                   // remove specified node
- * 
- *      .all
- *          .get()      // return an array of all nodes
- * 
- *          .remove()   // remove all selected nodes
- * 
- *          .select()   // select all nodes
- * 
- *          .deselect() // deselect all nodes
- * 
- *      .selected
- *          .get()      // return an array of selected nodes
- * 
- *          .remove()   // remove selected nodes
- * 
- *  // THE EDGE SETS FUNCTIONS -------------------------------------------------
- * 
- *  .edges
- *      .createNew({new attributes})    // create a new edge
- * 
- *      .remove(edge)                   // removes a specified edge
- * 
- *      .all
- *          .get()      // return an array of all edges
- * 
- *          .remove()   // remove all selected edges
- * 
- *          .select()   // select all edges
- * 
- *          .deselect() // deselect all edges
- * 
- *      .selected
- *          .get()      // return an array of selected edges
- * 
- *          .remove()   // remove selected edges
- * 
- *  // GRAPH OBJECTS -------------------------------------------------------
- * 
- *      node                            // a node object
- * 
- *      .attr({changed attributes}) // change the attributes of the node
- *          
- *      .toggleSelect()             // toggle selection of the node
- * 
- *   edge
- *      .attr({changed attributes})
- * 
- *      .toggleSelect()
+/*
+the following functions take a one node or edge, or an array of nodes or edges
+remove()
+select()
+deselect()
+
+nodes.createNew()
+nodes.get.all()
+nodes.get.selected()
+nodes.get.unselected()
+
+edges.createNew()
+edges.get.all
 */
 
 function rapidgraph_graph( surface )
