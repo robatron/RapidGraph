@@ -6,14 +6,12 @@ function rapidgraph_ui()
     // UI DATA //
     /////////////
     var surface = null;   // will be the Raphael SVG drawing space
-    var grabbedNode = null; // currently grabbed node. Null if none grabbed.
-    var nodes = new Array(); // the nodes
+    var graph = null;   // the main graph object
     
-    var graph = null;
+    var temp = null;
     
     this.init = function()
     {
-        console.group("ui.init()");
             
         // TODO: Make these dimensions dynamically
         var width = 300;
@@ -29,8 +27,6 @@ function rapidgraph_ui()
             surface.setSize( screenWidth(), screenHeight() );
         });
         */
-        
-        console.groupEnd();
     }
     
     // init panel 
