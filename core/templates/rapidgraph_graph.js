@@ -28,7 +28,7 @@ function rapidgraph_graph( surface )
     var edges = [];    // an array of the edges
     
     // mouse handling data
-    var grabbedNodeObj = null;  // the currently grabbed node Raphael object
+    var grabbedNode = null;  // the currently grabbed node Raphael object
     var hasMoved = true;        // did the object move between click & release?
     
     var idCounter = 0; // an ID counter so every element may have a unique ID
@@ -46,9 +46,9 @@ function rapidgraph_graph( surface )
         $(document).bind('mousemove', {graph:currentGraph}, function(e)
         // if there's currently a grabbed node, move it to the mouse's position
         {                     
-            if( grabbedNodeObj ){
+            if( grabbedNode ){
                 
-                var n = grabbedNodeObj;
+                var n = grabbedNode.object;
                 n.translate( e.clientX - n.dx, e.clientY - n.dy );
                 n.dx = e.clientX;
                 n.dy = e.clientY;
@@ -65,7 +65,7 @@ function rapidgraph_graph( surface )
         $(surface.canvas).bind('mousedown', {graph:currentGraph}, function(e)
         {   
             // if there are no nodes under the cursor, deselect everything
-            if( !grabbedNodeObj ){
+            if( !grabbedNode ){
                 e.data.graph.deselect(  e.data.graph.nodes.get.all() );
             }
             
@@ -77,15 +77,15 @@ function rapidgraph_graph( surface )
         {            
             // if the mouse hasn't moved between mouse down and up, and the
             // cursor is over a node, toggle the node's selection
-            if( grabbedNodeObj && !hasMoved )
-                $(grabbedNodeObj).data("node").toggleSelect();
-            
+            if( grabbedNode && !hasMoved )
+                grabbedNode.toggleSelect();
+
             // if there is a grabbed object and it's out of bounds, remove it
-            if( grabbedNodeObj && !inBounds( grabbedNodeObj ) )
-                e.data.graph.remove( $(grabbedNodeObj).data("node") );
+            if( grabbedNode && !inBounds( grabbedNode.object ) )
+                e.data.graph.remove( grabbedNode );
             
             // clear the grabbed node
-            grabbedNodeObj = null;
+            grabbedNode = null;
         });
     }
 
@@ -423,6 +423,10 @@ function rapidgraph_graph( surface )
         // make the attributes public
         this.attr = defaultAttr;
         
+        // PRIVATE VARIABLES ---------------------------------------------------
+        
+        var currentNode = this; // capture this node
+        
         // CREATE THE NEW NODE -------------------------------------------------
         
         // create the raphael object
@@ -433,10 +437,7 @@ function rapidgraph_graph( surface )
         ).attr({
             fill: this.attr.fill,
             stroke: this.attr.stroke
-        }); 
-        
-        // attach this node to the Raphael object
-        $(this.object).data("node", this);
+        });
         
         // change the mouseover cursor to the "move" symbol
         this.object.node.style.cursor = "move";
@@ -445,11 +446,11 @@ function rapidgraph_graph( surface )
         this.object.mousedown( function(e)
         {            
             // set the grabbed node to this node
-            grabbedNodeObj = this;
+            grabbedNode = currentNode;
             
             // set this node's position to the mouse's position
-            grabbedNodeObj.dx = e.clientX;
-            grabbedNodeObj.dy = e.clientY;
+            grabbedNode.object.dx = e.clientX;
+            grabbedNode.object.dy = e.clientY;
             
             // prevent the default event action
             e.preventDefault();
