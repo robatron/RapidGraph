@@ -37,11 +37,7 @@ function rapidgraph_graph( surface )
     
     // run init as soon as a graph object is instantiated
     init();
-    
-    ///////////////////////////
-    // WHOLE GRAPH FUNCTIONS //
-    ///////////////////////////
-    
+
     function init()
     // initialize the graph
     {
@@ -84,22 +80,13 @@ function rapidgraph_graph( surface )
             if( grabbedNodeObj && !hasMoved )
                 $(grabbedNodeObj).data("node").toggleSelect();
             
+            // if there is a grabbed object and it's out of bounds, remove it
+            if( grabbedNodeObj && !inBounds( grabbedNodeObj ) )
+                e.data.graph.remove( $(grabbedNodeObj).data("node") );
+            
             // clear the grabbed node
             grabbedNodeObj = null;
         });
-    }
-    
-    this.clear = function()
-    // clear all elements from the graph
-    {
-        var consoleID = "rapidgraph_graph: clear: ";
-
-        console.log(consoleID+"Clearing Raphael surface");
-        surface.clear();
-        
-        console.log(consoleID + "Purging the element sets");
-        nodes = [];
-        edges = [];
     }
 
     //////////////////////////////
@@ -125,9 +112,37 @@ function rapidgraph_graph( surface )
         return -1;
     }
 
+    function inBounds( object )
+    // returns if the specified Raphael object is in-bounds
+    {
+        var x = object.attr("cx");
+        var y = object.attr("cy");
+        
+        var w = surface.width + object.getBBox().width/2;
+        var h = surface.height + object.getBBox().height/2;
+        
+        if( x >= 0 && y >= 0 && x < w && y < h )
+            return true;
+            
+        return false;
+    }
+
     ///////////////////////
     // ELEMENT FUNCTIONS //
     ///////////////////////
+    
+    this.clear = function()
+    // clear all elements from the graph
+    {
+        var consoleID = "rapidgraph_graph: clear: ";
+
+        console.log(consoleID+"Clearing Raphael surface");
+        surface.clear();
+        
+        console.log(consoleID + "Purging the element sets");
+        nodes = [];
+        edges = [];
+    }
 
     this.remove = function( elements )
     // remove the specified node, nodes, edge, or edges
