@@ -47,7 +47,7 @@ function rapidgraph_graph( surface )
     {
         var consoleID = "rapidgraph_graph: init: ";
         
-        $(surface.canvas).bind('mousemove', {graph:currentGraph}, function(e)
+        $(document).bind('mousemove', {graph:currentGraph}, function(e)
         // if there's currently a grabbed node, move it to the mouse's position
         {                     
             if( grabbedNodeObj ){
@@ -67,29 +67,26 @@ function rapidgraph_graph( surface )
         });
         
         $(surface.canvas).bind('mousedown', {graph:currentGraph}, function(e)
-        {            
-            // if the background is clicked, deselect everything
+        {   
+            // if there are no nodes under the cursor, deselect everything
             if( !grabbedNodeObj ){
                 e.data.graph.deselect(  e.data.graph.nodes.get.all() );
             }
+            
+            // draw a selection box
         });
         
-        surface.canvas.onmouseup = function()
+        $(document).bind('mouseup', {graph:currentGraph}, function(e)
         // if the mouse button is lifted, clear any grabbed nodes
         {            
             // if the mouse hasn't moved between mouse down and up, and the
-            // cursor is over a node, toggle its selection
+            // cursor is over a node, toggle the node's selection
             if( grabbedNodeObj && !hasMoved )
                 $(grabbedNodeObj).data("node").toggleSelect();
-                
-            // if there are no nodes under the cursor, deselect everything
-            if( !grabbedNodeObj ){
-                // deselect all nodes
-            }
             
             // clear the grabbed node
             grabbedNodeObj = null;
-        };
+        });
     }
     
     this.clear = function()
@@ -153,16 +150,27 @@ function rapidgraph_graph( surface )
             // make sure element exists in one of the element arrays
             if( eIndex != -1 ){
                 
-                console.log(consoleID+"Removing element "+e.id);
+                console.log(consoleID+"Removing "+e.elementType+" "+e.id);
                 
                 // remove the element's object from the Raphael surface
                 e.object.remove();
-                
-                // remove the element from it's array
-                if( e.elementType == "node" )
+
+                // if the element is a node, remove it from the nodes array, and
+                // remove any edges that may be attached to it
+                if( e.elementType == "node" ){
+                    
                     nodes.splice( eIndex, 1 );
                     
-                else if( e.elementType == "edge" )
+                    // remove any edges that may be attached to the node
+                    for( var ii = 0; ii<edges.length; ii++ ){
+                        if( edges[ii].attachedTo( e ) ){
+                            this.remove( edges[ii] );
+                            ii--; // since the edge was removed, roll back index
+                        }
+                    }
+                    
+                // if the element is an edge, just remove it from the array
+                } else if( e.elementType == "edge" )
                     edges.splice( eIndex, 1 );
                     
                 else
@@ -248,6 +256,8 @@ function rapidgraph_graph( surface )
                 "Creating a new node with the specified attributes"
             );
             var newNode = new node( attr );
+            
+            newNode.select();
             
             console.log(consoleID+"Pushing the new node onto the stack");
             nodes.push( newNode );
@@ -611,6 +621,15 @@ function rapidgraph_graph( surface )
                 prevPos.node2.y = bb2.y;
             }
         } 
+        
+        this.attachedTo = function( node )
+        // returns true if the specified node is attached to this edge, and
+        // false if it is not.
+        {
+            if( this.attr.node1 == node || this.attr.node2 == node )
+                return true;
+            return false
+        }
         
         // update on new edge initialization
         this.update();
