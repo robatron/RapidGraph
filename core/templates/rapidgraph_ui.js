@@ -14,8 +14,8 @@ function rapidgraph_ui()
     {
             
         // TODO: Make these dimensions dynamically
-        var width = 300;
-        var height = 300;
+        var width = 800;
+        var height = 200;
         surface = Raphael( "main", width, height );
         graph = new rapidgraph_graph( surface );
         
@@ -35,41 +35,58 @@ function rapidgraph_ui()
         // make all of the buttons buttons
         $('.ui-button').button();
         
-        $('#newnode').click(function()
-        {
-            graph.nodes.createNew();
-        });
-        
-        $('#selectall').click(function()
-        {
-            graph.select( graph.nodes.getAll() );
-        });
-        
-        $('#selectnone').click(function()
-        {
-            graph.deselect( graph.nodes.getAll() );
-        });
-        
-        $('#deletenodes').click(function()
-        {
-            graph.remove( graph.nodes.getSelected() );
-        });
-        
-        $('#clearall').click(function()
-        {
-            graph.clear();
-        });
+        initBottomPanel();
         
         positionPanels();
         $(window).resize( function(){ positionPanels() });
+    }
+    
+    function initBottomPanel()
+    { 
+        // all elements
+        $('#all>#clearall').click(function()
+        {
+            graph.clear();
+        });
+
+        // node elements
+        $('#nodes>#createnew').click(function()
+        {
+            graph.nodes.createNew();
+        });
+        $('#nodes>#selectall').click(function()
+        {
+            graph.select( graph.nodes.getAll() );
+        });
+        $('#nodes>#selectnone').click(function()
+        {
+            graph.deselect( graph.nodes.getAll() );
+        });
+        $('#nodes>#deleteselected').click(function()
+        {
+            graph.remove( graph.nodes.getSelected() );
+        });
+    
+        // 
+        $('#edges>#connectselected').click(function()
+        {
+            ;
+        });    
     }
     
     function positionPanels()
     {
         // center main panel
         $('#main').offset({
-            top: screenHeight()/2 - $('#main').outerHeight(true)/2,
+            top: 
+                (screenHeight() - $('#bottom').outerHeight(true))/2 - 
+                $('#main').outerHeight(true)/2,
             left: screenWidth()/2 - $('#main').outerWidth(true)/2,
+        });
+        
+        // center bottom panel
+        $('#bottom').offset({
+            left: screenWidth()/2 - $('#bottom').outerWidth(true)/2
         });
     }
 }

@@ -13,7 +13,8 @@ nodes.get.selected()
 nodes.get.unselected()
 
 edges.createNew()
-edges.get.all
+edges.get.all()
+...
 */
 
 function rapidgraph_graph( surface )

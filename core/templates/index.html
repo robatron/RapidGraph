@@ -50,34 +50,59 @@
     <body>        
         <div id='main' class='panel'></div>
         
-        <div id='left' class='panel'>
-            <button id='newnode' class="ui-button ui-widget ui-state-default ui-corner-all">
-               <span class="ui-button-text">Create New Node</span>
-            </button>
-            
-            <button id='selectall' class="ui-button ui-widget ui-state-default ui-corner-all">
-               <span class="ui-button-text">Select All Nodes</span>
-            </button>
-            
-            <button id='selectnone' class="ui-button ui-widget ui-state-default ui-corner-all">
-               <span class="ui-button-text">Deselect All Nodes</span>
-            </button>
-            
-            <button id='connectnodes' class="ui-button ui-widget ui-state-default ui-corner-all">
-               <span class="ui-button-text">Connect Selected</span>
-            </button>
-            
-            <button id='deletenodes' class="ui-button ui-widget ui-state-default ui-corner-all">
-               <span class="ui-button-text">Delete Selected</span>
-            </button>
-            
-            <button id='clearall' class="ui-button ui-widget ui-state-default ui-corner-all">
-               <span class="ui-button-text">Clear All</span>
-            </button>
-        </div>
+        <div id='left' class='panel'>left panel</div>
         
-        <div id='right' class='panel'>right</div>
-        <div id='bottom' class='panel'>bottom</div>
+        <div id='right' class='panel'>right panel</div>
+        
+        <div id='bottom' class='panel'>
+            <table border=0>
+                <tr>
+                    <td colspan=2>TEMPORARY UI CONTROLS:</td>
+                </tr>
+                <tr>
+                    <td>all elements:</td>
+                    <td>
+                        <div id="all">
+                            <button id='clearall' class="ui-button ui-widget ui-state-default ui-corner-all">
+                               <span class="ui-button-text">Clear All</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>nodes:</td>
+                    <td>
+                        <div id="nodes">
+                            <button id='createnew' class="ui-button ui-widget ui-state-default ui-corner-all">
+                               <span class="ui-button-text">Create new</span>
+                            </button>
+                            
+                            <button id='selectall' class="ui-button ui-widget ui-state-default ui-corner-all">
+                               <span class="ui-button-text">Select all</span>
+                            </button>
+                            
+                            <button id='selectnone' class="ui-button ui-widget ui-state-default ui-corner-all">
+                               <span class="ui-button-text">Deselect all</span>
+                            </button>
+                            
+                            <button id='deleteselected' class="ui-button ui-widget ui-state-default ui-corner-all">
+                               <span class="ui-button-text">Delete selected</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>edges:</td>
+                    <td>
+                        <div id="edges">
+                            <button id='connectselected' class="ui-button ui-widget ui-state-default ui-corner-all">
+                               <span class="ui-button-text">Connect selected</span>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
     </body>
 </html>
