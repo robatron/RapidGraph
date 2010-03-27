@@ -43,16 +43,29 @@ function rapidgraph_graph( surface )
     {
         var consoleID = "rapidgraph_graph: init: ";
         
+        surface.text(100, 100, "Text!").attr({fill:"white"});
+        
         $(document).bind('mousemove', {graph:currentGraph}, function(e)
         // when the mouse moves...
         {
-            // if there's a node under the cursor, move it to follow the cursor
+            // if there's a node under the cursor, move all of the selected
+            // nodes to follow
             if( grabbedElement && grabbedElement.elementType == "node" ){
                 
                 var n = grabbedElement.object;
                 n.translate( e.clientX - n.dx, e.clientY - n.dy );
                 n.dx = e.clientX;
                 n.dy = e.clientY;
+                
+                /* move all selected nodes
+                var selNodes = e.data.graph.nodes.get.selected();
+                for( var i = 0; i<selNodes.length; i++ ){
+                    var n = selNodes[i].object;
+                    n.translate( e.clientX - n.dx, e.clientY - n.dy );
+                    n.dx = e.clientX;
+                    n.dy = e.clientY;
+                }
+                */
                 
                 // update the edge paths
                 var edges = e.data.graph.edges.get.all();
@@ -298,12 +311,9 @@ function rapidgraph_graph( surface )
             );
             var newNode = new node( attr );
             
-            newNode.select();
-            
             console.log(consoleID+"Pushing the new node onto the stack");
             nodes.push( newNode );
-            
-            console.log(consoleID+"Returning with the new node");
+
             return newNode;   
         },
         
@@ -313,17 +323,12 @@ function rapidgraph_graph( surface )
             all: function()
             // return all of the nodes in an array
             {
-                //var consoleID = "rapidgraph_graph.nodes.get.all: ";
-                //console.log(consoleID+"Returning all nodes");
                 return nodes;
             },
                 
             selected: function()
             // return the selected nodes in an array
             {
-                var consoleID = "rapidgraph_graph.nodes.get.selected: ";
-                console.log(consoleID+"Returning selected nodes");
-                
                 var selected = [];
                 
                 for( var i = 0; i<nodes.length; i++ )
@@ -335,10 +340,7 @@ function rapidgraph_graph( surface )
                 
             unselected: function()
             // return the unselected nodes in an array
-            {
-                var consoleID = "rapidgraph_graph.nodes.get.unselected: ";
-                console.log(consoleID+"Returning unselected nodes");
-                
+            {   
                 var unselected = [];
                 
                 for( var i = 0; i<nodes.length; i++ )
@@ -366,7 +368,6 @@ function rapidgraph_graph( surface )
             console.log(consoleID+"Pushing the new edge onto the stack");
             edges.push( newEdge );
             
-            console.log(consoleID+"Returning with the new edge");
             return newEdge;   
         },
         
@@ -376,17 +377,12 @@ function rapidgraph_graph( surface )
             all: function()
             // return all of the edges in an array
             {
-                //var consoleID = "rapidgraph_graph.edges.get.all: ";
-                //console.log(consoleID+"Returning all edges");
                 return edges;
             },
                 
             selected: function()
             // return the selected edges in an array
             {
-                var consoleID = "rapidgraph_graph.edges.get.selected: ";
-                console.log(consoleID+"Returning selected edges");
-                
                 var selected = [];
                 
                 for( var i = 0; i<edges.length; i++ )
@@ -399,9 +395,6 @@ function rapidgraph_graph( surface )
             unselected: function()
             // return the unselected edges in an array
             {
-                var consoleID = "rapidgraph_graph.edges.get.unselected: ";
-                console.log(consoleID+"Returning unselected edges");
-                
                 var unselected = [];
                 
                 for( var i = 0; i<edges.length; i++ )
@@ -435,8 +428,8 @@ function rapidgraph_graph( surface )
             radius:     20,
             x:          surface.width/2,
             y:          surface.height/2,
-            selected:   false,
             label:      null,
+            selected:   false,
             fill:       "black",
             stroke:     "white",
             selFill:    "black",
@@ -544,8 +537,10 @@ function rapidgraph_graph( surface )
 
         // default attributes
         var defaultAttr = {
-            node1:  null,
-            node2:  null,
+            node1:      null,
+            node2:      null,
+            label:      null,
+            selected:   false,
             line:       "black",
             bg:         "white",
             selLine:    "black",
@@ -660,18 +655,18 @@ function rapidgraph_graph( surface )
                     this.object.bg.attr({ path: path });
                     this.object.line.attr({ path: path });
                     
-                // otherwise, create a new path object
+                // otherwise, create the new path objects
                 } else {
-                    
-                    this.object.bg = surface.path( path ).attr({
-                        stroke: this.attr.bg,
-                        'stroke-width': 4
-                    });
                     
                     this.object.line = surface.path( path ).attr({
                         stroke: this.attr.line,
                         'stroke-width': 2
-                    });
+                    }).toBack(); // move to back so they're behind the nodes
+                    
+                    this.object.bg = surface.path( path ).attr({
+                        stroke: this.attr.bg,
+                        'stroke-width': 4
+                    }).toBack();
                 }
                 
                 // save the node positions for the next update
@@ -707,7 +702,7 @@ function rapidgraph_graph( surface )
             this.object.bg.attr( "stroke", this.attr.selBg );
             this.object.line.attr( "stroke", this.attr.selLine );
             
-            console.log(consoleID+"select: Edge %d selected", this.id);
+            console.log(consoleID+"Edge %d selected", this.id);
         }
         
         this.deselect = function()
@@ -717,7 +712,7 @@ function rapidgraph_graph( surface )
             this.object.bg.attr( "stroke", this.attr.bg );
             this.object.line.attr( "stroke", this.attr.line );
             
-            console.log(consoleID+"deselect: Node %d deselected", this.id);
+            console.log(consoleID+"Edge %d deselected", this.id);
         }
 
         // INITIALIZE ----------------------------------------------------------
