@@ -28,7 +28,7 @@ function rapidgraph_graph( surface )
     var edges = [];    // an array of the edges
     
     // mouse handling data
-    var grabbedNode = null;  // the currently grabbed node Raphael object
+    var grabbedElement = null;  // the currently grabbed element
     var hasMoved = true;        // did the object move between click & release?
     
     var idCounter = 0; // an ID counter so every element may have a unique ID
@@ -44,15 +44,17 @@ function rapidgraph_graph( surface )
         var consoleID = "rapidgraph_graph: init: ";
         
         $(document).bind('mousemove', {graph:currentGraph}, function(e)
-        // if there's currently a grabbed node, move it to the mouse's position
-        {                     
-            if( grabbedNode ){
+        // when the mouse moves...
+        {
+            // if there's a node under the cursor, move it to follow the cursor
+            if( grabbedElement && grabbedElement.elementType == "node" ){
                 
-                var n = grabbedNode.object;
+                var n = grabbedElement.object;
                 n.translate( e.clientX - n.dx, e.clientY - n.dy );
                 n.dx = e.clientX;
                 n.dy = e.clientY;
                 
+                // update the edge paths
                 var edges = e.data.graph.edges.get.all();
                 for( var i = 0; i<edges.length; i++ )
                     edges[i].update();
@@ -63,29 +65,46 @@ function rapidgraph_graph( surface )
         });
         
         $(surface.canvas).bind('mousedown', {graph:currentGraph}, function(e)
+        // when the mouse button is pressed...
         {   
-            // if there are no nodes under the cursor, deselect everything
-            if( !grabbedNode ){
+            var consoleID = "graph: surface: mousedown: ";
+            
+            // if there are no elements under the cursor, deselect everything
+            if( !grabbedElement ){
+                
+                console.log(
+                    consoleID+"no elements under cursor. "+
+                    "Deselecting everything."
+                );
+                
                 e.data.graph.deselect(  e.data.graph.nodes.get.all() );
+                e.data.graph.deselect(  e.data.graph.edges.get.all() );
             }
             
             // draw a selection box
         });
         
         $(document).bind('mouseup', {graph:currentGraph}, function(e)
-        // if the mouse button is lifted, clear any grabbed nodes
-        {            
-            // if the mouse hasn't moved between mouse down and up, and the
-            // cursor is over a node, toggle the node's selection
-            if( grabbedNode && !hasMoved )
-                grabbedNode.toggleSelect();
+        // when the mouse button is released...
+        {    
+            // if there's a grabbed element...
+            if( grabbedElement ){
+                
+                // if the mouse hasn't moved between mouse down and up, toggle 
+                // the element's selection
+                if( !hasMoved ) grabbedElement.toggleSelect();
 
-            // if there is a grabbed object and it's out of bounds, remove it
-            if( grabbedNode && !inBounds( grabbedNode.object ) )
-                e.data.graph.remove( grabbedNode );
-            
-            // clear the grabbed node
-            grabbedNode = null;
+                // if the grabbed element is a node and it's out of bounds, 
+                // remove it
+                if( 
+                    grabbedElement.elementType == "node" && 
+                    !inBounds( grabbedElement.object ) 
+                )
+                    e.data.graph.remove( grabbedElement );
+                
+                // clear the grabbed element
+                grabbedElement = null;
+            }
         });
     }
 
@@ -453,11 +472,11 @@ function rapidgraph_graph( surface )
         this.object.mousedown( function(e)
         {            
             // set the grabbed node to this node
-            grabbedNode = currentNode;
+            grabbedElement = currentNode;
             
             // set this node's position to the mouse's position
-            grabbedNode.object.dx = e.clientX;
-            grabbedNode.object.dy = e.clientY;
+            grabbedElement.object.dx = e.clientX;
+            grabbedElement.object.dy = e.clientY;
             
             // prevent the default event action
             e.preventDefault();
@@ -510,6 +529,8 @@ function rapidgraph_graph( surface )
 
     function edge( attr )
     {
+        var consoleID = "rapidgraph_graph: edge: ";
+        
         // READ-ONLY ATTRIBUTES ------------------------------------------------
 
         this.id = idCounter++;      // the edge's unique ID
@@ -550,6 +571,8 @@ function rapidgraph_graph( surface )
                 y: null
             }
         }
+        
+        var currentEdge = this; // capture the this edge
         
         // PUBLIC FUNCTIONS ----------------------------------------------------
         
@@ -667,9 +690,55 @@ function rapidgraph_graph( surface )
                 return true;
             return false
         }
+
+        // SELECTION ----------------------------------------------------------- 
+        
+        this.toggleSelect = function()
+        // toggle the selection of this edge
+        {
+            if( this.attr.selected ) this.deselect();
+            else this.select();
+        }
+        
+        this.select = function()
+        // select this edge
+        {
+            this.attr.selected = true;
+            this.object.bg.attr( "stroke", this.attr.selBg );
+            this.object.line.attr( "stroke", this.attr.selLine );
+            
+            console.log(consoleID+"select: Edge %d selected", this.id);
+        }
+        
+        this.deselect = function()
+        // deselect this node
+        {
+            this.attr.selected = false;
+            this.object.bg.attr( "stroke", this.attr.bg );
+            this.object.line.attr( "stroke", this.attr.line );
+            
+            console.log(consoleID+"deselect: Node %d deselected", this.id);
+        }
+
+        // INITIALIZE ----------------------------------------------------------
         
         // update on new edge initialization
         this.update();
+        
+        // set the mousedown for this new edge
+        this.object.bg.mousedown( function(e){ holdEdge(e) });
+        this.object.line.mousedown( function(e){ holdEdge(e) });
+        function holdEdge( e )
+        {
+            // set the grabbed node to this node
+            grabbedElement = currentEdge;
+            
+            // prevent the default event action
+            e.preventDefault();
+            
+            // reset the hasMoved flag
+            hasMoved = false;
+        }
         
         // return the newly created edge
         return this;
