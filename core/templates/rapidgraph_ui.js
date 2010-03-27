@@ -39,10 +39,22 @@ function rapidgraph_ui()
         {
             graph.nodes.createNew();
         });
+        
+        $('#selectall').click(function()
+        {
+            graph.select( graph.nodes.getAll() );
+        });
+        
+        $('#selectnone').click(function()
+        {
+            graph.deselect( graph.nodes.getAll() );
+        });
+        
         $('#deletenodes').click(function()
         {
             graph.remove( graph.nodes.getSelected() );
         });
+        
         $('#clearall').click(function()
         {
             graph.clear();

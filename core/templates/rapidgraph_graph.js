@@ -143,8 +143,6 @@ function rapidgraph_graph( surface )
         }
         
         console.log(consoleID+"Element set size = "+elements.length);
-        console.log(consoleID+"Nodes array before: ",nodes );
-        console.log(consoleID+"Edges array before: ",edges );
         
         for( var i = 0; i<elements.length; i++ ){
             
@@ -174,22 +172,63 @@ function rapidgraph_graph( surface )
             // otherwise, the element was not found. Error out.
             } else
                 console.error(
-                    consoleID+"Element not found in either element array."
+                    consoleID+"Element not found in either element arrays."
                 );
         }
-        
-        console.log(consoleID+"Nodes array after: ",nodes );
-        console.log(consoleID+"Edges array after: ",edges );
     };
     
-    this.select = function()
+    this.select = function( elements )
     // select the specified node, nodes, edge, or edges
     {
+        var consoleID = "rapidgraph_graph: select: ";
+        
+        // if elements is not an array, make it one (of length 1)
+        if( !$.isArray( elements ) ){
+            console.log(consoleID+"A single element recieved.");
+            elements = [elements];
+        }
+        
+        console.log(consoleID+"Element set size = "+elements.length);
+        
+        for( var i = 0; i<elements.length; i++ ){           
+            
+            // make sure element exists in one of the element arrays
+            if( getElementIndex(elements[i]) != -1 )
+                elements[i].select();
+                
+            // otherwise, the element was not found. Error out.
+            else
+                console.error(
+                    consoleID+"Element not found in element arrays."
+                );
+        }
     };
     
-    this.deselect = function()
+    this.deselect = function( elements )
     // deselectthe specified node, nodes, edge, or edges
     {
+        var consoleID = "rapidgraph_graph: deselect: ";
+        
+        // if elements is not an array, make it one (of length 1)
+        if( !$.isArray( elements ) ){
+            console.log(consoleID+"A single element recieved.");
+            elements = [elements];
+        }
+        
+        console.log(consoleID+"Element set size = "+elements.length);
+        
+        for( var i = 0; i<elements.length; i++ ){           
+            
+            // make sure element exists in one of the element arrays
+            if( getElementIndex(elements[i]) != -1 )
+                elements[i].deselect();
+                
+            // otherwise, the element was not found. Error out.
+            else
+                console.error(
+                    consoleID+"Element not found in element arrays."
+                );
+        }
     };
     
     ////////////////////////////
