@@ -66,7 +66,7 @@ function rapidgraph_graph( surface )
                 n.dy = e.clientY;
                 
                 for( var i = 0; i<e.data.edges.length; i++ )
-                    console.log( e.data.edges[i] );
+                    e.data.edges[i].update();
                 
                 // set the hasMoved flag, for the node has moved
                 hasMoved = true;
@@ -494,6 +494,7 @@ function rapidgraph_graph( surface )
 
         this.id = idCounter++;      // the edge's unique ID
         this.elementType = "edge";  // the type of this element
+        this.object = null;         // the edge's Raphael object
 
         // WRITABLE ATTRIBUTES -------------------------------------------------
 
@@ -512,17 +513,23 @@ function rapidgraph_graph( surface )
         this.attr = defaultAttr;
         
         // DO SOME SWEET STUFFS (comment later) --------------------------------
+        this.update = function()
+        {
+            if( this.object ) this.object.remove();
+            
+            var n1x = this.attr.node1.object.getBBox().x;
+            var n1y = this.attr.node1.object.getBBox().y;
+            var n2x = this.attr.node2.object.getBBox().x;
+            var n2y = this.attr.node2.object.getBBox().y;
+            var pathParams = "M"+n1x+" "+n1y+"L"+n2x+" "+n2y;
+            
+            this.object = surface.path( pathParams ).attr({
+                stroke: "white",
+                'stroke-width': 3
+            });
+        }
         
-        var n1x = this.attr.node1.object.getBBox().x;
-        var n1y = this.attr.node1.object.getBBox().y;
-        var n2x = this.attr.node2.object.getBBox().x;
-        var n2y = this.attr.node2.object.getBBox().y;
-        var pathParams = "M"+n1x+" "+n1y+"L"+n2x+" "+n2y;
-        
-        this.object = surface.path( pathParams ).attr({
-            stroke: "white",
-            'stroke-width': 3
-        });
+        this.update();
         
         // return the newly created edge
         return this;
