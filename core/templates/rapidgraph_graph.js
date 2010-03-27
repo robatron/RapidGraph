@@ -47,15 +47,7 @@ function rapidgraph_graph( surface )
     {
         var consoleID = "rapidgraph_graph: init: ";
         
-        console.log(this);
-        
-        $(surface.canvas).bind(
-            'mousemove',
-            {
-                graph:currentGraph, 
-                edges:edges
-            },
-            function(e)
+        $(surface.canvas).bind('mousemove', {graph:currentGraph}, function(e)
         // if there's currently a grabbed node, move it to the mouse's position
         {                     
             if( grabbedNodeObj ){
@@ -65,27 +57,22 @@ function rapidgraph_graph( surface )
                 n.dx = e.clientX;
                 n.dy = e.clientY;
                 
-                for( var i = 0; i<e.data.edges.length; i++ )
-                    e.data.edges[i].update();
+                var edges = e.data.graph.edges.get.all();
+                for( var i = 0; i<edges.length; i++ )
+                    edges[i].update();
                 
                 // set the hasMoved flag, for the node has moved
                 hasMoved = true;
             }
         });
         
-        surface.canvas.onmousedown = function( e )
-        // if no node is under the pointer, make a new node
+        $(surface.canvas).bind('mousedown', {graph:currentGraph}, function(e)
         {            
-            /* Create a new node if the background is clicked.
+            // if the background is clicked, deselect everything
             if( !grabbedNodeObj ){
-                
-                var x = e.clientX - offset.x;
-                var y = e.clientY - offset.y;
-                
-                grabbedNodeObj = new node({x:x, y:y}).object;
+                e.data.graph.deselect(  e.data.graph.nodes.get.all() );
             }
-            */
-        };
+        });
         
         surface.canvas.onmouseup = function()
         // if the mouse button is lifted, clear any grabbed nodes
@@ -275,8 +262,8 @@ function rapidgraph_graph( surface )
             all: function()
             // return all of the nodes in an array
             {
-                var consoleID = "rapidgraph_graph.nodes.get.all: ";
-                console.log(consoleID+"Returning all nodes");
+                //var consoleID = "rapidgraph_graph.nodes.get.all: ";
+                //console.log(consoleID+"Returning all nodes");
                 return nodes;
             },
                 
@@ -313,7 +300,7 @@ function rapidgraph_graph( surface )
     };
     
     this.edges = 
-    // functions related to the nodes set
+    // functions related to the edges set
     {
         createNew: function( attr )
         // create a new edge
@@ -338,9 +325,9 @@ function rapidgraph_graph( surface )
             all: function()
             // return all of the edges in an array
             {
-                var consoleID = "rapidgraph_graph.edges.get.all: ";
-                console.log(consoleID+"Returning all edges");
-                return nodes;
+                //var consoleID = "rapidgraph_graph.edges.get.all: ";
+                //console.log(consoleID+"Returning all edges");
+                return edges;
             },
                 
             selected: function()
@@ -512,84 +499,120 @@ function rapidgraph_graph( surface )
         // make the attributes public
         this.attr = defaultAttr;
         
-        // DO SOME SWEET STUFFS (comment later) --------------------------------
-        this.update = function()
-        {            
-            var bb1 = this.attr.node1.object.getBBox();
-            var bb2 = this.attr.node2.object.getBBox();
-            
-            var p = [
-                {x: bb1.x + bb1.width / 2,  y: bb1.y - 1},
-                {x: bb1.x + bb1.width / 2,  y: bb1.y + bb1.height + 1},
-                {x: bb1.x - 1,              y: bb1.y + bb1.height / 2},
-                {x: bb1.x + bb1.width + 1,  y: bb1.y + bb1.height / 2},
-
-                {x: bb2.x + bb2.width / 2,  y: bb2.y - 1},
-                {x: bb2.x + bb2.width / 2,  y: bb2.y + bb2.height + 1},
-                {x: bb2.x - 1,              y: bb2.y + bb2.height / 2},
-                {x: bb2.x + bb2.width + 1,  y: bb2.y + bb2.height / 2}
-            ];
-            
-            var d = {};
-            var dis = [];
-            
-            for( var i = 0; i < 4; i++ )
-                for( var j = 4; j < 8; j++ ){
-                    
-                    var dx = Math.abs(p[i].x - p[j].x);
-                    var dy = Math.abs(p[i].y - p[j].y);
-                    
-                    if( (i == j - 4) 
-                        || (((i != 3 && j != 6) || p[i].x < p[j].x) 
-                        && ((i != 2 && j != 7) || p[i].x > p[j].x) 
-                        && ((i != 0 && j != 5) || p[i].y > p[j].y) 
-                        && ((i != 1 && j != 4) || p[i].y < p[j].y))){
-                            
-                        dis.push(dx + dy);
-                        d[dis[dis.length - 1]] = [i, j];
-                    }
-                }
-            
-            if (dis.length == 0)
-                var res = [0, 4];
-            else
-                var res = d[Math.min.apply(Math, dis)];
-            
-            var x1 = p[res[0]].x;
-            var y1 = p[res[0]].y;
-            var x4 = p[res[1]].x;
-            var y4 = p[res[1]].y;
-            var dx = Math.max(Math.abs(x1 - x4) / 2, 10);
-            var dy = Math.max(Math.abs(y1 - y4) / 2, 10);
-            var x2 = [x1, x1, x1 - dx, x1 + dx][res[0]].toFixed(3);
-            var y2 = [y1 - dy, y1 + dy, y1, y1][res[0]].toFixed(3);
-            var x3 = [0, 0, 0, 0, x4, x4, x4 - dx, x4 + dx][res[1]].toFixed(3);
-            var y3 = [0, 0, 0, 0, y1 + dy, y1 - dy, y4, y4][res[1]].toFixed(3);
-            
-            var path = [
-                "M", x1.toFixed(3), 
-                y1.toFixed(3), 
-                "C", 
-                x2, 
-                y2, 
-                x3, 
-                y3, 
-                x4.toFixed(3), 
-                y4.toFixed(3)
-            ].join(",");
-            
-            // if the object is already defined, just update the path
-            if( this.object ) 
-                this.object.attr({ path: path });
-                
-            // otherwise, create a new path
-            else
-                this.object = surface.path( path ).attr({
-                    stroke: "white",
-                    'stroke-width': 3
-                });
+        // PRIVATE DATA --------------------------------------------------------
+        
+        // structure to hold prevous node positions for update need testing
+        var prevPos = {
+            node1: {
+                x: null,
+                y: null
+            },
+            node2: {
+                x: null,
+                y: null
+            }
         }
         
+        // PUBLIC FUNCTIONS ----------------------------------------------------
+        
+        this.update = function()
+        // update the path
+        {
+            // grab the bounding box of each node's Raphael object
+            var bb1 = this.attr.node1.object.getBBox();
+            var bb2 = this.attr.node2.object.getBBox();
+                
+            // figure out if the path needs to be updated (if the path object
+            // has not yet been defined or the nodes have been moved since the
+            // last update)
+            if( 
+                !this.object ||
+                prevPos.node1.x != bb1.x ||
+                prevPos.node1.y != bb1.y ||
+                prevPos.node2.x != bb2.x ||
+                prevPos.node2.y != bb2.y
+            ){
+                // calculate the path in relation to the nodes
+                var p = [
+                    {x: bb1.x + bb1.width / 2,  y: bb1.y - 1},
+                    {x: bb1.x + bb1.width / 2,  y: bb1.y + bb1.height + 1},
+                    {x: bb1.x - 1,              y: bb1.y + bb1.height / 2},
+                    {x: bb1.x + bb1.width + 1,  y: bb1.y + bb1.height / 2},
+
+                    {x: bb2.x + bb2.width / 2,  y: bb2.y - 1},
+                    {x: bb2.x + bb2.width / 2,  y: bb2.y + bb2.height + 1},
+                    {x: bb2.x - 1,              y: bb2.y + bb2.height / 2},
+                    {x: bb2.x + bb2.width + 1,  y: bb2.y + bb2.height / 2}
+                ];
+                
+                var d = {};
+                var dis = [];
+                
+                for( var i = 0; i < 4; i++ )
+                    for( var j = 4; j < 8; j++ ){
+                        
+                        var dx = Math.abs(p[i].x - p[j].x);
+                        var dy = Math.abs(p[i].y - p[j].y);
+                        
+                        if( (i == j - 4) 
+                            || (((i != 3 && j != 6) || p[i].x < p[j].x) 
+                            && ((i != 2 && j != 7) || p[i].x > p[j].x) 
+                            && ((i != 0 && j != 5) || p[i].y > p[j].y) 
+                            && ((i != 1 && j != 4) || p[i].y < p[j].y))){
+                                
+                            dis.push(dx + dy);
+                            d[dis[dis.length - 1]] = [i, j];
+                        }
+                    }
+                
+                if (dis.length == 0)
+                    var res = [0, 4];
+                else
+                    var res = d[Math.min.apply(Math, dis)];
+                
+                var x1 = p[res[0]].x;
+                var y1 = p[res[0]].y;
+                var x4 = p[res[1]].x;
+                var y4 = p[res[1]].y;
+                var dx = Math.max(Math.abs(x1 - x4) / 2, 10);
+                var dy = Math.max(Math.abs(y1 - y4) / 2, 10);
+                var x2 = [x1, x1, x1-dx, x1+ dx][res[0]].toFixed(3);
+                var y2 = [y1 - dy, y1 + dy, y1, y1][res[0]].toFixed(3);
+                var x3 = [0, 0, 0, 0, x4, x4, x4-dx, x4+dx][res[1]].toFixed(3);
+                var y3 = [0, 0, 0, 0, y1+dy, y1-dy, y4, y4][res[1]].toFixed(3);
+                
+                var path = [
+                    "M", x1.toFixed(3), 
+                    y1.toFixed(3), 
+                    "C", 
+                    x2, 
+                    y2, 
+                    x3, 
+                    y3, 
+                    x4.toFixed(3), 
+                    y4.toFixed(3)
+                ].join(",");
+                
+                // if the object is already defined, just update the path
+                if( this.object ) 
+                    this.object.attr({ path: path });
+                    
+                // otherwise, create a new path
+                else
+                    this.object = surface.path( path ).attr({
+                        stroke: "white",
+                        'stroke-width': 3
+                    });
+                    
+                // save the node positions for the next update
+                prevPos.node1.x = bb1.x;
+                prevPos.node1.y = bb1.y;
+                prevPos.node2.x = bb2.x;
+                prevPos.node2.y = bb2.y;
+            }
+        } 
+        
+        // update on new edge initialization
         this.update();
         
         // return the newly created edge

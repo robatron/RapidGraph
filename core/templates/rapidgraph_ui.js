@@ -63,14 +63,12 @@ function rapidgraph_ui()
         {
             graph.nodes.createNew();
         });
+        
         $('#nodes>#selectall').click(function()
         {
             graph.select( graph.nodes.get.all() );
         });
-        $('#nodes>#selectnone').click(function()
-        {
-            graph.deselect( graph.nodes.get.all() );
-        });
+
         $('#nodes>#deleteselected').click(function()
         {
             graph.remove( graph.nodes.get.selected() );
