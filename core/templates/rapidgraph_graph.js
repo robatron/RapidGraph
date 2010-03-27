@@ -118,10 +118,13 @@ function rapidgraph_graph( surface )
         var x = object.attr("cx");
         var y = object.attr("cy");
         
-        var w = surface.width + object.getBBox().width/2;
-        var h = surface.height + object.getBBox().height/2;
+        var w = -object.getBBox().width/2;
+        var h = -object.getBBox().height/2;
         
-        if( x >= 0 && y >= 0 && x < w && y < h )
+        var W = surface.width + object.getBBox().width/2;
+        var H = surface.height + object.getBBox().height/2;
+        
+        if( x >= w && y >= h && x < W && y < H )
             return true;
             
         return false;
@@ -166,12 +169,9 @@ function rapidgraph_graph( surface )
             if( eIndex != -1 ){
                 
                 console.log(consoleID+"Removing "+e.elementType+" "+e.id);
-                
-                // remove the element's object from the Raphael surface
-                e.object.remove();
 
-                // if the element is a node, remove it from the nodes array, and
-                // remove any edges that may be attached to it
+                // if the element is a node, remove it and any edges that may 
+                // be attached to it
                 if( e.elementType == "node" ){
                     
                     nodes.splice( eIndex, 1 );
@@ -184,11 +184,18 @@ function rapidgraph_graph( surface )
                         }
                     }
                     
-                // if the element is an edge, just remove it from the array
-                } else if( e.elementType == "edge" )
-                    edges.splice( eIndex, 1 );
+                    // remove the node's object from the Raphael surface
+                    e.object.remove();
                     
-                else
+                // if the element is an edge, just remove it and its objects
+                } else if( e.elementType == "edge" ){
+                    
+                    edges.splice( eIndex, 1 );
+                
+                    e.object.line.remove();
+                    e.object.bg.remove();
+                    
+                } else
                     console.error(consoleID+
                         "Recieved unexpected element type: "+e.elementType
                     );
@@ -507,7 +514,10 @@ function rapidgraph_graph( surface )
 
         this.id = idCounter++;      // the edge's unique ID
         this.elementType = "edge";  // the type of this element
-        this.object = null;         // the edge's Raphael object
+        this.object = {             // the edge's Raphael objects
+            line: null,             // the line component
+            bg: null                // the background component
+        };
 
         // WRITABLE ATTRIBUTES -------------------------------------------------
 
@@ -515,8 +525,10 @@ function rapidgraph_graph( surface )
         var defaultAttr = {
             node1:  null,
             node2:  null,
-            fill:   "white",
-            stroke: "white"
+            line:       "black",
+            bg:         "white",
+            selLine:    "black",
+            selBg:      "red",
         }
         
         // extend the default attributes with the passed-in attributes
@@ -619,17 +631,26 @@ function rapidgraph_graph( surface )
                     y4.toFixed(3)
                 ].join(",");
                 
-                // if the object is already defined, just update the path
-                if( this.object ) 
-                    this.object.attr({ path: path });
+                // if the objects are already defined, just update the path
+                if( this.object.line && this.object.bg ){
                     
-                // otherwise, create a new path
-                else
-                    this.object = surface.path( path ).attr({
-                        stroke: "white",
-                        'stroke-width': 3
+                    this.object.bg.attr({ path: path });
+                    this.object.line.attr({ path: path });
+                    
+                // otherwise, create a new path object
+                } else {
+                    
+                    this.object.bg = surface.path( path ).attr({
+                        stroke: this.attr.bg,
+                        'stroke-width': 4
                     });
                     
+                    this.object.line = surface.path( path ).attr({
+                        stroke: this.attr.line,
+                        'stroke-width': 2
+                    });
+                }
+                
                 // save the node positions for the next update
                 prevPos.node1.x = bb1.x;
                 prevPos.node1.y = bb1.y;

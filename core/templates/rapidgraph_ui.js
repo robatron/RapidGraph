@@ -37,12 +37,7 @@ function rapidgraph_ui()
         
         var node1 = graph.nodes.createNew({x:50, y:50});
         var node2 = graph.nodes.createNew({x:200, y:100});
-        graph.edges.createNew({ 
-            node1:node1,
-            node2:node2, 
-            line: "white", 
-            bg: "white" 
-        });
+        graph.edges.createNew({ node1:node1, node2:node2 });
         
         initBottomPanel();
         
@@ -81,9 +76,7 @@ function rapidgraph_ui()
             if( selected.length == 2 ){
                 graph.edges.createNew({ 
                     node1:selected[0],
-                    node2:selected[1], 
-                    line: "white", 
-                    bg: "white" 
+                    node2:selected[1]
                 });
             } else
                 console.warn(
