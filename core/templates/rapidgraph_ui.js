@@ -35,6 +35,15 @@ function rapidgraph_ui()
         // make all of the buttons buttons
         $('.ui-button').button();
         
+        var node1 = graph.nodes.createNew({x:50, y:50});
+        var node2 = graph.nodes.createNew({x:200, y:100});
+        graph.edges.createNew({ 
+            node1:node1,
+            node2:node2, 
+            line: "white", 
+            bg: "white" 
+        });
+        
         initBottomPanel();
         
         positionPanels();
@@ -56,21 +65,33 @@ function rapidgraph_ui()
         });
         $('#nodes>#selectall').click(function()
         {
-            graph.select( graph.nodes.getAll() );
+            graph.select( graph.nodes.get.all() );
         });
         $('#nodes>#selectnone').click(function()
         {
-            graph.deselect( graph.nodes.getAll() );
+            graph.deselect( graph.nodes.get.all() );
         });
         $('#nodes>#deleteselected').click(function()
         {
-            graph.remove( graph.nodes.getSelected() );
+            graph.remove( graph.nodes.get.selected() );
         });
     
         // 
         $('#edges>#connectselected').click(function()
         {
-            ;
+            var selected = graph.nodes.get.selected();
+            if( selected.length == 2 ){
+                graph.edges.createNew({ 
+                    node1:selected[0],
+                    node2:selected[1], 
+                    line: "white", 
+                    bg: "white" 
+                });
+            } else
+                console.warn(
+                    "buttons:edges:connectSelected: Please select exactly "+
+                    "two nodes to connect."
+                );
         });    
     }
     
