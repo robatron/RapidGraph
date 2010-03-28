@@ -1,6 +1,6 @@
 // RaphGraph - A general graph (as in graph theory) library for Raphael
 
-/* Sketchpad. Please ignore the following.
+/* Sketchpad. Please ignore the following. Kthx.
 
 remove()
 select()
@@ -14,6 +14,7 @@ nodes.get.unselected()
 edges.createNew()
 edges.get.all()
 ...
+
 */
 
 function RaphGraph( surface )
@@ -457,13 +458,10 @@ function RaphGraph( surface )
             };
         }
         
-        this.getBBox = function()
+        this.getBBox = function(){ return obj.main.getBBox() }
         // return the node's object's bounding box
-        {
-            return obj.main.getBBox();
-        }
         
-        // WEIGHT --------------------------------------------------------------
+        // WEIGHT & LABEL ------------------------------------------------------
         
         this.weight = 
         {
@@ -480,20 +478,21 @@ function RaphGraph( surface )
             toggle: function()
             // toggle the weight's visibility
             {
+                alert( "I. O. U. one function definition. Love, Rob." );
             },
             
             show: function()
             // show the weight
             {
+                alert( "I. O. U. one function definition. Love, Rob." );
             },
             
             hide: function()
             // hide the weight
             {
+                alert( "I. O. U. one function definition. Love, Rob." );
             }
         }
-        
-        // LABEL ---------------------------------------------------------------
         
         this.label = 
         {
@@ -510,16 +509,19 @@ function RaphGraph( surface )
             toggle: function()
             // toggle the label's visibility
             {
+                alert( "I. O. U. one function definition. Love, Rob." );
             },
             
             show: function()
             // show the label
             {
+                alert( "I. O. U. one function definition. Love, Rob." );
             },
             
             hide: function()
             // hide the label
             {
+                alert( "I. O. U. one function definition. Love, Rob." );
             }
         }
         
@@ -851,16 +853,19 @@ function RaphGraph( surface )
             toggle: function()
             // toggle the weight's visibility
             {
+                alert( "I. O. U. one function definition. Love, Rob." );
             },
             
             show: function()
             // show the weight
             {
+                alert( "I. O. U. one function definition. Love, Rob." );
             },
             
             hide: function()
             // hide the weight
             {
+                alert( "I. O. U. one function definition. Love, Rob." );
             }
         }
         
