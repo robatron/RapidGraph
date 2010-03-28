@@ -1,3 +1,5 @@
+// RapidGraphUI.js - RapidGraph's user interface control
+
 function RapidGraphUI()
 {
     /////////////
