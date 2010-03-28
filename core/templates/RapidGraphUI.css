@@ -6,43 +6,47 @@
     -moz-border-radius: 5px;
 }
 
+b{
+    color:blue;
+    font-weight:heavy;
+}
+
 /* user interface panels */
 .panel{
     display:block;
     position:absolute;
+    
+    overflow:hidden;
+    
+    padding:1em;
+    margin:1em;
 
     border: 1px solid green;
 }
 
-#panelMain{    
+#main{    
     margin-left:auto;
     margin-right:auto;
-    
-    background:black;
-    border:1px solid green;
 }
 
 #left{
     left:0;
-    width:15%;
+    width:16%;
 }
 
 #right{
     right:0;
-    width:15%;
+    width:16%;
 }
 
-#bottom{
-    text-align:center;
-    
-    bottom:0;
-    
-    margin-left:auto;
-    margin-right:auto;
+#top{
+    top:0;
+    left:0;
 }
 
 
 svg{
     border:1px solid blue;
 }
+
 

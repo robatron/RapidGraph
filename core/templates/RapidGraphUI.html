@@ -47,64 +47,104 @@
         </script>
     </head>
     
-    <body>        
-        <div id='main' class='panel'></div>
-        
-        <div id='left' class='panel'>
-            <p><b>INSTRUCITONS:</b></p>
-            <p>
-                To <b>delete a node</b> (and any attached edges), drag it off of the 
-                graph surface.
-            </p>
-            <p>...</p>
-        </div>
-        
-        <div id='right' class='panel'>right panel</div>
-        
-        <div id='bottom' class='panel'>
-            <table border=0>
+    <body>         
+        <div id='top' class='panel'>
+            <!--
+            <center>
+                <img src='static/core/images/logo.png' height='60'>
+            </center>
+            -->
+            <table width=100%>
                 <tr>
-                    <td colspan=2>TEMPORARY UI CONTROLS:</td>
-                </tr>
-                <tr>
-                    <td>all elements:</td>
-                    <td>
-                        <div id="all">
-                            <button id='clearall' class="ui-button ui-widget ui-state-default ui-corner-all">
-                               <span class="ui-button-text">Clear All</span>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>nodes:</td>
-                    <td>
-                        <div id="nodes">
-                            <button id='createnew' class="ui-button ui-widget ui-state-default ui-corner-all">
-                               <span class="ui-button-text">Create new</span>
-                            </button>
-                            
-                            <button id='selectall' class="ui-button ui-widget ui-state-default ui-corner-all">
-                               <span class="ui-button-text">Select all</span>
-                            </button>
-                            
-                            <button id='deleteselected' class="ui-button ui-widget ui-state-default ui-corner-all">
-                               <span class="ui-button-text">Delete selected</span>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <td>edges:</td>
-                    <td>
-                        <div id="edges">
-                            <button id='connectselected' class="ui-button ui-widget ui-state-default ui-corner-all">
-                               <span class="ui-button-text">Connect selected (only two at a time)</span>
-                            </button>
-                        </div>
+                    <td><h1>RapidGraph v0.001</h1></td>
+                    <td align='right'>
+                        <form>
+                            <select name='plugins'>
+                                <option value='nutin' selected='selected'>Select a plugin...</option>
+                                <option value='JerrySeinfeld'>Jerry Seinfeld</option>
+                                <option value='GeorgeCostanza'>George Costanza</option>
+                                <option value='ElaineBenes'>Elaine Benes</option>
+                                <option value='CosmoKramer'>Cosmo Kramer</option>
+                            </select>
+                        </form>
                     </td>
                 </tr>
             </table>
+            
+        </div>
+        
+        <div id='main' class='panel'></div>
+        
+        <div id='left' class='panel'>
+            <h3>Temporary UI controls:</h3>
+            
+            <p align='center'>
+                <div id="nodes">
+                
+                    <button id='createnew' class="ui-button ui-widget ui-state-default ui-corner-all">
+                       <span class="ui-button-text">Create new node</span>
+                    </button>
+                    
+                    <button id='selectall' class="ui-button ui-widget ui-state-default ui-corner-all">
+                       <span class="ui-button-text">Select all nodes</span>
+                    </button>
+                    
+                </div>
+            </p>
+            
+            <p align='center'>
+                <div id="edges">
+                
+                    <button id='createnew' class="ui-button ui-widget ui-state-default ui-corner-all">
+                       <span class="ui-button-text">Connect selected nodes (max 2)</span>
+                    </button>
+                    
+                    <button id='selectall' class="ui-button ui-widget ui-state-default ui-corner-all">
+                       <span class="ui-button-text">Select all edges</span>
+                    </button>
+                    
+                </div>
+            </p>
+            
+            <p align='center'>
+                <div id="all">
+                
+                    <button id='clear' class="ui-button ui-widget ui-state-default ui-corner-all">
+                       <span class="ui-button-text">Clear all elements</span>
+                    </button>
+                    
+                    <button id='selectall' class="ui-button ui-widget ui-state-default ui-corner-all">
+                       <span class="ui-button-text">Select all elements</span>
+                    </button>
+                    
+                    <button id='deleteselected' class="ui-button ui-widget ui-state-default ui-corner-all">
+                       <span class="ui-button-text">Delete selected elements</span>
+                    </button>
+                    
+                </div>
+            </p>
+            
+        </div>
+
+        <div id='right' class='panel'>
+            <h3>Instructions:</h3>
+            <p>
+                To <b>create a new node</b>, click on the <i>Create new</i>
+                button.
+            </p>
+            <p>
+                To <b>select any element</b>, click on it without moving it. 
+                Click on it once more to <b>deselect</b> it, or click on the
+                background to <b>deselect everything</b>.
+            </p>
+            <p>
+                To <b>create an undirected edge</b>, select two nodes and click
+                the <i>Connect selected</i> button.
+            </p>
+            <p>
+                To <b>delete a node</b> (and any attached edges), drag it off of
+                the graph surface.
+            </p>
         </div>
 
     </body>

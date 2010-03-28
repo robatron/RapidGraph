@@ -1,7 +1,7 @@
 // RaphGraph - A general graph (as in graph theory) library for Raphael
 
-/*
-the following functions take a one node or edge, or an array of nodes or edges
+/* Sketchpad. Please ignore the following.
+
 remove()
 select()
 deselect()
@@ -14,20 +14,10 @@ nodes.get.unselected()
 edges.createNew()
 edges.get.all()
 ...
-
-node.position.move( x, y )
-node.position.get()
-node.dimensions.get()
-node.dimensions.getBBox()
-node.remove()
-node.select.state()
-node.select.toggle()
-node.select.select()
-node.select.deselect()
 */
 
 function RaphGraph( surface )
-{    
+{  
     ////////////////
     // GRAPH DATA //
     ////////////////
