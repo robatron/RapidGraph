@@ -986,8 +986,12 @@ function RaphGraph( surface )
         // select this edge
         {
             attr.selected = true;
+            
             obj.bg.attr( "stroke", attr.selBg );
             obj.line.attr( "stroke", attr.selLine );
+            
+            obj.weight.attr( "fill", attr.selBg );
+            obj.label.attr( "fill", attr.selBg );
             
             console.log(consoleID+"Edge %d selected", this.id);
         }
@@ -996,8 +1000,12 @@ function RaphGraph( surface )
         // deselect this node
         {
             attr.selected = false;
+            
             obj.bg.attr( "stroke", attr.bg );
             obj.line.attr( "stroke", attr.line );
+            
+            obj.weight.attr( "fill", attr.bg );
+            obj.label.attr( "fill", attr.bg );
             
             console.log(consoleID+"Edge %d deselected", this.id);
         }
