@@ -428,6 +428,11 @@ function RaphGraph( surface )
         
         var currentNode = this; // capture this node
         var objects = [];       // the node's Raphael objects
+        var obj = {
+            main: null,         // the main object
+            weight: null,       // the weight object
+            label: null         // the label object
+        };
         
         // POSITION AND SIZE --------------------------------------------------- 
         
@@ -435,18 +440,18 @@ function RaphGraph( surface )
         // move this node to the specified coordinates on the Raphael surface
         {
             for( var i = 0; i<objects.length; i++ )
-                objects[i].translate( x - objects[0].dx, y - objects[0].dy );
+                objects[i].translate( x - obj.main.dx, y - obj.main.dy );
             
-            objects[0].dx = x;
-            objects[0].dy = y;
+            obj.main.dx = x;
+            obj.main.dy = y;
         }
         
         this.getPosition = function()
         // get this node's position on the Raphael surface
         {
             return {
-                x: objects[0].attr("cx"),
-                y: objects[0].attr("cy")
+                x: obj.main.attr("cx"),
+                y: obj.main.attr("cy")
             };
         }
         
@@ -454,15 +459,15 @@ function RaphGraph( surface )
         // get this node's dimensions
         {
             return {
-                height: objects[0].getBBox().height,
-                width:  objects[0].getBBox().width
+                height: obj.main.getBBox().height,
+                width:  obj.main.getBBox().width
             };
         }
         
         this.getBBox = function()
         // return the node's object's bounding box
         {
-            return objects[0].getBBox();
+            return obj.main.getBBox();
         }
         
         // WEIGHT --------------------------------------------------------------
@@ -476,7 +481,7 @@ function RaphGraph( surface )
             // set the weight
             {   
                 attr.weight = weight;
-                objects[1].attr({text:weight});
+                obj.weight.attr({text:weight});
             },
             
             toggle: function()
@@ -506,7 +511,7 @@ function RaphGraph( surface )
             // set a new label
             {
                 attr.label = label;
-                objects[2].attr({text:label});
+                obj.label.attr({text:label});
             },
             
             toggle: function()
@@ -544,11 +549,11 @@ function RaphGraph( surface )
         {
             attr.selected = true;
             
-            objects[0].attr( "fill", attr.selFill );
-            objects[0].attr( "stroke", attr.selStroke );
+            obj.main.attr( "fill", attr.selFill );
+            obj.main.attr( "stroke", attr.selStroke );
             
-            objects[1].attr( "fill", attr.selStroke );
-            objects[2].attr( "fill", attr.selStroke );
+            obj.weight.attr( "fill", attr.selStroke );
+            obj.label.attr( "fill", attr.selStroke );
             
             console.log(consoleID+"select: Node %d selected", this.id);
         }
@@ -558,11 +563,11 @@ function RaphGraph( surface )
         {
             attr.selected = false;
             
-            objects[0].attr( "fill", attr.fill );
-            objects[0].attr( "stroke", attr.stroke );
+            obj.main.attr( "fill", attr.fill );
+            obj.main.attr( "stroke", attr.stroke );
             
-            objects[1].attr( "fill", attr.stroke );
-            objects[2].attr( "fill", attr.stroke );
+            obj.weight.attr( "fill", attr.stroke );
+            obj.label.attr( "fill", attr.stroke );
             
             console.log(consoleID+"deselect: Node %d deselected", this.id);
         }
@@ -576,7 +581,7 @@ function RaphGraph( surface )
                 objects[i].remove();
         }
         
-        // CREATE THE NEW NODE -------------------------------------------------
+        // INIT ----------------------------------------------------------------
         
         // create the main Raphael object
         objects[0] = surface.circle( 
@@ -601,12 +606,19 @@ function RaphGraph( surface )
         // create the label
         objects[2] = surface.text( 
             attr.x, 
-            this.getBBox().y - 10, 
+            objects[0].getBBox().y - 10, 
             attr.label
         ).attr({
             fill:"white",
             'font-size': 12
         });
+        
+        // set up object aliases
+        obj = {
+            main:   objects[0],  // the main object
+            weight: objects[1],  // the weight object
+            label:  objects[2]   // the label object
+        };
         
         // set up mouse functions common to all objects
         for( var i = 0; i<objects.length; i++ ){
@@ -633,14 +645,14 @@ function RaphGraph( surface )
         }
 
         // set up edit events for weight and label editing
-        $(objects[1].node).bind('dblclick', {node:this}, function(e)
+        $(obj.weight.node).bind('dblclick', {node:this}, function(e)
         {
             var entry = 
                 parseInt(prompt("Enter a new weight: (Just integers for now!)"));
             
             if( entry ) e.data.node.weight.set( entry );
         });
-        $(objects[2].node).bind('dblclick', {node:this}, function(e)
+        $(obj.label.node).bind('dblclick', {node:this}, function(e)
         {
             var entry = prompt("Enter a new label:");
             if( entry ) e.data.node.label.set( entry );
