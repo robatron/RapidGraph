@@ -808,8 +808,16 @@ function RaphGraph( surface )
                 // the lines and the positions of the labels and weights
                 if( objects.length ){
                     
+                    // update the path
                     obj.bg.attr({ path: path });
                     obj.line.attr({ path: path });
+                    
+                    // update the weight and label positions
+                    var bb = obj.bg.getBBox();
+                    obj.weight.attr("x", bb.x + bb.width/2);
+                    obj.weight.attr("y", bb.y + bb.height/2 + 15);
+                    obj.label.attr("x", bb.x + bb.width/2);
+                    obj.label.attr("y", bb.y + bb.height/2 - 15);
                     
                 // otherwise, create the new path objects
                 } else {
@@ -836,7 +844,7 @@ function RaphGraph( surface )
                     // create the label
                     objects[3] = surface.text( 
                         bb.x + bb.width/2, 
-                        bb.y - 10, 
+                        bb.y + bb.height/2 - 15, 
                         attr.label
                     ).attr({
                         fill:"white",
@@ -846,7 +854,7 @@ function RaphGraph( surface )
                     // create the weight
                     objects[2] = surface.text( 
                         bb.x + bb.width/2, 
-                        bb.y + bb.height/2, 
+                        bb.y + bb.height/2 + 15, 
                         attr.weight 
                     ).attr({
                         fill:"white",
