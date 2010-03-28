@@ -14,6 +14,16 @@ nodes.get.unselected()
 edges.createNew()
 edges.get.all()
 ...
+
+node.position.move( x, y )
+node.position.get()
+node.dimensions.get()
+node.dimensions.getBBox()
+node.remove()
+node.select.state()
+node.select.toggle()
+node.select.select()
+node.select.deselect()
 */
 
 function RaphGraph( surface )
@@ -390,7 +400,7 @@ function RaphGraph( surface )
 
         // READ-ONLY ATTRIBUTES ------------------------------------------------
 
-        this.id = Math.floor(Math.random()*10);      // the node's unique ID
+        this.id = idCounter++;      // the node's unique ID
         this.elementType = "node";  // the type of this element
 
         // INITIAL ATTRIBUTES --------------------------------------------------
@@ -400,7 +410,8 @@ function RaphGraph( surface )
             radius:     20,
             x:          surface.width/2,
             y:          surface.height/2,
-            label:      null,
+            weight:     1,
+            label:      "Untitled",
             selected:   false,
             fill:       "black",
             stroke:     "white",
@@ -416,54 +427,16 @@ function RaphGraph( surface )
         var currentNode = this; // capture this node
         var objects = [];       // the node's Raphael objects
         
-        // CREATE THE NEW NODE -------------------------------------------------
-        
-        // create the raphael object
-        objects[0] = surface.circle( 
-            attr.x, 
-            attr.y, 
-            attr.radius 
-        ).attr({
-            fill: attr.fill,
-            stroke: attr.stroke
-        });
-        
-        // change the mouseover cursor to the "move" symbol
-        objects[0].node.style.cursor = "move";
-        
-        objects[0].mousedown( function(e)
-        // when the mouse button is pressed on this node...
-        { 
-            // set the grabbed node to this node
-            grabbedElement = currentNode;
-            
-            // set this node's position to the mouse's position
-            this.dx = e.clientX;
-            this.dy = e.clientY;
-            
-            // prevent the default event action
-            e.preventDefault();
-            
-            // reset the hasMoved flag
-            hasMoved = false;
-        });
-        
-        console.log(
-            consoleID+"New node %d created at %d, %d", 
-            this.id, attr.x, attr.y
-        );
-        
-        // PUBLIC FUNCTIONS----------------------------------------------------- 
+        // POSITION AND SIZE --------------------------------------------------- 
         
         this.moveTo = function( x, y )
         // move this node to the specified coordinates on the Raphael surface
         {
             for( var i = 0; i<objects.length; i++ )
-            {
-                objects[i].translate( x - objects[i].dx, y - objects[i].dy );
-                objects[i].dx = x;
-                objects[i].dy = y;
-            }
+                objects[i].translate( x - objects[0].dx, y - objects[0].dy );
+            
+            objects[0].dx = x;
+            objects[0].dy = y;
         }
         
         this.getPosition = function()
@@ -490,12 +463,63 @@ function RaphGraph( surface )
             return objects[0].getBBox();
         }
         
-        this.remove = function()
-        // remove this node's objects from the Raphael surface
+        // WEIGHT --------------------------------------------------------------
+        
+        this.weight = 
         {
-            for( var i = 0; i<objects.length; i++ )
-                objects[i].remove();
+            get: function(){ return attr.weight },
+            // return the weight
+            
+            set: function( weight )
+            // set the weight
+            {
+            },
+            
+            toggle: function()
+            // toggle the weight's visibility
+            {
+            },
+            
+            show: function()
+            // show the weight
+            {
+            },
+            
+            hide: function()
+            // hide the weight
+            {
+            }
         }
+        
+        // LABEL ---------------------------------------------------------------
+        
+        this.label = 
+        {
+            get: function(){ return attr.label },
+            // return the label
+            
+            set: function( label )
+            // set a new label
+            {
+            },
+            
+            toggle: function()
+            // toggle the label's visibility
+            {
+            },
+            
+            show: function()
+            // show the label
+            {
+            },
+            
+            hide: function()
+            // hide the label
+            {
+            }
+        }
+        
+        // SELECTION -----------------------------------------------------------
         
         this.isSelected = function(){ return attr.selected }
         // returns if the node is selected or not
@@ -513,8 +537,11 @@ function RaphGraph( surface )
         // select this node
         {
             attr.selected = true;
-            objects[0].attr( "fill", attr.selFill );
-            objects[0].attr( "stroke", attr.selStroke );
+            
+            for( var i = 0; i<objects.length; i++ ){
+                objects[i].attr( "fill", attr.selFill );
+                objects[i].attr( "stroke", attr.selStroke );
+            }
             
             console.log(consoleID+"select: Node %d selected", this.id);
         }
@@ -523,11 +550,77 @@ function RaphGraph( surface )
         // deselect this node
         {
             attr.selected = false;
-            objects[0].attr( "fill", attr.fill );
-            objects[0].attr( "stroke", attr.stroke );
+            
+            for( var i = 0; i<objects.length; i++ ){
+                objects[i].attr( "fill", attr.fill );
+                objects[i].attr( "stroke", attr.stroke );
+            }
             
             console.log(consoleID+"deselect: Node %d deselected", this.id);
         }
+        
+        // ELEMENT REMOVAL -----------------------------------------------------
+        
+        this.remove = function()
+        // remove this node's objects from the Raphael surface
+        {
+            for( var i = 0; i<objects.length; i++ )
+                objects[i].remove();
+        }
+        
+        // CREATE THE NEW NODE -------------------------------------------------
+        
+        // create the main Raphael object
+        objects[0] = surface.circle( 
+            attr.x, 
+            attr.y, 
+            attr.radius 
+        ).attr({
+            fill: attr.fill,
+            stroke: attr.stroke
+        });
+        
+        // create the weight
+        objects[1] = surface.text( 
+            attr.x, 
+            attr.y, 
+            attr.weight 
+        ).attr({fill:"white"});
+        
+        // create the label
+        objects[2] = surface.text( 
+            attr.x, 
+            this.getBBox().y - 10, 
+            attr.label
+        ).attr({fill:"white"});
+        
+        for( var i = 0; i<objects.length; i++ ){
+            
+            // change the mouseover cursor to the "move" symbol
+            objects[i].node.style.cursor = "move";
+        
+            objects[i].mousedown( function(e)
+            // when the mouse button is pressed on this node...
+            { 
+                // set the grabbed node to this node
+                grabbedElement = currentNode;
+                
+                // set this node's position to the mouse's position
+                this.dx = e.clientX;
+                this.dy = e.clientY;
+                
+                // prevent the default event action
+                e.preventDefault();
+                
+                // reset the hasMoved flag
+                hasMoved = false;
+            });
+        }
+        
+        console.log(
+            consoleID+"New node %d created at %d, %d", 
+            this.id, attr.x, attr.y
+        );
         
         // return this newly created node
         return this;
