@@ -21,6 +21,11 @@ function rapidgraph_ui()
         
         initPanels();
         
+        graph.edges.createNew({
+            node1: graph.nodes.createNew({x:50, y:50}),
+            node2: graph.nodes.createNew({x:100, y:100}),
+        });
+        
         /*
         $(document).resize(function()
         {
@@ -35,9 +40,9 @@ function rapidgraph_ui()
         // make all of the buttons buttons
         $('.ui-button').button();
         
-        var node1 = graph.nodes.createNew({x:50, y:50});
-        var node2 = graph.nodes.createNew({x:200, y:100});
-        graph.edges.createNew({ node1:node1, node2:node2 });
+        //var node1 = graph.nodes.createNew({x:50, y:50});
+        //var node2 = graph.nodes.createNew({x:200, y:100});
+        //graph.edges.createNew({ node1:node1, node2:node2 });
         
         initBottomPanel();
         

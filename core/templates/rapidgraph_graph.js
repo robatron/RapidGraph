@@ -41,9 +41,7 @@ function rapidgraph_graph( surface )
     function init()
     // initialize the graph
     {
-        var consoleID = "rapidgraph_graph: init: ";
-        
-        surface.text(100, 100, "Text!").attr({fill:"white"});
+        var consoleID = "graph.init: ";
         
         $(document).bind('mousemove', {graph:currentGraph}, function(e)
         // when the mouse moves...
@@ -52,10 +50,7 @@ function rapidgraph_graph( surface )
             // nodes to follow
             if( grabbedElement && grabbedElement.elementType == "node" ){
                 
-                var n = grabbedElement.object;
-                n.translate( e.clientX - n.dx, e.clientY - n.dy );
-                n.dx = e.clientX;
-                n.dy = e.clientY;
+                grabbedElement.moveTo( e.clientX, e.clientY );
                 
                 /* move all selected nodes
                 var selNodes = e.data.graph.nodes.get.selected();
@@ -66,10 +61,9 @@ function rapidgraph_graph( surface )
                     n.dy = e.clientY;
                 }
                 */
-                
+
                 // update the edge paths
-                var edges = e.data.graph.edges.get.all();
-                for( var i = 0; i<edges.length; i++ )
+                for( var i = 0; i<e.data.graph.edges.get.all().length; i++ )
                     edges[i].update();
                 
                 // set the hasMoved flag, for the node has moved
@@ -80,7 +74,7 @@ function rapidgraph_graph( surface )
         $(surface.canvas).bind('mousedown', {graph:currentGraph}, function(e)
         // when the mouse button is pressed...
         {   
-            var consoleID = "graph: surface: mousedown: ";
+            var consoleID = "graph.surface.mousedown: ";
             
             // if there are no elements under the cursor, deselect everything
             if( !grabbedElement ){
@@ -111,7 +105,7 @@ function rapidgraph_graph( surface )
                 // remove it
                 if( 
                     grabbedElement.elementType == "node" && 
-                    !inBounds( grabbedElement.object ) 
+                    !inBounds( grabbedElement ) 
                 )
                     e.data.graph.remove( grabbedElement );
                 
@@ -147,14 +141,17 @@ function rapidgraph_graph( surface )
     function inBounds( object )
     // returns if the specified Raphael object is in-bounds
     {
-        var x = object.attr("cx");
-        var y = object.attr("cy");
+        var position = object.getPosition();
+        var dimensions = object.getDimensions();
         
-        var w = -object.getBBox().width/2;
-        var h = -object.getBBox().height/2;
+        var x = position.x;
+        var y = position.y;
         
-        var W = surface.width + object.getBBox().width/2;
-        var H = surface.height + object.getBBox().height/2;
+        var w = -dimensions.width/2;
+        var h = -dimensions.height/2;
+        
+        var W = surface.width - w;
+        var H = surface.height - h;
         
         if( x >= w && y >= h && x < W && y < H )
             return true;
@@ -169,7 +166,7 @@ function rapidgraph_graph( surface )
     this.clear = function()
     // clear all elements from the graph
     {
-        var consoleID = "rapidgraph_graph: clear: ";
+        var consoleID = "graph.clear: ";
 
         console.log(consoleID+"Clearing Raphael surface");
         surface.clear();
@@ -182,15 +179,14 @@ function rapidgraph_graph( surface )
     this.remove = function( elements )
     // remove the specified node, nodes, edge, or edges
     {   
-        var consoleID = "rapidgraph_graph: remove: ";
+        var consoleID = "graph.remove: ";
         
         // if elements is not an array, make it one (of length 1)
-        if( !$.isArray( elements ) ){
-            console.log(consoleID+"A single element recieved.");
-            elements = [elements];
-        }
+        if( !$.isArray( elements ) ) elements = [elements];
         
-        console.log(consoleID+"Element set size = "+elements.length);
+        console.log(
+            consoleID+"Preparing to remove "+elements.length+" elements"
+        );
         
         for( var i = 0; i<elements.length; i++ ){
             
@@ -201,6 +197,9 @@ function rapidgraph_graph( surface )
             if( eIndex != -1 ){
                 
                 console.log(consoleID+"Removing "+e.elementType+" "+e.id);
+
+                // remove the element from the Raphael surface
+                e.remove();
 
                 // if the element is a node, remove it and any edges that may 
                 // be attached to it
@@ -216,18 +215,11 @@ function rapidgraph_graph( surface )
                         }
                     }
                     
-                    // remove the node's object from the Raphael surface
-                    e.object.remove();
-                    
-                // if the element is an edge, just remove it and its objects
-                } else if( e.elementType == "edge" ){
-                    
+                // if the element is an edge, just remove it from the edge list
+                } else if( e.elementType == "edge" )
                     edges.splice( eIndex, 1 );
-                
-                    e.object.line.remove();
-                    e.object.bg.remove();
                     
-                } else
+                else
                     console.error(consoleID+
                         "Recieved unexpected element type: "+e.elementType
                     );
@@ -243,15 +235,14 @@ function rapidgraph_graph( surface )
     this.select = function( elements )
     // select the specified node, nodes, edge, or edges
     {
-        var consoleID = "rapidgraph_graph: select: ";
+        var consoleID = "graph.select: ";
         
         // if elements is not an array, make it one (of length 1)
-        if( !$.isArray( elements ) ){
-            console.log(consoleID+"A single element recieved.");
-            elements = [elements];
-        }
+        if( !$.isArray( elements ) ) elements = [elements];
         
-        console.log(consoleID+"Element set size = "+elements.length);
+        console.log(
+            consoleID+"Preparing to select "+elements.length+" elements."
+        );
         
         for( var i = 0; i<elements.length; i++ ){           
             
@@ -268,17 +259,16 @@ function rapidgraph_graph( surface )
     };
     
     this.deselect = function( elements )
-    // deselectthe specified node, nodes, edge, or edges
+    // deselect the specified node, nodes, edge, or edges
     {
-        var consoleID = "rapidgraph_graph: deselect: ";
+        var consoleID = "graph.deselect: ";
         
         // if elements is not an array, make it one (of length 1)
-        if( !$.isArray( elements ) ){
-            console.log(consoleID+"A single element recieved.");
-            elements = [elements];
-        }
+        if( !$.isArray( elements ) ) elements = [elements];
         
-        console.log(consoleID+"Element set size = "+elements.length);
+        console.log(
+            consoleID+"Preparing to deselect "+elements.length+" elements."
+        );
         
         for( var i = 0; i<elements.length; i++ ){           
             
@@ -304,11 +294,10 @@ function rapidgraph_graph( surface )
         createNew: function( attr )
         // create a new node
         {            
-            var consoleID = "rapidgraph_graph.nodes.createNew: ";
+            var consoleID = "graph.nodes.createNew: ";
             
-            console.log(consoleID+
-                "Creating a new node with the specified attributes"
-            );
+            console.log(consoleID+"Creating a new node");
+            
             var newNode = new node( attr );
             
             console.log(consoleID+"Pushing the new node onto the stack");
@@ -320,21 +309,16 @@ function rapidgraph_graph( surface )
         get: 
         // get functions
         {
-            all: function()
+            all: function(){ return nodes },
             // return all of the nodes in an array
-            {
-                return nodes;
-            },
                 
             selected: function()
             // return the selected nodes in an array
             {
                 var selected = [];
-                
                 for( var i = 0; i<nodes.length; i++ )
                     if( nodes[i].attr.selected )
                         selected.push( nodes[i] );
-                        
                 return selected;
             },
                 
@@ -342,11 +326,9 @@ function rapidgraph_graph( surface )
             // return the unselected nodes in an array
             {   
                 var unselected = [];
-                
                 for( var i = 0; i<nodes.length; i++ )
                     if( !nodes[i].attr.selected )
                         selected.push( nodes[i] );
-                        
                 return unselected;
             }
         }
@@ -358,11 +340,10 @@ function rapidgraph_graph( surface )
         createNew: function( attr )
         // create a new edge
         {
-            var consoleID = "rapidgraph_graph.edges.createNew: ";
+            var consoleID = "graph.edges.createNew: ";
             
-            console.log(consoleID+
-                "Creating a new edge with the specified attributes"
-            );
+            console.log(consoleID+"Creating a new edge");
+            
             var newEdge = new edge( attr );
             
             console.log(consoleID+"Pushing the new edge onto the stack");
@@ -374,21 +355,16 @@ function rapidgraph_graph( surface )
         get: 
         // get functions
         {
-            all: function()
+            all: function(){ return edges },
             // return all of the edges in an array
-            {
-                return edges;
-            },
                 
             selected: function()
             // return the selected edges in an array
             {
                 var selected = [];
-                
                 for( var i = 0; i<edges.length; i++ )
                     if( edges[i].attr.selected )
                         selected.push( edges[i] );
-                        
                 return selected;
             },
                 
@@ -396,11 +372,9 @@ function rapidgraph_graph( surface )
             // return the unselected edges in an array
             {
                 var unselected = [];
-                
                 for( var i = 0; i<edges.length; i++ )
                     if( !edges[i].attr.selected )
                         selected.push( edges[i] );
-                        
                 return unselected;
             }
         }
@@ -413,13 +387,12 @@ function rapidgraph_graph( surface )
     // a node object
     function node( attr )
     {   
-        var consoleID = "rapidgraph_graph: node: ";
+        var consoleID = "graph.node: ";
 
         // READ-ONLY ATTRIBUTES ------------------------------------------------
 
         this.id = idCounter++;      // the node's unique ID
         this.elementType = "node";  // the type of this element
-        this.object = null;         // the node's Raphael object
 
         // WRITABLE ATTRIBUTES -------------------------------------------------
 
@@ -445,11 +418,12 @@ function rapidgraph_graph( surface )
         // PRIVATE VARIABLES ---------------------------------------------------
         
         var currentNode = this; // capture this node
+        var objects = [];       // the node's Raphael objects
         
         // CREATE THE NEW NODE -------------------------------------------------
         
         // create the raphael object
-        this.object = surface.circle( 
+        objects[0] = surface.circle( 
             this.attr.x, 
             this.attr.y, 
             this.attr.radius 
@@ -459,17 +433,18 @@ function rapidgraph_graph( surface )
         });
         
         // change the mouseover cursor to the "move" symbol
-        this.object.node.style.cursor = "move";
+        objects[0].node.style.cursor = "move";
         
         // set the mousedown for this new node
-        this.object.mousedown( function(e)
+        objects[0].mousedown( function(e)
         {            
             // set the grabbed node to this node
             grabbedElement = currentNode;
             
-            // set this node's position to the mouse's position
-            grabbedElement.object.dx = e.clientX;
-            grabbedElement.object.dy = e.clientY;
+            // set this node's position to the mouse's position (makes movement
+            // smoother. Should be fixed, but low priority.)
+            //grabbedElement.object.dx = e.clientX;
+            //grabbedElement.object.dy = e.clientY;
             
             // prevent the default event action
             e.preventDefault();
@@ -483,21 +458,65 @@ function rapidgraph_graph( surface )
             this.id, this.attr.x, this.attr.y
         );
         
-        // SELECTION ----------------------------------------------------------- 
+        // PUBLIC FUNCTIONS----------------------------------------------------- 
+        
+        this.moveTo = function( x, y )
+        // move this node to the specified coordinates on the Raphael surface
+        {
+            for( var i = 0; i<objects.length; i++ )
+            {
+                objects[i].translate( x - objects[i].dx, y - objects[i].dy );
+                objects[i].dx = x;
+                objects[i].dy = y;
+            }
+        }
+        
+        this.getPosition = function()
+        // get this node's position on the Raphael surface
+        {
+            return {
+                x: objects[0].attr("cx"),
+                y: objects[0].attr("cy")
+            };
+        }
+        
+        this.getDimensions = function()
+        // get this node's dimensions
+        {
+            return {
+                height: objects[0].getBBox().height,
+                width:  objects[0].getBBox().width
+            };
+        }
+        
+        this.getBBox = function()
+        // return the node's object's bounding box
+        {
+            return objects[0].getBBox();
+        }
+        
+        this.remove = function()
+        // remove this node's objects from the Raphael surface
+        {
+            for( var i = 0; i<objects.length; i++ )
+                objects[i].remove();
+        }
         
         this.toggleSelect = function()
         // toggle the selection of this node
         {
-            if( this.attr.selected ) this.deselect();
-            else this.select();
+            if( this.attr.selected ) 
+                this.deselect();
+            else 
+                this.select();
         }
         
         this.select = function()
         // select this node
         {
             this.attr.selected = true;
-            this.object.attr( "fill", this.attr.selFill );
-            this.object.attr( "stroke", this.attr.selStroke );
+            objects[0].attr( "fill", this.attr.selFill );
+            objects[0].attr( "stroke", this.attr.selStroke );
             
             console.log(consoleID+"select: Node %d selected", this.id);
         }
@@ -506,8 +525,8 @@ function rapidgraph_graph( surface )
         // deselect this node
         {
             this.attr.selected = false;
-            this.object.attr( "fill", this.attr.fill );
-            this.object.attr( "stroke", this.attr.stroke );
+            objects[0].attr( "fill", this.attr.fill );
+            objects[0].attr( "stroke", this.attr.stroke );
             
             console.log(consoleID+"deselect: Node %d deselected", this.id);
         }
@@ -522,16 +541,12 @@ function rapidgraph_graph( surface )
 
     function edge( attr )
     {
-        var consoleID = "rapidgraph_graph: edge: ";
+        var consoleID = "graph.edge: ";
         
         // READ-ONLY ATTRIBUTES ------------------------------------------------
 
         this.id = idCounter++;      // the edge's unique ID
         this.elementType = "edge";  // the type of this element
-        this.object = {             // the edge's Raphael objects
-            line: null,             // the line component
-            bg: null                // the background component
-        };
 
         // WRITABLE ATTRIBUTES -------------------------------------------------
 
@@ -567,7 +582,9 @@ function rapidgraph_graph( surface )
             }
         }
         
-        var currentEdge = this; // capture the this edge
+        var currentEdge = this; // capture this edge
+        
+        objects = [];           // this edge's Raphael objects
         
         // PUBLIC FUNCTIONS ----------------------------------------------------
         
@@ -575,14 +592,14 @@ function rapidgraph_graph( surface )
         // update the path
         {
             // grab the bounding box of each node's Raphael object
-            var bb1 = this.attr.node1.object.getBBox();
-            var bb2 = this.attr.node2.object.getBBox();
+            var bb1 = this.attr.node1.getBBox();
+            var bb2 = this.attr.node2.getBBox();
                 
             // figure out if the path needs to be updated (if the path object
             // has not yet been defined or the nodes have been moved since the
             // last update)
             if( 
-                !this.object ||
+                objects.length == 0 ||
                 prevPos.node1.x != bb1.x ||
                 prevPos.node1.y != bb1.y ||
                 prevPos.node2.x != bb2.x ||
@@ -650,20 +667,26 @@ function rapidgraph_graph( surface )
                 ].join(",");
                 
                 // if the objects are already defined, just update the path
-                if( this.object.line && this.object.bg ){
+                if( objects[0] && objects[1] ){
                     
-                    this.object.bg.attr({ path: path });
-                    this.object.line.attr({ path: path });
+                    objects[0].attr({ path: path });
+                    objects[1].attr({ path: path });
                     
                 // otherwise, create the new path objects
                 } else {
                     
-                    this.object.line = surface.path( path ).attr({
+                    console.log(
+                        "%sCreating new edge %d from node %d to node %d",
+                        consoleID, this.id, this.attr.node1.id, 
+                        this.attr.node2.id
+                    );
+                    
+                    objects[1] = surface.path( path ).attr({
                         stroke: this.attr.line,
                         'stroke-width': 2
                     }).toBack(); // move to back so they're behind the nodes
                     
-                    this.object.bg = surface.path( path ).attr({
+                    objects[0] = surface.path( path ).attr({
                         stroke: this.attr.bg,
                         'stroke-width': 4
                     }).toBack();
@@ -686,21 +709,28 @@ function rapidgraph_graph( surface )
             return false
         }
 
-        // SELECTION ----------------------------------------------------------- 
+        this.remove = function()
+        // removes this edge from the Raphael surface
+        {
+            for( var i = 0; i<objects.length; i++ )
+                objects[i].remove();
+        }
         
         this.toggleSelect = function()
         // toggle the selection of this edge
         {
-            if( this.attr.selected ) this.deselect();
-            else this.select();
+            if( this.attr.selected ) 
+                this.deselect();
+            else 
+                this.select();
         }
         
         this.select = function()
         // select this edge
         {
             this.attr.selected = true;
-            this.object.bg.attr( "stroke", this.attr.selBg );
-            this.object.line.attr( "stroke", this.attr.selLine );
+            objects[0].attr( "stroke", this.attr.selBg );
+            objects[1].attr( "stroke", this.attr.selLine );
             
             console.log(consoleID+"Edge %d selected", this.id);
         }
@@ -709,8 +739,8 @@ function rapidgraph_graph( surface )
         // deselect this node
         {
             this.attr.selected = false;
-            this.object.bg.attr( "stroke", this.attr.bg );
-            this.object.line.attr( "stroke", this.attr.line );
+            objects[0].attr( "stroke", this.attr.bg );
+            objects[1].attr( "stroke", this.attr.line );
             
             console.log(consoleID+"Edge %d deselected", this.id);
         }
@@ -721,8 +751,8 @@ function rapidgraph_graph( surface )
         this.update();
         
         // set the mousedown for this new edge
-        this.object.bg.mousedown( function(e){ holdEdge(e) });
-        this.object.line.mousedown( function(e){ holdEdge(e) });
+        for( var i = 0; i<objects.length; i++ )
+            objects[i].mousedown( function(e){ holdEdge(e) });
         function holdEdge( e )
         {
             // set the grabbed node to this node
