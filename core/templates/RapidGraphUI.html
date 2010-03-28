@@ -2,9 +2,9 @@
     <head>
         <title>RapidGraph</title>
         
-        <!-- Include CSS styles -->
+        <!-- Include RapidGraph UI styles -->
         <style>
-            {% include "styles.css" %}
+            {% include "RapidGraphUI.css" %}
         </style>
         
         <!-- Include general javascript libraries -->
@@ -22,13 +22,13 @@
             //////////////
             // INCLUDES //
             //////////////
-            {% include "rapidgraph_ui.js" %}
-            {% include "rapidgraph_graph.js" %}
+            {% include "RapidGraphUI.js" %}
+            {% include "RaphGraph.js" %}
             
             /////////////////
             // GLOBAL DATA //
             /////////////////
-            var ui = new rapidgraph_ui(); // create the user interface
+            var ui = new RapidGraphUI(); // create the user interface
             
             //////////////////////
             // GLOBAL FUNCTIONS //

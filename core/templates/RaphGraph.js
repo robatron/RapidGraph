@@ -1,5 +1,4 @@
-// rapidgraph_graph.js
-// depends on jQuery and Raphael
+// RaphGraph - A general graph (as in graph theory) library for Raphael
 
 /*
 the following functions take a one node or edge, or an array of nodes or edges
@@ -17,7 +16,7 @@ edges.get.all()
 ...
 */
 
-function rapidgraph_graph( surface )
+function RaphGraph( surface )
 {    
     ////////////////
     // GRAPH DATA //
@@ -51,14 +50,15 @@ function rapidgraph_graph( surface )
             if( grabbedElement && grabbedElement.elementType == "node" ){
                 
                 grabbedElement.moveTo( e.clientX, e.clientY );
-                
-                /* move all selected nodes
+    
+                // also move selected nodes with it (need to fix, but low
+                // priority
+                /*
                 var selNodes = e.data.graph.nodes.get.selected();
                 for( var i = 0; i<selNodes.length; i++ ){
-                    var n = selNodes[i].object;
-                    n.translate( e.clientX - n.dx, e.clientY - n.dy );
-                    n.dx = e.clientX;
-                    n.dy = e.clientY;
+                    var pos = selNodes[i].getPosition();
+                    console.log( e.clientX - pos.x, e.clientY - pos.y );
+                    selNodes[i].moveTo( e.clientX - pos.x, e.clientY - pos.y );
                 }
                 */
 
@@ -379,19 +379,18 @@ function rapidgraph_graph( surface )
             }
         }
     };
-   
+    
     ////////////////////////////
     // NODE OBJECT DEFINITION //
     ////////////////////////////
     
-    // a node object
     function node( attr )
     {   
         var consoleID = "graph.node: ";
 
         // READ-ONLY ATTRIBUTES ------------------------------------------------
 
-        this.id = idCounter++;      // the node's unique ID
+        this.id = Math.floor(Math.random()*10);      // the node's unique ID
         this.elementType = "node";  // the type of this element
 
         // INITIAL ATTRIBUTES --------------------------------------------------
@@ -432,16 +431,15 @@ function rapidgraph_graph( surface )
         // change the mouseover cursor to the "move" symbol
         objects[0].node.style.cursor = "move";
         
-        // set the mousedown for this new node
         objects[0].mousedown( function(e)
-        {            
+        // when the mouse button is pressed on this node...
+        { 
             // set the grabbed node to this node
             grabbedElement = currentNode;
             
-            // set this node's position to the mouse's position (makes movement
-            // smoother. Should be fixed, but low priority.)
-            //grabbedElement.object.dx = e.clientX;
-            //grabbedElement.object.dy = e.clientY;
+            // set this node's position to the mouse's position
+            this.dx = e.clientX;
+            this.dy = e.clientY;
             
             // prevent the default event action
             e.preventDefault();
@@ -534,18 +532,18 @@ function rapidgraph_graph( surface )
         // return this newly created node
         return this;
     }
-
+    
     ////////////////////////////
     // EDGE OBJECT DEFINITION //
     ////////////////////////////
-
+    
     function edge( attr )
     {
         var consoleID = "graph.edge: ";
         
         // READ-ONLY ATTRIBUTES ------------------------------------------------
 
-        this.id = idCounter++;      // the edge's unique ID
+        this.id = Math.floor(Math.random()*10);      // the edge's unique ID
         this.elementType = "edge";  // the type of this element
 
         // WRITABLE ATTRIBUTES -------------------------------------------------
@@ -666,12 +664,6 @@ function rapidgraph_graph( surface )
                 
                 // if the objects are already defined, just update the path
                 if( objects.length ){
-                    
-                    console.log(
-                        "%sUpdating edge %d from node %d to node %d",
-                        consoleID, this.id, attr.node1.id, 
-                        attr.node2.id
-                    );
                     
                     objects[0].attr({ path: path });
                     objects[1].attr({ path: path });

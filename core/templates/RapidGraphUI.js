@@ -1,6 +1,4 @@
-// rapidgraph_ui.js
-
-function rapidgraph_ui()
+function RapidGraphUI()
 {
     /////////////
     // UI DATA //
@@ -17,7 +15,7 @@ function rapidgraph_ui()
         var width = 800;
         var height = 200;
         surface = Raphael( "main", width, height );
-        graph = new rapidgraph_graph( surface );
+        graph = new RaphGraph( surface );
         
         initPanels();
         
