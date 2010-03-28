@@ -18,11 +18,7 @@ function RapidGraphUI()
         graph = new RaphGraph( surface );
         
         initPanels();
-        
-        graph.edges.createNew({
-            node1: graph.nodes.createNew({x:50, y:50}),
-            node2: graph.nodes.createNew({x:200, y:100}),
-        });
+        createSimpleOregonMap();
     }
     
     // init panel 
@@ -65,7 +61,7 @@ function RapidGraphUI()
             graph.select( graph.nodes.get.all() );
         });
     
-        // edges        
+        // edges
         $('#edges>#createNew').click(function()
         {
             var selected = graph.nodes.get.selected();
@@ -97,10 +93,21 @@ function RapidGraphUI()
         );
         
         // main panel
+        $('#main').width(
+            screenWidth() -
+            $('#left').outerWidth(true) - $('#right').outerWidth(true) -
+            ($('#main').outerWidth(true) - $('#main').width())
+        );
+        $('#main').height(
+            screenHeight() -
+            $('#top').outerHeight(true) -
+            ($('#main').outerHeight(true) - $('#main').height())
+        );               
         $('#main').offset({
             top: topHeight,
             left: screenWidth()/2 - $('#main').outerWidth(true)/2
         });
+        surface.setSize( $('#main').innerWidth(), $('#main').innerHeight() );
         
         // left panel
         $('#left').offset({
@@ -119,5 +126,127 @@ function RapidGraphUI()
             screenHeight() - topHeight -
             ($('#right').outerHeight(true) - $('#right').height())
         );
+    }
+
+    function createSimpleOregonMap()
+    {
+        var seaside     = graph.nodes.createNew({
+            x: 76,
+            y: 46,
+            label:"Seaside"
+        });
+        var portland    = graph.nodes.createNew({
+            x: 202,
+            y: 54,
+            label:"Portland"
+        });
+        var gresham     = graph.nodes.createNew({
+            x: 310,
+            y: 73,
+            label:"Gresham"
+        });
+        var newport     = graph.nodes.createNew({
+            x: 74,
+            y: 156,
+            label:"Newport"
+        });
+        var corvallis   = graph.nodes.createNew({
+            x: 202,
+            y: 164,
+            label:"Corvallis"
+        });
+        var bend        = graph.nodes.createNew({
+            x: 394,
+            y: 203,
+            label:"Bend"
+        });
+        var eugene      = graph.nodes.createNew({
+            x: 203,
+            y: 296,
+            label:"Eugene"
+        });
+        var medford     = graph.nodes.createNew({
+            x: 306,
+            y: 332,
+            label:"Medford"
+        });
+        var brookings   = graph.nodes.createNew({
+            x: 75,
+            y: 332,
+            label:"Brookings"
+        });
+        
+        graph.edges.createNew({
+            node1: seaside,
+            node2: portland,
+            weight: 79,
+            label: null
+        });
+        graph.edges.createNew({
+            node1: portland,
+            node2: gresham,
+            weight: 15,
+            label: null
+        });
+        graph.edges.createNew({
+            node1: seaside,
+            node2: newport,
+            weight: 117,
+            label: null
+        });
+        graph.edges.createNew({
+            node1: portland,
+            node2: corvallis,
+            weight: 83,
+            label: null
+        });
+        graph.edges.createNew({
+            node1: gresham,
+            node2: bend,
+            weight: 146,
+            label: null
+        });
+        graph.edges.createNew({
+            node1: newport,
+            node2: corvallis,
+            weight: 60,
+            label: null
+        });
+        graph.edges.createNew({
+            node1: corvallis,
+            node2: bend,
+            weight: 128,
+            label: null
+        });
+        graph.edges.createNew({
+            node1: newport,
+            node2: brookings,
+            weight: 205,
+            label: null
+        });
+        graph.edges.createNew({
+            node1: corvallis,
+            node2: eugene,
+            weight: 47,
+            label: null
+        });
+        graph.edges.createNew({
+            node1: eugene,
+            node2: medford,
+            weight: 168,
+            label: null
+        });
+        graph.edges.createNew({
+            node1: medford,
+            node2: bend,
+            weight: 173,
+            label: null
+        });
+        graph.edges.createNew({
+            node1: brookings,
+            node2: corvallis,
+            weight: 253,
+            label: null
+        });
     }
 }

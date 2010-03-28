@@ -27,6 +27,8 @@ b{
 #main{    
     margin-left:auto;
     margin-right:auto;
+    padding:0;
+    
 }
 
 #left{
@@ -44,9 +46,10 @@ b{
     left:0;
 }
 
-
+/*
 svg{
     border:1px solid blue;
 }
+*/
 
 

@@ -47,7 +47,7 @@ function RaphGraph( surface )
         {
             // if there's a node under the cursor, move all of the selected
             // nodes to follow
-            if( grabbedElement && grabbedElement.elementType == "node" ){
+            if( grabbedElement && grabbedElement.getType() == "node" ){
                 
                 grabbedElement.moveTo( e.clientX, e.clientY );
     
@@ -104,7 +104,7 @@ function RaphGraph( surface )
                 // if the grabbed element is a node and it's out of bounds, 
                 // remove it
                 if( 
-                    grabbedElement.elementType == "node" && 
+                    grabbedElement.getType() == "node" && 
                     !inBounds( grabbedElement ) 
                 )
                     e.data.graph.remove( grabbedElement );
@@ -196,14 +196,14 @@ function RaphGraph( surface )
             // make sure element exists in one of the element arrays
             if( eIndex != -1 ){
                 
-                console.log(consoleID+"Removing "+e.elementType+" "+e.id);
+                console.log(consoleID+"Removing "+e.getType()+" "+e.getID());
 
                 // remove the element from the Raphael surface
                 e.remove();
 
                 // if the element is a node, remove it and any edges that may 
                 // be attached to it
-                if( e.elementType == "node" ){
+                if( e.getType() == "node" ){
                     
                     nodes.splice( eIndex, 1 );
                     
@@ -216,12 +216,12 @@ function RaphGraph( surface )
                     }
                     
                 // if the element is an edge, just remove it from the edge list
-                } else if( e.elementType == "edge" )
+                } else if( e.getType() == "edge" )
                     edges.splice( eIndex, 1 );
                     
                 else
                     console.error(consoleID+
-                        "Recieved unexpected element type: "+e.elementType
+                        "Recieved unexpected element type: "+e.getType()
                     );
             
             // otherwise, the element was not found. Error out.
@@ -387,12 +387,17 @@ function RaphGraph( surface )
     function node( attr )
     {   
         var consoleID = "graph.node: ";
-
-        // READ-ONLY ATTRIBUTES ------------------------------------------------
-
-        this.id = idCounter++;      // the node's unique ID
-        this.elementType = "node";  // the type of this element
-
+                
+        var id = idCounter++;       // the node's unique ID
+        var elementType = "node";   // the type of this element
+        var currentNode = this;     // capture this node
+        var objects = [];           // the node's Raphael objects
+        var obj = {
+            main: null,             // the main object
+            weight: null,           // the weight object
+            label: null             // the label object
+        };
+        
         // INITIAL ATTRIBUTES --------------------------------------------------
 
         // default attributes
@@ -400,9 +405,9 @@ function RaphGraph( surface )
             radius:     20,
             x:          surface.width/2,
             y:          surface.height/2,
-            weight:     1,
+            weight:     null,
             weightVis:  true,
-            label:      "Node " + this.id,
+            label:      "Node " + id,
             labelVis:   true,
             selected:   false,
             fill:       "black",
@@ -414,15 +419,13 @@ function RaphGraph( surface )
         // extend the default attributes with the passed-in attributes
         var attr = $.extend( defaultAttr, attr );
         
-        // PRIVATE VARIABLES ---------------------------------------------------
+        // GETTERS -------------------------------------------------------------
         
-        var currentNode = this; // capture this node
-        var objects = [];       // the node's Raphael objects
-        var obj = {
-            main: null,         // the main object
-            weight: null,       // the weight object
-            label: null         // the label object
-        };
+        this.getID = function(){ return id }
+        // returns this edge's ID
+        
+        this.getType = function(){ return elementType }
+        // returns the element's type
         
         // POSITION AND SIZE --------------------------------------------------- 
         
@@ -545,7 +548,11 @@ function RaphGraph( surface )
             obj.weight.attr( "fill", attr.selStroke );
             obj.label.attr( "fill", attr.selStroke );
             
-            console.log(consoleID+"select: Node %d selected", this.id);
+            var pos = this.getPosition();
+            console.log(
+                consoleID + 
+                "select: Node %d selected at %d, %d", this.getID(), pos.x, pos.y
+            );
         }
         
         this.deselect = function()
@@ -559,7 +566,7 @@ function RaphGraph( surface )
             obj.weight.attr( "fill", attr.stroke );
             obj.label.attr( "fill", attr.stroke );
             
-            console.log(consoleID+"deselect: Node %d deselected", this.id);
+            console.log(consoleID+"deselect: Node %d deselected", this.getID());
         }
         
         // ELEMENT REMOVAL -----------------------------------------------------
@@ -650,7 +657,7 @@ function RaphGraph( surface )
         
         console.log(
             consoleID+"New node %d created at %d, %d", 
-            this.id, attr.x, attr.y
+            this.getID(), attr.x, attr.y
         );
         
         // return this newly created node
@@ -665,20 +672,33 @@ function RaphGraph( surface )
     {
         var consoleID = "graph.edge: ";
         
-        // READ-ONLY ATTRIBUTES ------------------------------------------------
+        var id = Math.floor(Math.random()*10);  // the edge's unique ID
+        var elementType = "edge";               // the type of this element
+        
+        var currentEdge = this; // capture this edge
+        var objects = [];       // this edge's Raphael objects
+        var obj = {
+            bg: null,           // the main object
+            line: null,
+            weight: null,       // the weight object
+            label: null         // the label object
+        };
+        
+        // structure to hold prevous node positions for update testing
+        var prevPos = {
+            node1: { x: null, y: null },
+            node2: { x: null, y: null }
+        }
 
-        this.id = Math.floor(Math.random()*10);      // the edge's unique ID
-        this.elementType = "edge";  // the type of this element
-
-        // WRITABLE ATTRIBUTES -------------------------------------------------
+        // INITIAL ATTRIBUTES --------------------------------------------------
 
         // default attributes
         var defaultAttr = {
             node1:      null,
             node2:      null,
-            weight:     1,
+            weight:     null,
             weightVis:  true,
-            label:      "Edge " + this.id,
+            label:      "Edge " + id,
             labelVis:   true,
             selected:   false,
             line:       "black",
@@ -690,29 +710,6 @@ function RaphGraph( surface )
         // extend the default attributes with the passed-in attributes
         $.extend( defaultAttr, attr );
         var attr = defaultAttr;
-        
-        // PRIVATE DATA --------------------------------------------------------
-        
-        // structure to hold prevous node positions for update need testing
-        var prevPos = {
-            node1: {
-                x: null,
-                y: null
-            },
-            node2: {
-                x: null,
-                y: null
-            }
-        }
-        
-        var currentEdge = this; // capture this edge
-        var objects = [];       // this edge's Raphael objects
-        var obj = {
-            bg: null,           // the main object
-            line: null,
-            weight: null,       // the weight object
-            label: null         // the label object
-        };
         
         // UPDATE --------------------------------------------------------------
         
@@ -733,7 +730,6 @@ function RaphGraph( surface )
                 prevPos.node2.x != bb2.x ||
                 prevPos.node2.y != bb2.y
             ){
-                // calculate the path in relation to the nodes
                 var p = [
                     {x: bb1.x + bb1.width / 2,  y: bb1.y - 1},
                     {x: bb1.x + bb1.width / 2,  y: bb1.y + bb1.height + 1},
@@ -794,85 +790,16 @@ function RaphGraph( surface )
                     y4.toFixed(3)
                 ].join(",");
                 
-                // if the objects are already defined, just update the path of 
-                // the lines and the positions of the labels and weights
-                if( objects.length ){
-                    
-                    // update the path
-                    obj.bg.attr({ path: path });
-                    obj.line.attr({ path: path });
-                    
-                    // update the weight and label positions
-                    var bb = obj.bg.getBBox();
-                    obj.weight.attr("x", bb.x + bb.width/2);
-                    obj.weight.attr("y", bb.y + bb.height/2 + 15);
-                    obj.label.attr("x", bb.x + bb.width/2);
-                    obj.label.attr("y", bb.y + bb.height/2 - 15);
-                    
-                // otherwise, create the new path objects
-                } else {
-                    
-                    console.log(
-                        "%sCreating new edge %d from node %d to node %d",
-                        consoleID, this.id, attr.node1.id, 
-                        attr.node2.id
-                    );
-                    
-                    // create the foreground path
-                    objects[1] = surface.path( path ).attr({
-                        stroke: attr.line,
-                        'stroke-width': 2
-                    }).toBack(); // move to back so they're behind the nodes
-                    
-                    // create the background path
-                    objects[0] = surface.path( path ).attr({
-                        stroke: attr.bg,
-                        'stroke-width': 4
-                    }).toBack();
-                    
-                    var bb = objects[0].getBBox();
-                    // create the label
-                    objects[3] = surface.text( 
-                        bb.x + bb.width/2, 
-                        bb.y + bb.height/2 - 15, 
-                        attr.label
-                    ).attr({
-                        fill:"white",
-                        'font-size': 12
-                    });
-                    
-                    // create the weight
-                    objects[2] = surface.text( 
-                        bb.x + bb.width/2, 
-                        bb.y + bb.height/2 + 15, 
-                        attr.weight 
-                    ).attr({
-                        fill:"white",
-                        'font-size': 12
-                    });
-                    
-                    // set up object aliases
-                    obj = {
-                        bg:     objects[0], // the background line object
-                        line:   objects[1], // the foreground line object
-                        weight: objects[2], // the weight object
-                        label:  objects[3]  // the label object
-                    };
-                    
-                    // set up edit events for weight and label editing
-                    $(obj.weight.node).bind('dblclick', {node:this}, function(e)
-                    {
-                        var entry = 
-                            parseInt(prompt("Enter a new weight: (Just integers for now!)"));
+                // update the path
+                obj.bg.attr({ path: path });
+                obj.line.attr({ path: path });
                         
-                        if( entry ) e.data.node.weight.set( entry );
-                    });
-                    $(obj.label.node).bind('dblclick', {node:this}, function(e)
-                    {
-                        var entry = prompt("Enter a new label:");
-                        if( entry ) e.data.node.label.set( entry );
-                    });
-                }
+                // update the weight and label
+                var bb = obj.bg.getBBox();
+                obj.weight.attr("x", bb.x + bb.width/2);
+                obj.weight.attr("y", bb.y + bb.height/2 + 15);
+                obj.label.attr("x", bb.x + bb.width/2);
+                obj.label.attr("y", bb.y + bb.height/2 - 15);
                 
                 // save the node positions for the next update
                 prevPos.node1.x = bb1.x;
@@ -880,7 +807,23 @@ function RaphGraph( surface )
                 prevPos.node2.x = bb2.x;
                 prevPos.node2.y = bb2.y;
             }
-        } 
+        }
+        
+        // REMOVE --------------------------------------------------------------
+
+        this.remove = function()
+        // removes this edge from the Raphael surface
+        {
+            for( var i = 0; i<objects.length; i++ ) objects[i].remove();
+        }
+        
+        // GETTERS -------------------------------------------------------------
+        
+        this.getID = function(){ return id }
+        // returns this edge's ID
+        
+        this.getType = function(){ return elementType }
+        // returns the element's type
         
         this.attachedTo = function( node )
         // returns true if the specified node is attached to this edge, and
@@ -890,15 +833,8 @@ function RaphGraph( surface )
                 return true;
             return false
         }
-
-        this.remove = function()
-        // removes this edge from the Raphael surface
-        {
-            for( var i = 0; i<objects.length; i++ )
-                objects[i].remove();
-        }
         
-        // WEIGHT --------------------------------------------------------------
+        // WEIGHTS & LABELS ----------------------------------------------------
         
         this.weight = 
         {
@@ -928,36 +864,6 @@ function RaphGraph( surface )
             }
         }
         
-        // LABEL ---------------------------------------------------------------
-        
-        this.label = 
-        {
-            get: function(){ return attr.label },
-            // return the label
-            
-            set: function( label )
-            // set a new label
-            {
-                attr.label = label;
-                obj.label.attr({text:label});
-            },
-            
-            toggle: function()
-            // toggle the label's visibility
-            {
-            },
-            
-            show: function()
-            // show the label
-            {
-            },
-            
-            hide: function()
-            // hide the label
-            {
-            }
-        }
-        
         // SELECTION -----------------------------------------------------------
         
         this.isSelected = function(){ return attr.selected }
@@ -983,7 +889,7 @@ function RaphGraph( surface )
             obj.weight.attr( "fill", attr.selBg );
             obj.label.attr( "fill", attr.selBg );
             
-            console.log(consoleID+"Edge %d selected", this.id);
+            console.log(consoleID+"Edge %d selected", this.getID());
         }
         
         this.deselect = function()
@@ -997,13 +903,62 @@ function RaphGraph( surface )
             obj.weight.attr( "fill", attr.bg );
             obj.label.attr( "fill", attr.bg );
             
-            console.log(consoleID+"Edge %d deselected", this.id);
+            console.log(consoleID+"Edge %d deselected", this.getID());
         }
 
-        // INIT ----------------------------------------------------------------
+        // INITIALIZE ----------------------------------------------------------
+
+        console.log(
+            "%sCreating new edge %d from node %d to node %d",
+            consoleID, this.getID(), attr.node1.getID(), 
+            attr.node2.getID()
+        );
+
+        // create the label
+        objects[3] = surface.text( 0, 0, attr.label ).attr({
+            fill:"white",
+            'font-size': 12
+        }).toBack();
         
-        // update on new edge initialization
-        this.update();
+        // create the weight
+        objects[2] = surface.text( 0, 0, attr.weight).attr({
+            fill:"white",
+            'font-size': 12
+        }).toBack();
+        
+        // create the foreground path
+        objects[1] = surface.path().attr({
+            stroke: attr.line,
+            'stroke-width': 2
+        }).toBack(); // move to back so they're behind the nodes
+        
+        // create the background path
+        objects[0] = surface.path().attr({
+            stroke: attr.bg,
+            'stroke-width': 4
+        }).toBack();
+        
+        // set up object aliases
+        obj = {
+            bg:     objects[0], // the background line object
+            line:   objects[1], // the foreground line object
+            weight: objects[2], // the weight object
+            label:  objects[3]  // the label object
+        };
+        
+        // set up edit events for weight and label editing
+        $(obj.weight.node).bind('dblclick', {node:this}, function(e)
+        {
+            var entry = 
+                parseInt(prompt("Enter a new weight: (Just integers for now!)"));
+            
+            if( entry ) e.data.node.weight.set( entry );
+        });
+        $(obj.label.node).bind('dblclick', {node:this}, function(e)
+        {
+            var entry = prompt("Enter a new label:");
+            if( entry ) e.data.node.label.set( entry );
+        });
         
         // set the mousedown for this new edge
         for( var i = 0; i<objects.length; i++ )
@@ -1019,6 +974,9 @@ function RaphGraph( surface )
             // reset the hasMoved flag
             hasMoved = false;
         }
+        
+        // finally, update the objects' positions
+        this.update();
         
         // return the newly created edge
         return this;
