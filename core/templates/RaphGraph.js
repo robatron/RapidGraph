@@ -411,7 +411,9 @@ function RaphGraph( surface )
             x:          surface.width/2,
             y:          surface.height/2,
             weight:     1,
+            weightVis:  true,
             label:      "Untitled",
+            labelVis:   true,
             selected:   false,
             fill:       "black",
             stroke:     "white",
@@ -472,7 +474,9 @@ function RaphGraph( surface )
             
             set: function( weight )
             // set the weight
-            {
+            {   
+                attr.weight = weight;
+                objects[1].attr({text:weight});
             },
             
             toggle: function()
@@ -501,6 +505,8 @@ function RaphGraph( surface )
             set: function( label )
             // set a new label
             {
+                attr.label = label;
+                objects[2].attr({text:label});
             },
             
             toggle: function()
@@ -538,10 +544,11 @@ function RaphGraph( surface )
         {
             attr.selected = true;
             
-            for( var i = 0; i<objects.length; i++ ){
-                objects[i].attr( "fill", attr.selFill );
-                objects[i].attr( "stroke", attr.selStroke );
-            }
+            objects[0].attr( "fill", attr.selFill );
+            objects[0].attr( "stroke", attr.selStroke );
+            
+            objects[1].attr( "fill", attr.selStroke );
+            objects[2].attr( "fill", attr.selStroke );
             
             console.log(consoleID+"select: Node %d selected", this.id);
         }
@@ -551,10 +558,11 @@ function RaphGraph( surface )
         {
             attr.selected = false;
             
-            for( var i = 0; i<objects.length; i++ ){
-                objects[i].attr( "fill", attr.fill );
-                objects[i].attr( "stroke", attr.stroke );
-            }
+            objects[0].attr( "fill", attr.fill );
+            objects[0].attr( "stroke", attr.stroke );
+            
+            objects[1].attr( "fill", attr.stroke );
+            objects[2].attr( "fill", attr.stroke );
             
             console.log(consoleID+"deselect: Node %d deselected", this.id);
         }
@@ -585,15 +593,22 @@ function RaphGraph( surface )
             attr.x, 
             attr.y, 
             attr.weight 
-        ).attr({fill:"white"});
+        ).attr({
+            fill:"white",
+            'font-size': 12
+        });
         
         // create the label
         objects[2] = surface.text( 
             attr.x, 
             this.getBBox().y - 10, 
             attr.label
-        ).attr({fill:"white"});
+        ).attr({
+            fill:"white",
+            'font-size': 12
+        });
         
+        // set up mouse functions common to all objects
         for( var i = 0; i<objects.length; i++ ){
             
             // change the mouseover cursor to the "move" symbol
@@ -616,6 +631,20 @@ function RaphGraph( surface )
                 hasMoved = false;
             });
         }
+
+        // set up edit events for weight and label editing
+        $(objects[1].node).bind('dblclick', {node:this}, function(e)
+        {
+            var entry = 
+                parseInt(prompt("Enter a new weight: (Just integers for now!)"));
+            
+            if( entry ) e.data.node.weight.set( entry );
+        });
+        $(objects[2].node).bind('dblclick', {node:this}, function(e)
+        {
+            var entry = prompt("Enter a new label:");
+            if( entry ) e.data.node.label.set( entry );
+        });
         
         console.log(
             consoleID+"New node %d created at %d, %d", 

@@ -23,13 +23,6 @@ function RapidGraphUI()
             node1: graph.nodes.createNew({x:50, y:50}),
             node2: graph.nodes.createNew({x:200, y:100}),
         });
-        
-        /*
-        $(document).resize(function()
-        {
-            surface.setSize( screenWidth(), screenHeight() );
-        });
-        */
     }
     
     // init panel 
