@@ -52,14 +52,22 @@ function RaphGraph( surface )
                 
                 grabbedElement.moveTo( e.clientX, e.clientY );
     
-                // also move selected nodes with it (need to fix, but low
-                // priority
                 /*
+                // also move selected nodes with it (need to fix, but low
+                // priority)
                 var selNodes = e.data.graph.nodes.get.selected();
                 for( var i = 0; i<selNodes.length; i++ ){
-                    var pos = selNodes[i].getPosition();
-                    console.log( e.clientX - pos.x, e.clientY - pos.y );
-                    selNodes[i].moveTo( e.clientX - pos.x, e.clientY - pos.y );
+                    
+                    var mousePos = { x: e.clientX, y: e.clientY }
+                    var nodePos = selNodes[i].getPosition();
+                    
+                    console.log( nodePos.x, nodePos.y  );
+                    //console.log( nodePos.x, nodePos.y );
+                    
+                    selNodes[i].moveTo( 
+                        nodePos.x, 
+                        nodePos.y 
+                    );
                 }
                 */
 
@@ -443,6 +451,7 @@ function RaphGraph( surface )
         this.getPosition = function()
         // get this node's position on the Raphael surface
         {
+            console.log( obj.main.attr() );
             return {
                 x: obj.main.attr("cx"),
                 y: obj.main.attr("cy")
@@ -710,13 +719,12 @@ function RaphGraph( surface )
         }
         
         // extend the default attributes with the passed-in attributes
-        $.extend( defaultAttr, attr );
-        var attr = defaultAttr;
+        attr = $.extend( defaultAttr, attr );
         
         // UPDATE --------------------------------------------------------------
         
         this.update = function()
-        // update the path
+        // update the edge
         {
             // grab the bounding box of each node's Raphael object
             var bb1 = attr.node1.getBBox();
@@ -967,18 +975,17 @@ function RaphGraph( surface )
         
         // set the mousedown for this new edge
         for( var i = 0; i<objects.length; i++ )
-            objects[i].mousedown( function(e){ holdEdge(e) });
-        function holdEdge( e )
-        {
-            // set the grabbed node to this node
-            grabbedElement = currentEdge;
-            
-            // prevent the default event action
-            e.preventDefault();
-            
-            // reset the hasMoved flag
-            hasMoved = false;
-        }
+            objects[i].mousedown( function(e){
+                
+                // set the grabbed element to this edge
+                grabbedElement = currentEdge;
+                
+                // prevent the default event action
+                e.preventDefault();
+                
+                // clear the hasMoved flag
+                hasMoved = false;
+            });
         
         // finally, update the objects' positions
         this.update();
