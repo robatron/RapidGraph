@@ -2,32 +2,38 @@
 
 function RapidGraphUI()
 {
-    /////////////
-    // UI DATA //
-    /////////////
-    var surface = null;   // will be the Raphael SVG drawing space
-    var graph = null;   // the main graph object
-    
-    var temp = null;
+    var surface = null;     // will be the Raphael SVG drawing space
+    var graph = null;       // the main graph object
+
+    var test = 0;
+
+    this.addOne = function()
+    {
+        alert( "test = " + test );
+        test++;
+    }
     
     this.init = function()
     {
-            
-        // TODO: Make these dimensions dynamically
-        var width = 700;
-        var height = 400;
-        surface = Raphael( "main", width, height );
+        surface = Raphael( "main" );
         graph = new RaphGraph( surface );
         
         initPanels();
         createSimpleOregonMap();
     }
+
+    this.getGraph = function()
+    // return the RaphGraph object
+    {
+        return graph;
+    }
     
-    // init panel 
+    // init panels
     function initPanels()
     {        
         initButtons();
         
+        // position the panels, and do so everytime the window is resized
         positionPanels();
         $(window).resize( function(){ positionPanels() });
     }
@@ -251,4 +257,8 @@ function RapidGraphUI()
             label: null
         });
     }
+
+    // to get the viewport dimensions
+    function screenHeight(){ return Screen.getViewportHeight() };
+    function screenWidth(){ return Screen.getViewportWidth() };
 }
