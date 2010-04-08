@@ -451,7 +451,6 @@ function RaphGraph( surface )
         this.getPosition = function()
         // get this node's position on the Raphael surface
         {
-            console.log( obj.main.attr() );
             return {
                 x: obj.main.attr("cx"),
                 y: obj.main.attr("cy")
