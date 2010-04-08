@@ -84,4 +84,5 @@ INSTALLED_APPS = (
     
     # RapidGraph specific applications
     'core',
+    'plugins.sample-graphs',
 )
