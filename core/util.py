@@ -1,11 +1,7 @@
 def get_app_static_dirs():
     """
-    This function builds a list of paths for application static
-    directories, which allows the static paths to be added
-    automatically.
-    
-    Please note that this funciton will only search up to two
-    packages deep.
+    This function builds a list of paths for django application static
+    directories, which allows the static paths to be added automatically.
     """
     import os
     from django.conf import settings
