@@ -8,7 +8,7 @@
         
         <!-- Include RapidGraph UI styles -->
         <style>
-            {% include "RapidGraphUI.css" %}
+            {% include "RapidGraph.css" %}
         </style>
         
         <!-- Include general javascript libraries -->
@@ -23,31 +23,23 @@
         
         <!-- main js code -->
         <script type='text/javascript'>
+        
             //////////////
             // INCLUDES //
             //////////////
+
+            {% include "RapidGraph.js" %}
             {% include "RapidGraphUI.js" %}
+            {% include "RapidGraphPluginManager.js" %}
             {% include "RaphGraph.js" %}
-            
-            /////////////////
-            // GLOBAL DATA //
-            /////////////////
-            var ui = new RapidGraphUI(); // create the user interface
-            
-            //////////////////////
-            // GLOBAL FUNCTIONS //
-            //////////////////////
-            
-            // to get the viewport dimensions
-            function screenHeight(){ return Screen.getViewportHeight() };
-            function screenWidth(){ return Screen.getViewportWidth() };
             
             ///////////
             // START //
             ///////////
             
-            // once the document is ready, start the user interface
-            $(document).ready( function(){ ui.init() });
+            // once the document is ready, start the main client-side application
+            $(document).ready( function(){ RapidGraph.init() });
+            
         </script>
     </head>
     
