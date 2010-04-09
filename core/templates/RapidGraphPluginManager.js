@@ -1,8 +1,36 @@
 function RapidGraphPluginManager( api )
 {
+    //////////
+    // DATA //
+    //////////
+    
+    // an array of the plugins
+    var plugins = []; 
+    
+    // the plugin class
+    var plugin = function( attr ){
+        
+        var defaultAttr = {
+            title: null,
+            javascript: null,
+            html: null
+        }
+        
+        // extend the default attributes with the passed-in attributes and make
+        // it public
+        this.attr = $.extend( defaultAttr, attr );
+    }
+    
     this.init = function()
     {
+        initPlugins();
+        
         createSimpleOregonMap();
+    }
+
+    function initPlugins()
+    {
+        
     }
 
     function createSimpleOregonMap()
