@@ -62,11 +62,11 @@ function RapidGraphPluginManager( ui )
         
         // CDATA blocks like this allow multiline strings
         html: (<r><![CDATA[
-        
+            
             <h3>Oregon map control</h3>
         
             <p id='oregonmap_test' class='tempUIctrl'>
-                [Create simple oregon map]
+                Create simple oregon map
             </p>
             
         ]]></r>).toString(),
