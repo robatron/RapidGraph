@@ -19,8 +19,22 @@ function RapidGraphUI()
         return graph;
     }
     
-    // init panels
+    this.installPlugin = function( plugin )
+    // installs a plugin into the RapidGraph UI
+    {
+        idCounter = 0;
+        
+        // install plugin into the dropdown menu
+        $("#plugins_dropdown").append(
+            "<option id='plugin_"+idCounter+"'>"+plugin.attr.name+"</option>"
+        )
+        $("#plugin_"+idCounter).click(function(){
+            alert("hello?");
+        });
+    }
+    
     function initPanels()
+    // init panels
     {        
         initButtons();
         
@@ -30,10 +44,7 @@ function RapidGraphUI()
     }
     
     function initButtons()
-    { 
-        // make all of the buttons buttons
-        $('.ui-button').button();
-        
+    {       
         // all elements
         $('#all>#clear').click(function()
         {
@@ -61,7 +72,7 @@ function RapidGraphUI()
         });
     
         // edges
-        $('#edges>#createNew').click(function()
+        $('#edges>#createnew').click(function()
         {
             var selected = graph.nodes.get.selected();
             if( selected.length == 2 ){

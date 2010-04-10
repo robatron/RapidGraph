@@ -10,6 +10,18 @@
     -moz-border-radius: 5px;
 }
 
+.tempUIctrl{
+    cursor:pointer;
+    padding:0;
+    margin-left:0;
+    text-indent:0;
+}
+
+.tempUIctrl:hover{
+    color:blue;
+    font-weight:heavy;
+}
+
 b{
     color:blue;
     font-weight:heavy;

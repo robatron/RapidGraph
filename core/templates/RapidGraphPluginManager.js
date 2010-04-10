@@ -14,7 +14,7 @@ function RapidGraphPluginManager( ui )
     var plugin = function( attr ){
         
         var defaultAttr = {
-            title: null,
+            name: null,
             javascript: null,
             html: null
         }
@@ -37,7 +37,7 @@ function RapidGraphPluginManager( ui )
     {
         plugins.push(
             new plugin({
-                title: "Sample plugin - Create Oregon map",
+                name: "Sample plugin - Create Oregon map",
                 javascript: function(){alert("oh hai!")},
                 html: "<h1>Oh Hai!</h1>"
             })
@@ -49,7 +49,7 @@ function RapidGraphPluginManager( ui )
     {
         // install the plugin names in the plugin list
         for( var i=0; i<plugins.length; i++ )
-            plugins[i]
+            ui.installPlugin( plugins[i] );
     }
 
     function createSimpleOregonMap()
