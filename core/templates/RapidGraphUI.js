@@ -26,11 +26,22 @@ function RapidGraphUI()
         
         // install plugin into the dropdown menu
         $("#plugins_dropdown").append(
-            "<option id='plugin_"+idCounter+"'>"+plugin.attr.name+"</option>"
+            "<option id='plugin_"+idCounter+"'>"+plugin.attr.title+"</option>"
         )
-        $("#plugin_"+idCounter).click(function(){
-            alert("hello?");
+        
+        // fill in the plugin's HTML in the right panel when plugin is selected
+        $("#plugin_"+idCounter).click( function()
+        {
+            $("#plugins_title").html( 
+                "<h2 id='plugin_title'>"+plugin.attr.title+"</h2>" +
+                "<p id='plugin_subtitle'>"+plugin.attr.subtitle+"</p>"
+            );
+            $("#right").html( plugin.attr.html );
         });
+        
+        // bind the plugin's start function to the plugin selection if defined
+        if( plugin.attr.javascript.start )
+            $("#plugin_"+idCounter).click( plugin.attr.javascript.start );
     }
     
     function initPanels()

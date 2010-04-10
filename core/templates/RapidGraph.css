@@ -15,11 +15,15 @@
     padding:0;
     margin-left:0;
     text-indent:0;
+    text-sytle:underline;
 }
 
-.tempUIctrl:hover{
-    color:blue;
-    font-weight:heavy;
+#plugin_title{
+    margin:0;
+}
+
+#plugin_subtitle{
+    margin:0;
 }
 
 b{
