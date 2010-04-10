@@ -1,8 +1,11 @@
-function RapidGraphPluginManager( api )
+function RapidGraphPluginManager( ui )
 {
     //////////
     // DATA //
     //////////
+    
+    // create a new API object associated with the UI for the plugins to use
+    var api = new RapidGraphAPI( ui );
     
     // an array of the plugins
     var plugins = []; 
@@ -23,14 +26,30 @@ function RapidGraphPluginManager( api )
     
     this.init = function()
     {
-        initPlugins();
+        getPlugins();
+        installPlugins();
         
         createSimpleOregonMap();
     }
 
-    function initPlugins()
+    function getPlugins()
+    // aggregate all of the plugins
     {
-        
+        plugins.push(
+            new plugin({
+                title: "Sample plugin - Create Oregon map",
+                javascript: function(){alert("oh hai!")},
+                html: "<h1>Oh Hai!</h1>"
+            })
+        );
+    }
+    
+    function installPlugins()
+    // install the plugins in rapidgraph
+    {
+        // install the plugin names in the plugin list
+        for( var i=0; i<plugins.length; i++ )
+            plugins[i]
     }
 
     function createSimpleOregonMap()
