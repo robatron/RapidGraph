@@ -11,7 +11,7 @@ function RapidGraph()
     
     this.init = function()
     // initialize the main RapidGraph client-side app
-    {
+    {        
         // initialize the UI
         ui.init();
 
