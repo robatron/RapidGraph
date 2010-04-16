@@ -1,10 +1,37 @@
+import os
+from django.conf import settings
+
+def get_plugins():
+    # Returns an array of dictionaries representing the found plugins.
+    
+    plugins = []
+    pluginDir = settings.DOC_ROOT + "/plugins"
+    pluginList = os.listdir( pluginDir )
+    
+    for plugin in pluginList:
+        
+        
+        try:
+            ui = open( pluginDir + "/"+ plugin + "/ui.html", 'r' ).read()
+            javascript = open( pluginDir + "/"+ plugin + "/plugin.js", 'r' ).read()
+            break
+        except IOError:
+            pass
+
+        """
+        plugins.append({
+            'ui': ui,
+            'javascript': javascript
+        })
+        """
+    
+    return plugins
+
 def get_app_static_dirs():
     """
     This function builds a list of paths for django application static
     directories, which allows the static paths to be added automatically.
     """
-    import os
-    from django.conf import settings
 
     paths = []
     for app in settings.INSTALLED_APPS:
