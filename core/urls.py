@@ -1,7 +1,7 @@
 from django.conf.urls.defaults import *
 
 from views import *
-from util import get_app_static_dirs
+from plugin_manager import get_app_static_dirs
 
 # template pages
 urlpatterns = patterns('',
