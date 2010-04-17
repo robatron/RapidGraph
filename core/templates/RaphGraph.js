@@ -230,7 +230,7 @@ function RaphGraph( surface )
                     
                 else
                     console.error(consoleID+
-                        "Recieved unexpected element type: "+e.getType()
+                        "Received unexpected element type: "+e.getType()
                     );
             
             // otherwise, the element was not found. Error out.
@@ -679,7 +679,7 @@ function RaphGraph( surface )
     ////////////////////////////
     
     function edge( attr )
-    {
+    {        
         var consoleID = "graph.edge: ";
         
         var id = Math.floor(Math.random()*10);  // the edge's unique ID

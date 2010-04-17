@@ -39,6 +39,7 @@ function RapidGraphPluginManager( ui )
     // aggregate all of the plugins
     {
         plugins.push( simpleOregonMapPlugin );
+        plugins.push( computerNetworking );
     }
     
     function installPlugins()
@@ -200,6 +201,40 @@ function RapidGraphPluginManager( ui )
                     node2: corvallis,
                     weight: 253,
                     label: null
+                });
+            }
+        }
+    })
+
+    var computerNetworking = new plugin({
+        title: "Computer Networking",
+        subtitle: "Shows the relationship between networking and a classic graph algorithm.",
+        
+        // CDATA blocks like this allow multiline strings
+        html: (<r><![CDATA[
+            
+            <h3>Computer Networking</h3>
+            
+            <p id='make_network' class='tempUIctrl'>
+                Create a sample network
+            </p>
+            
+            <p id='find_route' class='tempUIctrl'>
+                Find the fastest route between two computers
+            </p>
+
+        ]]></r>).toString(),
+        
+        javascript: new function()
+        {
+            this.start = function()
+            {
+                $("#make_network").click( function(){
+                    
+                });
+
+                $("#find_route").click( function(){
+                    
                 });
             }
         }
