@@ -51,7 +51,7 @@ function RaphGraph( surface )
             if( grabbedElement && grabbedElement.getType() == "node" ){
                 
                 grabbedElement.moveTo( e.clientX, e.clientY );
-    
+
                 /*
                 // also move selected nodes with it (need to fix, but low
                 // priority)
