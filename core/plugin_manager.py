@@ -9,21 +9,18 @@ def get_plugins():
     pluginList = os.listdir( pluginDir )
     
     for plugin in pluginList:
-        
-        
+    
         try:
             ui = open( pluginDir + "/"+ plugin + "/ui.html", 'r' ).read()
             javascript = open( pluginDir + "/"+ plugin + "/plugin.js", 'r' ).read()
-            break
+            
+            plugins.append({
+                'ui': ui,
+                'javascript': javascript
+            })
+            
         except IOError:
             pass
-
-        """
-        plugins.append({
-            'ui': ui,
-            'javascript': javascript
-        })
-        """
     
     return plugins
 
