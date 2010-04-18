@@ -45,6 +45,7 @@ function RapidGraphUI()
     }
     
     this.getMainPanelSize = function()
+    // return the size of the main panel as a dictionary of height and width
     {
         return {
             height: $('#main').height(),
