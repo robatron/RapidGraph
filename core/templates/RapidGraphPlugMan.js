@@ -1,4 +1,4 @@
-function RapidGraphPluginManager( ui )
+function RapidGraphPlugMan( ui )
 {
     //////////
     // DATA //
@@ -41,6 +41,8 @@ function RapidGraphPluginManager( ui )
     {
         plugins.push( simpleOregonMapPlugin );
         plugins.push( computerNetworking );
+        
+
     }
     
     function installPlugins()
