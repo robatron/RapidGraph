@@ -9,6 +9,7 @@ function RapidGraphAPI( ui )
     this.ui =
     // all ui functions. Accessed via api.ui.foo
     {
+        getMainPanelSize: function(){ return ui.getMainPanelSize() }
     };
 
     /////////////////////
