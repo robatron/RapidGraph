@@ -274,7 +274,6 @@ function RapidGraphPluginManager( ui )
 
                     // Check that all edge weights are non-negative and
                     // non-null
-                    
                     for( edge in api.graph.edges.get.all() ) {
                         console.log("blah");
                         if( edge.weight == null || edge.weight < 0) {
@@ -286,7 +285,7 @@ function RapidGraphPluginManager( ui )
                     console.log("After edge check");
 
                     // Check to that the user has selected exactly two nodes
-                    //console.log( api.graph.nodes.get.selected() );
+                    console.log( api.graph.nodes.get.selected() );
                     selectedNodes = api.graph.nodes.get.selected();
                     if( selectedNodes.length != 2 ) {
                         alert("Must select exactly two nodes, not " + count);
