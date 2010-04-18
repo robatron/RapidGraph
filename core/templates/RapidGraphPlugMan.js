@@ -23,8 +23,8 @@ function RapidGraphPluginManager( ui )
     }
     
     // create a new API object associated with the UI for the plugins to use
-    //var api = new RapidGraphAPI( ui );
-    var api = ui.getGraph();
+    var api = new RapidGraphAPI( ui );
+    var graph = ui.getGraph(); // graph object for TEMPORARY bypass of the API
     
     //////////
     // INIT //

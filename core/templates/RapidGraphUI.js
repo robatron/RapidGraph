@@ -44,6 +44,14 @@ function RapidGraphUI()
             $("#plugin_"+idCounter).click( plugin.attr.javascript.start );
     }
     
+    this.getMainPanelSize = function()
+    {
+        return {
+            height: $('#main').height(),
+            width: $('#main').width()
+        }
+    }
+    
     function initPanels()
     // init panels
     {        
