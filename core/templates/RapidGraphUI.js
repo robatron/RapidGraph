@@ -21,27 +21,25 @@ function RapidGraphUI()
     
     this.installPlugin = function( plugin )
     // installs a plugin into the RapidGraph UI
-    {
-        idCounter = 0;
-        
+    {        
         // install plugin into the dropdown menu
         $("#plugins_dropdown").append(
-            "<option id='plugin_"+idCounter+"'>"+plugin.attr.title+"</option>"
+            "<option id='"+plugin.hash+"'>"+plugin.title+"</option>"
         )
         
         // fill in the plugin's HTML in the right panel when plugin is selected
-        $("#plugin_"+idCounter).click( function()
+        $("#"+plugin.hash).click( function()
         {
             $("#plugins_title").html( 
-                "<h2 id='plugin_title'>"+plugin.attr.title+"</h2>" +
-                "<p id='plugin_subtitle'>"+plugin.attr.subtitle+"</p>"
+                "<h2 id='plugin_title'>"+plugin.title+"</h2>" +
+                "<p id='plugin_subtitle'>"+plugin.subtitle+"</p>"
             );
-            $("#right").html( plugin.attr.html );
+            $("#right").html( plugin.html );
         });
         
         // bind the plugin's start function to the plugin selection if defined
-        if( plugin.attr.javascript.start )
-            $("#plugin_"+idCounter).click( plugin.attr.javascript.start );
+        if( plugin.javascript.start )
+            $("#"+plugin.hash).click( plugin.javascript.start );
     }
     
     this.getMainPanelSize = function()

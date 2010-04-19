@@ -7,21 +7,6 @@ function RapidGraphPlugMan( ui )
     // an array of the plugins
     var plugins = []; 
     
-    // the plugin class
-    var plugin = function( attr ){
-        
-        var defaultAttr = {
-            title: null,
-            description: null,
-            javascript: null,
-            html: null
-        }
-        
-        // extend the default attributes with the passed-in attributes and make
-        // it public
-        this.attr = $.extend( defaultAttr, attr );
-    }
-    
     // create a new API object associated with the UI for the plugins to use
     var api = new RapidGraphAPI( ui );
     var graph = ui.getGraph(); // graph object for TEMPORARY bypass of the API
@@ -46,14 +31,13 @@ function RapidGraphPlugMan( ui )
                 {{plugin.javascript}}
                 
                 // push the new plugin onto the stack
-                plugins.push( 
-                    new plugin({
-                        title: {{plugin.hash}}.settings.title,
-                        subtitle: {{plugin.hash}}.settings.title,
-                        javascript: {{plugin.hash}},
-                        html: (<r><![CDATA[{{plugin.ui}}]]></r>).toString()
-                    })
-                );
+                plugins.push({
+                    hash:       "{{plugin.hash}}",
+                    title:      {{plugin.hash}}.settings.title,
+                    subtitle:   {{plugin.hash}}.settings.title,
+                    javascript: {{plugin.hash}},
+                    html:       (<r><![CDATA[{{plugin.ui}}]]></r>).toString()
+                });
                 
             {% endfor %}
         {% endautoescape %}
