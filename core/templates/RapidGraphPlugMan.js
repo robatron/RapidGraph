@@ -19,6 +19,7 @@ function RapidGraphPlugMan( ui )
     {
         getPlugins();
         installPlugins();
+        initPlugins();
     }
 
     function getPlugins()
@@ -34,7 +35,7 @@ function RapidGraphPlugMan( ui )
                 plugins.push({
                     hash:       "{{plugin.hash}}",
                     title:      {{plugin.hash}}.settings.title,
-                    subtitle:   {{plugin.hash}}.settings.title,
+                    subtitle:   {{plugin.hash}}.settings.subtitle,
                     javascript: {{plugin.hash}},
                     html:       (<r><![CDATA[{{plugin.ui}}]]></r>).toString()
                 });
@@ -49,5 +50,13 @@ function RapidGraphPlugMan( ui )
         // install the plugin names in the plugin list
         for( var i=0; i<plugins.length; i++ )
             ui.installPlugin( plugins[i] );
+    }
+    
+    function initPlugins()
+    // initialize all of the installed plugins
+    {
+        for( var i=0; i<plugins.length; i++ )
+            if( plugins[i].javascript.init )
+                plugins[i].javascript.init()
     }
 }
