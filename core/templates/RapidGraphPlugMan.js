@@ -233,27 +233,29 @@ function RapidGraphPluginManager( ui )
                 $("#make_network").click( function(){
                     // Make a small random undirected edge-weighted graph
 
-                    GRAPH_SIZE = 9;
-                    boxX = 600; // Fix to grab dimensions of bounding box
-                    boxY = 200; // ^^
+                    GRAPH_SIZE = 9;     // The number of nodes in the graph
+                    PERTURBATION = 0;   // The number of pixels that nodes can be randomly perturbed
+                    NODE_RADIUS = 25;   // The radius of a node image
+                    boxX = api.ui.getMainPanelSize().width - (2 * NODE_RADIUS);
+                    boxY = api.ui.getMainPanelSize().height - (2 * NODE_RADIUS);
                     
-
                     // Make some nodes
                     var myNodes = new Array();
                     for( i = 0; i < GRAPH_SIZE; ++i ) {
                         myNodes[i] = api.graph.nodes.createNew({
-                            x: ( (boxX / (Math.ceil(Math.sqrt(GRAPH_SIZE)) - 1)) * (i % Math.ceil(Math.sqrt(GRAPH_SIZE))) + Math.random() * 40 + 40 ),
-                            y: ( (boxY / (Math.ceil(Math.sqrt(GRAPH_SIZE)) - 1)) * Math.floor(i / Math.ceil(Math.sqrt(GRAPH_SIZE))) + Math.random() * 40 + 40 ),
+                            x: ( ((boxX - (PERTURBATION)) / (Math.ceil(Math.sqrt(GRAPH_SIZE)) - 1)) * (i % Math.ceil(Math.sqrt(GRAPH_SIZE))) + Math.random() * PERTURBATION + NODE_RADIUS),
+                            y: ( ((boxY - (PERTURBATION)) / (Math.ceil(Math.sqrt(GRAPH_SIZE)) - 1)) * Math.floor(i / Math.ceil(Math.sqrt(GRAPH_SIZE))) + Math.random() * PERTURBATION + NODE_RADIUS),
                             label: null
                         });
                     }
                     
                     // Connect some of the nodes in the graph with
                     // randomly weighted edges
+                    EDGE_PROB = 0.3   // The probability that two nodes within the graph will get connected by an edge
                     var myEdges = new Array();
                     for( i = 0; i < GRAPH_SIZE; ++i ) {
                         for( j = 0; j < GRAPH_SIZE; ++j ) {
-                            if( i < j && Math.random() < 0.3 ) {
+                            if( i < j && Math.random() < EDGE_PROB ) {
                                 api.graph.edges.createNew({
                                     node1: myNodes[i],
                                     node2: myNodes[j],
@@ -275,10 +277,10 @@ function RapidGraphPluginManager( ui )
 
                     // Check that all edge weights are non-negative and
                     // non-null
-                    for( edge in api.graph.edges.get.all() ) {
-                        console.log("blah");
-                        if( edge.weight == null || edge.weight < 0) {
-                            alert("Graph edges must be weighted with positive values");
+                    edges = graph.edges.get.all();
+                    for( i = 0; i < edges.length; ++i ) {
+                        if( edges[i].weight.get() == null || edges[i].weight.get() < 0) {
+                            alert("Graph edges must be weighted with positive values!");
                             return;
                         }
                     }
@@ -286,17 +288,16 @@ function RapidGraphPluginManager( ui )
                     console.log("After edge check");
 
                     // Check to that the user has selected exactly two nodes
-                    console.log( api.graph.nodes.get.selected() );
-                    selectedNodes = api.graph.nodes.get.selected();
+                    selectedNodes = graph.nodes.get.selected();
                     if( selectedNodes.length != 2 ) {
-                        alert("Must select exactly two nodes, not " + count);
+                        alert("Must select exactly two nodes, not " + selectedNodes.length + "!");
                         return;
                     }
 
                     // Initialize some variables
                     var distance = new Array();
                     var previous = new Array();
-                    for( i in api.graph.nodes.length ) {
+                    for( i = 0; i < graph.nodes.length; ++i ) {
                         distance[i] = -1;
                         previous[i] = null;
                     }
