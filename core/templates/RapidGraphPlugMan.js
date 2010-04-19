@@ -37,22 +37,24 @@ function RapidGraphPlugMan( ui )
     }
 
     function getPlugins()
-    // aggregate all of the plugins
+    // aggregate all of the plugins from the plugins directory
     {        
-        {% autoescape off %}
-            {% for plugin in plugins %}
+        {% autoescape off %} // do not escape special HTML characters
+            {% for plugin in plugins %} // for every plugin...
                 
                 // drop in the plugin (encapsulated in a javascript class)
                 {{plugin.javascript}}
                 
-                plugins.push( new plugin({
-                    title: {{plugin.hash}}.settings.title,
-                    subtitle: {{plugin.hash}}.settings.title,
-                    javascript: {{plugin.hash}},
-                    html: (<r><![CDATA[
-                        {{plugin.ui}}
-                    ]]></r>).toString()
-                }));
+                // push the new plugin onto the stack
+                plugins.push( 
+                    new plugin({
+                        title: {{plugin.hash}}.settings.title,
+                        subtitle: {{plugin.hash}}.settings.title,
+                        javascript: {{plugin.hash}},
+                        html: (<r><![CDATA[{{plugin.ui}}]]></r>).toString()
+                    })
+                );
+                
             {% endfor %}
         {% endautoescape %}
     }
