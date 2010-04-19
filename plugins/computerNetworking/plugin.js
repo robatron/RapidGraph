@@ -78,12 +78,19 @@ this.start = function()
         var distance = new Array();
         var previous = new Array();
         for( i = 0; i < graph.nodes.length; ++i ) {
-            distance[i] = -1;
             previous[i] = null;
+            if( selectedNodes[0] == graph.nodes[i] ) {
+                startIndex = i;
+                distance[i] = 0;
+            }
+            else {
+                distance[i] = -1;
+            }
+            if( selectedNodes[1] == graph.nodes[i] ) {
+                endIndex = i;
+            }
         }
-        start = selectedNodes[0];
-        end = selectedNoded[1];
-        
+
         /*
         function Dijkstra(Graph, source):
             for each vertex v in Graph:           // Initializations
