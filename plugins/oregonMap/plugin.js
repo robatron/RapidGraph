@@ -10,21 +10,21 @@ this.settings =
 
 this.init = function()
 {
-    alert({{plugin.hash}}+" is initializing!");
+    alert("::plugin:: is initializing!");
 }
 
 this.start = function()
 {
-    alert({{plugin.hash}}+" is starting!");
+    alert("::plugin:: is starting!");
     
-    $("#oregonmap_test").click( function(){ 
+    $("#oregonmap_test").click( function(){
         createSimpleOregonMap();
     });
 }
 
 this.stop = function()
 {
-    alert({{plugin.hash}}+" is stopping!");
+    alert("::plugin:: is stopping!");
 }
 
 function createSimpleOregonMap()

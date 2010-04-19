@@ -16,7 +16,7 @@ function RapidGraph()
         ui.init();
 
         // create and initialize the plugin manager assoc with the API
-        plugman = new RapidGraphPluginManager( ui );
+        plugman = new RapidGraphPlugMan( ui );
         plugman.init(); // initialize the plugin manager
     }
     
