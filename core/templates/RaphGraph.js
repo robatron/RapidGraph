@@ -1,22 +1,5 @@
 // RaphGraph - A general graph (as in graph theory) library for Raphael
 
-/* Sketchpad. Please ignore the following. Kthx.
-
-remove()
-select()
-deselect()
-
-nodes.createNew()
-nodes.get.all()
-nodes.get.selected()
-nodes.get.unselected()
-
-edges.createNew()
-edges.get.all()
-...
-
-*/
-
 function RaphGraph( surface )
 {  
     ////////////////
