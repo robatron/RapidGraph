@@ -34,8 +34,6 @@ function RapidGraphAPI( ui )
         deselect: function(elems){ return graph.deselect(elems) },
         // deselect the specified node, nodes, edge, or edges
         
-        deselect:,
-        
         nodes: 
         // functions related to the nodes set
         {
@@ -59,7 +57,7 @@ function RapidGraphAPI( ui )
         edges:
         // functions related to the edges set
         {
-            createNew: function(attr){ return graph.edges.createNew( attr ) };
+            createNew: function(attr){ return graph.edges.createNew( attr ) },
             // create a new edge
             
             get:
