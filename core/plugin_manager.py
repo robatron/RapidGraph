@@ -11,10 +11,22 @@ def get_plugins():
     for plugin in pluginList:
     
         try:
+            # read in the files
             ui = open( pluginDir + "/"+ plugin + "/ui.html", 'r' ).read()
             javascript = open( pluginDir + "/"+ plugin + "/plugin.js", 'r' ).read()
             
+            plugin = "plugin_" + plugin
+            
+            # process the javascript by adding a class wrapper
+            javascript = "function " + plugin + "(){ " + javascript + \
+                "} " + plugin + " = new " + plugin + "();"
+            
+            # tag replacements
+            javascript = javascript.replace("::plugin::", plugin)
+            ui = ui.replace("::plugin::", plugin)
+            
             plugins.append({
+                'hash': plugin,
                 'ui': ui,
                 'javascript': javascript
             })

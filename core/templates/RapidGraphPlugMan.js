@@ -39,10 +39,24 @@ function RapidGraphPlugMan( ui )
     function getPlugins()
     // aggregate all of the plugins
     {
-        plugins.push( simpleOregonMapPlugin );
-        plugins.push( computerNetworking );
+        //plugins.push( computerNetworking );
         
-
+        {% autoescape off %}
+            {% for plugin in plugins %}
+                
+                // drop in the plugin (encapsulated in a javascript class)
+                {{plugin.javascript}}
+                
+                plugins.push( new plugin({
+                    title: {{plugin.hash}}.settings.title,
+                    subtitle: {{plugin.hash}}.settings.title,
+                    javascript: {{plugin.hash}},
+                    html: (<r><![CDATA[
+                        {{plugin.ui}}
+                    ]]></r>).toString()
+                }));
+            {% endfor %}
+        {% endautoescape %}
     }
     
     function installPlugins()
