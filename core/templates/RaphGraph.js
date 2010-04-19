@@ -634,7 +634,7 @@ function RaphGraph( surface )
             });
         }
 
-        // set up edit events for weight and label editing
+        // set up edit events for weight and label editing        
         $(obj.weight.node).bind('dblclick', {node:this}, function(e)
         {
             var entry = 
