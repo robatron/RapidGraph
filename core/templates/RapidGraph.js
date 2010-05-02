@@ -15,11 +15,12 @@ function RapidGraph()
         // initialize the UI
         ui.init();
 
-        // create and initialize the plugin manager assoc with the API
+        // create and initialize the plugin manager assoc with the UI
         plugman = new RapidGraphPlugMan( ui );
         plugman.init(); // initialize the plugin manager
         
-        $(".editable").editInPlace({
+        // experimenting with the editInPlace module
+        $(".editable_test").editInPlace({
             callback:function(unused, enteredText){return enteredText}
         });
     }
