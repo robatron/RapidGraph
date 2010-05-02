@@ -1,4 +1,22 @@
-// RaphGraph - A general graph (as in graph theory) library for Raphael
+/* ~~~~~~~~~~~
+ *  RaphGraph  
+ * ~~~~~~~~~~~
+ * 
+ * Description:
+ * 
+ *     A general graph (as in graph theory) library for Raphael.
+ * 
+ * Usage:
+ * 
+ *     Declare a new RaphGraph object and pass it a Raphael surface, i.e.
+ * 
+ *     var graph = new RaphGraph( Raphael() );
+ * 
+ * Dependancies:
+ * 
+ *     - jQuery v1.4.2 or later
+ *     - Raphael v1.3.1 or later
+ */ 
 
 function RaphGraph( surface )
 {  
@@ -689,6 +707,7 @@ function RaphGraph( surface )
         var defaultAttr = {
             node1:      null,
             node2:      null,
+            directed:   false,
             weight:     null,
             weightVis:  true,
             label:      "Edge " + id,
@@ -910,35 +929,40 @@ function RaphGraph( surface )
         );
 
         // create the label
-        objects[3] = surface.text( 0, 0, attr.label ).attr({
+        objects[4] = surface.text( 0, 0, attr.label ).attr({
             fill:"white",
             'font-size': 12
         }).toBack();
         
         // create the weight
-        objects[2] = surface.text( 0, 0, attr.weight).attr({
+        objects[3] = surface.text( 0, 0, attr.weight).attr({
             fill:"white",
             'font-size': 12
         }).toBack();
         
         // create the foreground path
-        objects[1] = surface.path().attr({
+        objects[2] = surface.path().attr({
             stroke: attr.line,
             'stroke-width': 2
         }).toBack(); // move to back so they're behind the nodes
         
         // create the background path
-        objects[0] = surface.path().attr({
+        objects[1] = surface.path().attr({
             stroke: attr.bg,
             'stroke-width': 4
         }).toBack();
         
+        // create the arrow
+        // objects[0] = surface.triangle... TO DO! LOOK UP!!
+        objects[0] = surface.path().toBack();
+        
         // set up object aliases
         obj = {
-            bg:     objects[0], // the background line object
-            line:   objects[1], // the foreground line object
-            weight: objects[2], // the weight object
-            label:  objects[3]  // the label object
+            arrow:  objects[0], // the arrow
+            bg:     objects[1], // the background line object
+            line:   objects[2], // the foreground line object
+            weight: objects[3], // the weight object
+            label:  objects[4]  // the label object
         };
         
         // set up edit events for weight and label editing
