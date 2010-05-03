@@ -12,6 +12,7 @@ function RapidGraphUI()
         
         initPanels();
         
+        /*
         // DEBUG TESTING STUFF
         graph.edges.createNew({
             node1: graph.nodes.createNew({
@@ -27,6 +28,7 @@ function RapidGraphUI()
             directed: true,
             label: null
         });
+        */
     }
 
     this.getGraph = function()

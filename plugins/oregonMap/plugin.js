@@ -11,6 +11,8 @@ this.settings =
 this.init = function()
 {
     console.log("::plugin:: is initializing!");
+    
+    createSimpleOregonMap();
 }
 
 this.start = function()
@@ -80,7 +82,7 @@ function createSimpleOregonMap()
         node1: seaside,
         node2: portland,
         weight: 79,
-        label: null
+        label: "something"
     });
     api.graph.edges.createNew({
         node1: portland,

@@ -839,7 +839,7 @@ function RaphGraph( surface )
         var defaultAttr = {
             node1:      null,
             node2:      null,
-            directed:   false,
+            directed:   true,
             weight:     null,
             weightVis:  true,
             label:      "Edge " + id,
@@ -873,6 +873,7 @@ function RaphGraph( surface )
                 prevPos.node2.x != bb2.x ||
                 prevPos.node2.y != bb2.y
             ){                
+                // create a path from node 1 to node 2
                 var path = createEdgePath( bb1, bb2, attr.directed );
                 
                 // update the path
@@ -882,9 +883,15 @@ function RaphGraph( surface )
                 // update the weight and label
                 var bb = obj.bg.getBBox();
                 obj.weight.attr("x", bb.x + bb.width/2);
-                obj.weight.attr("y", bb.y + bb.height/2 + 15);
                 obj.label.attr("x", bb.x + bb.width/2);
-                obj.label.attr("y", bb.y + bb.height/2 - 15);
+                
+                var offset = 0;
+                if( attr.weight && attr.weight != "" && attr.weightVis && 
+                    attr.label && attr.label != "" && attr.labelVis )
+                    offset = 7;
+                    
+                obj.weight.attr("y", bb.y + bb.height/2 + offset);
+                obj.label.attr("y", bb.y + bb.height/2 - offset);
                 
                 // save the node positions for the next update
                 prevPos.node1.x = bb1.x;
