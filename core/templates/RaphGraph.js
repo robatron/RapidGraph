@@ -683,21 +683,26 @@ function RaphGraph( surface )
     // create an SVG path string for an edge from one bounding box to another.
     // If directed is true, then it also draws an arrow.
     {
+        // top, bottom, left, and right sides of each bounding box
         var p = [
-            {x: bb1.x + bb1.width / 2,  y: bb1.y - 1},
-            {x: bb1.x + bb1.width / 2,  y: bb1.y + bb1.height + 1},
-            {x: bb1.x - 1,              y: bb1.y + bb1.height / 2},
-            {x: bb1.x + bb1.width + 1,  y: bb1.y + bb1.height / 2},
+        
+            // points for bounding box 1
+            {x: bb1.x + bb1.width / 2,  y: bb1.y - 1},              // top
+            {x: bb1.x + bb1.width / 2,  y: bb1.y + bb1.height + 1}, // bottom
+            {x: bb1.x - 1,              y: bb1.y + bb1.height / 2}, // left
+            {x: bb1.x + bb1.width + 1,  y: bb1.y + bb1.height / 2}, // right
 
-            {x: bb2.x + bb2.width / 2,  y: bb2.y - 1},
-            {x: bb2.x + bb2.width / 2,  y: bb2.y + bb2.height + 1},
-            {x: bb2.x - 1,              y: bb2.y + bb2.height / 2},
-            {x: bb2.x + bb2.width + 1,  y: bb2.y + bb2.height / 2}
+            // points for bounding box 2
+            {x: bb2.x + bb2.width / 2,  y: bb2.y - 1},              // top
+            {x: bb2.x + bb2.width / 2,  y: bb2.y + bb2.height + 1}, // bottom
+            {x: bb2.x - 1,              y: bb2.y + bb2.height / 2}, // left
+            {x: bb2.x + bb2.width + 1,  y: bb2.y + bb2.height / 2}  // right
         ];
         
+        // figure out which side (top, bottom, left or right) of each bounding 
+        // box to attach to
         var d = {};
         var dis = [];
-        
         for( var i = 0; i < 4; i++ )
             for( var j = 4; j < 8; j++ ){
                 
@@ -726,10 +731,24 @@ function RaphGraph( surface )
         var y4 = p[res[1]].y;
         var dx = Math.max(Math.abs(x1 - x4) / 2, 10);
         var dy = Math.max(Math.abs(y1 - y4) / 2, 10);
-        var x2 = [x1, x1, x1-dx, x1+ dx][res[0]].toFixed(3);
-        var y2 = [y1 - dy, y1 + dy, y1, y1][res[0]].toFixed(3);
+        var x2 = [x1, x1, x1-dx, x1+dx][res[0]].toFixed(3);
+        var y2 = [y1-dy, y1+dy, y1, y1][res[0]].toFixed(3);
         var x3 = [0, 0, 0, 0, x4, x4, x4-dx, x4+dx][res[1]].toFixed(3);
         var y3 = [0, 0, 0, 0, y1+dy, y1-dy, y4, y4][res[1]].toFixed(3);
+        
+        function attachedSide()
+        // Helper function to figure out which side of the destination node 
+        // the edge is attached to (top, bottom, left, or right)
+        {
+            if( p[4].x == x4.toFixed(3) && p[4].y == y4.toFixed(3) ) 
+                return "top";
+            else if( p[5].x == x4.toFixed(3) && p[5].y == y4.toFixed(3) ) 
+                return "bottom";
+            else if( p[6].x == x4.toFixed(3) && p[6].y == y4.toFixed(3) ) 
+                return "left";
+            else if( p[7].x == x4.toFixed(3) && p[7].y == y4.toFixed(3) ) 
+                return "right";
+        }
         
         // create the edge path
         var path = [
@@ -737,34 +756,57 @@ function RaphGraph( surface )
             x1.toFixed(3), y1.toFixed(3), 
             "C", 
             x2, y2, 
-            x3, y3, 
-            x4.toFixed(3), y4.toFixed(3)
+            x3, y3
         ].join(",");
         
-        // if this edge is directed, also draw the triangle
-        if( directed ){
-            var size = 5;
-            var p0 = { 
-                x:x4.toFixed(3), 
-                y:y4.toFixed(3)
-            };
-            var p1 = { 
-                x:p0.x-size,
-                y:p0.y-size
-            };
-            var p2 = { 
-                x:p1.x,
-                y:p1.y+size*2
-            };
+        // If the edge is not directed. Close up the edge normally.
+        if( !directed )
+            path += "," + x4.toFixed(3) + "," + y4.toFixed(3);
+            
+        // Otherwise, the edge is directed, so also draw the triangle
+        else { 
+            
+            var size = 5; // triangle leg size
+            
+            // adjust point 1 and 2 of the triangle depending on which side of
+            // the destination node the edge is attached to
+            var origX = parseInt( x4.toFixed(3) );
+            var origY = parseInt( y4.toFixed(3) );
+            var p0, p1, p2, p3, p4;
+            if( attachedSide() == "top" ){
+                p0 = { x:origX, y:origY-size-2 };
+                p1 = { x:size,  y:0 };
+                p2 = { x:-size, y:size };
+                p3 = { x:-size, y:-size};
+                p4 = { x:size,  y:0};
+            } else if( attachedSide() == "bottom" ){
+                p0 = { x:origX, y:origY+size+2 };
+                p1 = { x:-size, y:0 };
+                p2 = { x:size,  y:-size };
+                p3 = { x:size,  y:size};
+                p4 = { x:-size, y:0};
+            } else if( attachedSide() == "left" ){
+                p0 = { x:origX-size-2, y:origY };
+                p1 = { x:0,     y:-size };
+                p2 = { x:+size, y:+size };
+                p3 = { x:-size, y:+size};
+                p4 = { x:0,     y:-size};
+            } else if( attachedSide() == "right" ){
+                p0 = { x:origX+size+2, y:origY };
+                p1 = { x:0,     y:+size };
+                p2 = { x:-size, y:-size };
+                p3 = { x:+size, y:-size};
+                p4 = { x:0,     y:+size};
+            }
             
             path += "," + [
-                "L",
+                p0.x, p0.y,
+                "l",
                 p1.x, p1.y,
                 p2.x, p2.y,
-                p0.x, p0.y
+                p3.x, p3.y,
+                p4.x, p4.y,
             ].join(",");
-            
-            console.log( p2.x, p2.y );
         }
         
         return path;
@@ -798,7 +840,7 @@ function RaphGraph( surface )
         var defaultAttr = {
             node1:      null,
             node2:      null,
-            directed:   true,
+            directed:   false,
             weight:     null,
             weightVis:  true,
             label:      "Edge " + id,
@@ -834,28 +876,9 @@ function RaphGraph( surface )
             ){                
                 var path = createEdgePath( bb1, bb2, attr.directed );
                 
-                /*
-                // create the triangle path
-                var trianglePath = [
-                    "M",
-                    x4.toFixed(3), y4.toFixed(3),
-                    "L",
-                    x4.toFixed(3)-10, y4.toFixed(3)-10,
-                    x4.toFixed(3)-10, y4.toFixed(3)+20,
-                    x4.toFixed(3)+10, y4.toFixed(3)-10
-                ].join(",");
-                */
-                
                 // update the path
                 obj.bg.attr({ path: path });
                 obj.line.attr({ path: path });
-                
-                /*
-                // update the direction arrow
-                if( attr.directed ){
-                    obj.arrow.attr({ path: trianglePath });
-                }
-                */
                         
                 // update the weight and label
                 var bb = obj.bg.getBBox();
@@ -981,43 +1004,35 @@ function RaphGraph( surface )
         );
 
         // create the label
-        objects[4] = surface.text( 0, 0, attr.label ).attr({
+        objects[3] = surface.text( 0, 0, attr.label ).attr({
             fill:"white",
             'font-size': 12
         }).toBack();
         
         // create the weight
-        objects[3] = surface.text( 0, 0 ).attr({
+        objects[2] = surface.text( 0, 0 ).attr({
             fill:"white",
             'font-size': 12
         }).toBack();
         
         // create the foreground path
-        objects[2] = surface.path().attr({
+        objects[1] = surface.path().attr({
             stroke: attr.line,
             'stroke-width': 2
         }).toBack(); // move to back so they're behind the nodes
         
         // create the background path
-        objects[1] = surface.path().attr({
+        objects[0] = surface.path().attr({
             stroke: attr.bg,
             'stroke-width': 4
         }).toBack();
         
-        // create the arrow
-        // objects[0] = surface.triangle... TO DO! LOOK UP!!
-        objects[0] = surface.path().attr({
-            stroke: attr.bg,
-            'stroke-width':4
-        }).toBack();
-        
         // set up object aliases
         obj = {
-            arrow:  objects[0], // the arrow
-            bg:     objects[1], // the background line object
-            line:   objects[2], // the foreground line object
-            weight: objects[3], // the weight object
-            label:  objects[4]  // the label object
+            bg:     objects[0], // the background line object
+            line:   objects[1], // the foreground line object
+            weight: objects[2], // the weight object
+            label:  objects[3]  // the label object
         };
         
         // handle initial settings
