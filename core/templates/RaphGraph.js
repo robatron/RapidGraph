@@ -815,8 +815,8 @@ function RaphGraph( surface )
     {        
         var consoleID = "graph.edge: ";
         
-        var id = Math.floor(Math.random()*10);  // the edge's unique ID
-        var elementType = "edge";               // the type of this element
+        var id = idCounter++;     // the edge's unique ID
+        var elementType = "edge"; // the type of this element
         
         var currentEdge = this; // capture this edge
         var objects = [];       // this edge's Raphael objects
@@ -1053,11 +1053,36 @@ function RaphGraph( surface )
             
             if( entry ) e.data.node.weight.set( entry );
         });
+        
+        /*
         $(obj.label.node).bind('dblclick', {node:this}, function(e)
         {
             var entry = prompt("Enter a new label:");
             if( entry ) e.data.node.label.set( entry );
         });
+        */
+        
+        $(obj.label.node).qtip({
+            content: "<input>"+attr.label+"</input>",
+            position: {
+               target: 'mouse',
+               adjust: { mouse: false }
+            },
+            show: { 
+                delay: 0,
+                when: { event: 'dblclick' } 
+            },
+            hide: 'unfocus'
+        });
+        
+        console.log( $(".editable_test") );
+        console.log( $("#edge_"+id) );
+        
+        /*
+        $("#edge_"+id).editInPlace({
+            callback:function(unused, enteredText){return enteredText}
+        });
+        */
         
         // set the mousedown for this new edge
         for( var i = 0; i<objects.length; i++ )

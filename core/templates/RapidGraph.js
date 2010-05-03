@@ -19,7 +19,7 @@ function RapidGraph()
         plugman = new RapidGraphPlugMan( ui );
         plugman.init(); // initialize the plugin manager
         
-        // experimenting with the editInPlace module
+        // DEBUG EXPERIMENTS
         $(".editable_test").editInPlace({
             callback:function(unused, enteredText){return enteredText}
         });
