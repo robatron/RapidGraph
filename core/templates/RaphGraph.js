@@ -764,8 +764,7 @@ function RaphGraph( surface )
             path += "," + x4.toFixed(3) + "," + y4.toFixed(3);
             
         // Otherwise, the edge is directed, so also draw the triangle
-        else { 
-            
+        else {
             var size = 5; // triangle leg size
             
             // adjust point 1 and 2 of the triangle depending on which side of
