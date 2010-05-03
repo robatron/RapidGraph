@@ -11,6 +11,18 @@ function RapidGraphUI()
         graph = new RaphGraph( surface );
         
         initPanels();
+        
+        // DEBUG TESTING STUFF
+        graph.edges.createNew({
+            node1: graph.nodes.createNew({
+                x: 100,
+                y: 100
+            }),
+            node2: graph.nodes.createNew({
+                x: 200,
+                y: 100
+            })
+        });
     }
 
     this.getGraph = function()

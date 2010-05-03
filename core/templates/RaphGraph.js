@@ -679,6 +679,97 @@ function RaphGraph( surface )
     // EDGE OBJECT DEFINITION //
     ////////////////////////////
     
+    function createEdgePath( bb1, bb2, directed )
+    // create an SVG path string for an edge from one bounding box to another.
+    // If directed is true, then it also draws an arrow.
+    {
+        var p = [
+            {x: bb1.x + bb1.width / 2,  y: bb1.y - 1},
+            {x: bb1.x + bb1.width / 2,  y: bb1.y + bb1.height + 1},
+            {x: bb1.x - 1,              y: bb1.y + bb1.height / 2},
+            {x: bb1.x + bb1.width + 1,  y: bb1.y + bb1.height / 2},
+
+            {x: bb2.x + bb2.width / 2,  y: bb2.y - 1},
+            {x: bb2.x + bb2.width / 2,  y: bb2.y + bb2.height + 1},
+            {x: bb2.x - 1,              y: bb2.y + bb2.height / 2},
+            {x: bb2.x + bb2.width + 1,  y: bb2.y + bb2.height / 2}
+        ];
+        
+        var d = {};
+        var dis = [];
+        
+        for( var i = 0; i < 4; i++ )
+            for( var j = 4; j < 8; j++ ){
+                
+                var dx = Math.abs(p[i].x - p[j].x);
+                var dy = Math.abs(p[i].y - p[j].y);
+                
+                if( (i == j - 4) 
+                    || (((i != 3 && j != 6) || p[i].x < p[j].x) 
+                    && ((i != 2 && j != 7) || p[i].x > p[j].x) 
+                    && ((i != 0 && j != 5) || p[i].y > p[j].y) 
+                    && ((i != 1 && j != 4) || p[i].y < p[j].y))){
+                        
+                    dis.push(dx + dy);
+                    d[dis[dis.length - 1]] = [i, j];
+                }
+            }
+        
+        if (dis.length == 0)
+            var res = [0, 4];
+        else
+            var res = d[Math.min.apply(Math, dis)];
+        
+        var x1 = p[res[0]].x;
+        var y1 = p[res[0]].y;
+        var x4 = p[res[1]].x;
+        var y4 = p[res[1]].y;
+        var dx = Math.max(Math.abs(x1 - x4) / 2, 10);
+        var dy = Math.max(Math.abs(y1 - y4) / 2, 10);
+        var x2 = [x1, x1, x1-dx, x1+ dx][res[0]].toFixed(3);
+        var y2 = [y1 - dy, y1 + dy, y1, y1][res[0]].toFixed(3);
+        var x3 = [0, 0, 0, 0, x4, x4, x4-dx, x4+dx][res[1]].toFixed(3);
+        var y3 = [0, 0, 0, 0, y1+dy, y1-dy, y4, y4][res[1]].toFixed(3);
+        
+        // create the edge path
+        var path = [
+            "M", 
+            x1.toFixed(3), y1.toFixed(3), 
+            "C", 
+            x2, y2, 
+            x3, y3, 
+            x4.toFixed(3), y4.toFixed(3)
+        ].join(",");
+        
+        // if this edge is directed, also draw the triangle
+        if( directed ){
+            var size = 5;
+            var p0 = { 
+                x:x4.toFixed(3), 
+                y:y4.toFixed(3)
+            };
+            var p1 = { 
+                x:p0.x-size,
+                y:p0.y-size
+            };
+            var p2 = { 
+                x:p1.x,
+                y:p1.y+size*2
+            };
+            
+            path += "," + [
+                "L",
+                p1.x, p1.y,
+                p2.x, p2.y,
+                p0.x, p0.y
+            ].join(",");
+            
+            console.log( p2.x, p2.y );
+        }
+        
+        return path;
+    }
+    
     function edge( attr )
     {        
         var consoleID = "graph.edge: ";
@@ -707,7 +798,7 @@ function RaphGraph( surface )
         var defaultAttr = {
             node1:      null,
             node2:      null,
-            directed:   false,
+            directed:   true,
             weight:     null,
             weightVis:  true,
             label:      "Edge " + id,
@@ -740,70 +831,31 @@ function RaphGraph( surface )
                 prevPos.node1.y != bb1.y ||
                 prevPos.node2.x != bb2.x ||
                 prevPos.node2.y != bb2.y
-            ){
-                var p = [
-                    {x: bb1.x + bb1.width / 2,  y: bb1.y - 1},
-                    {x: bb1.x + bb1.width / 2,  y: bb1.y + bb1.height + 1},
-                    {x: bb1.x - 1,              y: bb1.y + bb1.height / 2},
-                    {x: bb1.x + bb1.width + 1,  y: bb1.y + bb1.height / 2},
-
-                    {x: bb2.x + bb2.width / 2,  y: bb2.y - 1},
-                    {x: bb2.x + bb2.width / 2,  y: bb2.y + bb2.height + 1},
-                    {x: bb2.x - 1,              y: bb2.y + bb2.height / 2},
-                    {x: bb2.x + bb2.width + 1,  y: bb2.y + bb2.height / 2}
-                ];
+            ){                
+                var path = createEdgePath( bb1, bb2, attr.directed );
                 
-                var d = {};
-                var dis = [];
-                
-                for( var i = 0; i < 4; i++ )
-                    for( var j = 4; j < 8; j++ ){
-                        
-                        var dx = Math.abs(p[i].x - p[j].x);
-                        var dy = Math.abs(p[i].y - p[j].y);
-                        
-                        if( (i == j - 4) 
-                            || (((i != 3 && j != 6) || p[i].x < p[j].x) 
-                            && ((i != 2 && j != 7) || p[i].x > p[j].x) 
-                            && ((i != 0 && j != 5) || p[i].y > p[j].y) 
-                            && ((i != 1 && j != 4) || p[i].y < p[j].y))){
-                                
-                            dis.push(dx + dy);
-                            d[dis[dis.length - 1]] = [i, j];
-                        }
-                    }
-                
-                if (dis.length == 0)
-                    var res = [0, 4];
-                else
-                    var res = d[Math.min.apply(Math, dis)];
-                
-                var x1 = p[res[0]].x;
-                var y1 = p[res[0]].y;
-                var x4 = p[res[1]].x;
-                var y4 = p[res[1]].y;
-                var dx = Math.max(Math.abs(x1 - x4) / 2, 10);
-                var dy = Math.max(Math.abs(y1 - y4) / 2, 10);
-                var x2 = [x1, x1, x1-dx, x1+ dx][res[0]].toFixed(3);
-                var y2 = [y1 - dy, y1 + dy, y1, y1][res[0]].toFixed(3);
-                var x3 = [0, 0, 0, 0, x4, x4, x4-dx, x4+dx][res[1]].toFixed(3);
-                var y3 = [0, 0, 0, 0, y1+dy, y1-dy, y4, y4][res[1]].toFixed(3);
-                
-                var path = [
-                    "M", x1.toFixed(3), 
-                    y1.toFixed(3), 
-                    "C", 
-                    x2, 
-                    y2, 
-                    x3, 
-                    y3, 
-                    x4.toFixed(3), 
-                    y4.toFixed(3)
+                /*
+                // create the triangle path
+                var trianglePath = [
+                    "M",
+                    x4.toFixed(3), y4.toFixed(3),
+                    "L",
+                    x4.toFixed(3)-10, y4.toFixed(3)-10,
+                    x4.toFixed(3)-10, y4.toFixed(3)+20,
+                    x4.toFixed(3)+10, y4.toFixed(3)-10
                 ].join(",");
+                */
                 
                 // update the path
                 obj.bg.attr({ path: path });
                 obj.line.attr({ path: path });
+                
+                /*
+                // update the direction arrow
+                if( attr.directed ){
+                    obj.arrow.attr({ path: trianglePath });
+                }
+                */
                         
                 // update the weight and label
                 var bb = obj.bg.getBBox();
@@ -935,7 +987,7 @@ function RaphGraph( surface )
         }).toBack();
         
         // create the weight
-        objects[3] = surface.text( 0, 0, attr.weight).attr({
+        objects[3] = surface.text( 0, 0 ).attr({
             fill:"white",
             'font-size': 12
         }).toBack();
@@ -954,7 +1006,10 @@ function RaphGraph( surface )
         
         // create the arrow
         // objects[0] = surface.triangle... TO DO! LOOK UP!!
-        objects[0] = surface.path().toBack();
+        objects[0] = surface.path().attr({
+            stroke: attr.bg,
+            'stroke-width':4
+        }).toBack();
         
         // set up object aliases
         obj = {
@@ -964,6 +1019,10 @@ function RaphGraph( surface )
             weight: objects[3], // the weight object
             label:  objects[4]  // the label object
         };
+        
+        // handle initial settings
+        if( attr.weight ) this.weight.set( attr.weight );
+        //if( attr.weightVis ) this.weight.show();
         
         // set up edit events for weight and label editing
         $(obj.weight.node).bind('dblclick', {node:this}, function(e)
