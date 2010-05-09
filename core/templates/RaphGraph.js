@@ -822,17 +822,20 @@ function RaphGraph( surface )
     function edge( attr )
     {        
         var consoleID = "graph.edge: ";
+
+        var id = idCounter++;       // the edge's unique ID
         
-        var id = idCounter++;     // the edge's unique ID
-        var elementType = "edge"; // the type of this element
+        var elementType = "edge";   // the type of this element\
         
-        var currentEdge = this; // capture this edge
-        var objects = [];       // this edge's Raphael objects
-        var obj = {
-            bg: null,           // the main object
+        var thisEdge = this;        // capture this edge
+        
+        this.label = null;          // this edge's label
+        
+        // Raphael object data
+        var objects = [];           // the objects
+        var obj = {                 // name aliases
+            bg: null,           
             line: null,
-            weight: null,       // the weight object
-            label: null         // the label object
         };
         
         // structure to hold prevous node positions for update testing
@@ -849,9 +852,7 @@ function RaphGraph( surface )
             node2:      null,
             directed:   true,
             weight:     null,
-            weightVis:  true,
-            label:      "Edge " + id,
-            labelVis:   true,
+            text:      "Edge " + id,
             selected:   false,
             line:       "black",
             bg:         "white",
@@ -889,17 +890,7 @@ function RaphGraph( surface )
                 obj.line.attr({ path: path });
                         
                 // update the weight and label
-                var bb = obj.bg.getBBox();
-                obj.weight.attr("x", bb.x + bb.width/2);
-                obj.label.attr("x", bb.x + bb.width/2);
-                
-                var offset = 0;
-                if( attr.weight && attr.weight != "" && attr.weightVis && 
-                    attr.label && attr.label != "" && attr.labelVis )
-                    offset = 7;
-                    
-                obj.weight.attr("y", bb.y + bb.height/2 + offset);
-                obj.label.attr("y", bb.y + bb.height/2 - offset);
+                this.label.update();
                 
                 // save the node positions for the next update
                 prevPos.node1.x = bb1.x;
@@ -914,7 +905,8 @@ function RaphGraph( surface )
         this.remove = function()
         // removes this edge from the Raphael surface
         {
-            for( var i = 0; i<objects.length; i++ ) objects[i].remove();
+            for( var i = 0; i<objects.length; i++ ) 
+                objects[i].remove();
         }
         
         // GETTERS -------------------------------------------------------------
@@ -925,6 +917,9 @@ function RaphGraph( surface )
         this.getType = function(){ return elementType }
         // returns the element's type
         
+        this.getBBox = function(){ return obj.bg.getBBox() }
+        // returns the element's bounding box
+        
         this.attachedTo = function( node )
         // returns true if the specified node is attached to this edge, and
         // false if it is not.
@@ -932,39 +927,6 @@ function RaphGraph( surface )
             if( attr.node1 == node || attr.node2 == node )
                 return true;
             return false
-        }
-        
-        // WEIGHTS & LABELS ----------------------------------------------------
-        
-        this.weight = 
-        {
-            get: function(){ return attr.weight },
-            // return the weight
-            
-            set: function( weight )
-            // set the weight
-            {   
-                attr.weight = weight;
-                obj.weight.attr({text:weight});
-            },
-            
-            toggle: function()
-            // toggle the weight's visibility
-            {
-                alert( "I. O. U. one function definition. Love, Rob." );
-            },
-            
-            show: function()
-            // show the weight
-            {
-                alert( "I. O. U. one function definition. Love, Rob." );
-            },
-            
-            hide: function()
-            // hide the weight
-            {
-                alert( "I. O. U. one function definition. Love, Rob." );
-            }
         }
         
         // SELECTION -----------------------------------------------------------
@@ -989,8 +951,7 @@ function RaphGraph( surface )
             obj.bg.attr( "stroke", attr.selBg );
             obj.line.attr( "stroke", attr.selLine );
             
-            obj.weight.attr( "fill", attr.selBg );
-            obj.label.attr( "fill", attr.selBg );
+            this.label.select();
             
             console.log(consoleID+"Edge %d selected", this.getID());
         }
@@ -1003,8 +964,7 @@ function RaphGraph( surface )
             obj.bg.attr( "stroke", attr.bg );
             obj.line.attr( "stroke", attr.line );
             
-            obj.weight.attr( "fill", attr.bg );
-            obj.label.attr( "fill", attr.bg );
+            this.label.deselect();
             
             console.log(consoleID+"Edge %d deselected", this.getID());
         }
@@ -1016,18 +976,17 @@ function RaphGraph( surface )
             consoleID, this.getID(), attr.node1.getID(), 
             attr.node2.getID()
         );
-
-        // create the label
-        objects[3] = surface.text( 0, 0, attr.label ).attr({
-            fill:"white",
-            'font-size': 12
-        }).toBack();
         
-        // create the weight
-        objects[2] = surface.text( 0, 0 ).attr({
-            fill:"white",
-            'font-size': 12
-        }).toBack();
+        // create a new label object
+        this.label = new elementLabel({
+            element:    this,
+            weight:     attr.weight,
+            text:       attr.text,
+            fgCol:      attr.bg,
+            bgCol:      attr.line,
+            fgColSel:   attr.selBg,
+            bgColSel:   attr.selLine
+        });
         
         // create the foreground path
         objects[1] = surface.path().attr({
@@ -1045,45 +1004,7 @@ function RaphGraph( surface )
         obj = {
             bg:     objects[0], // the background line object
             line:   objects[1], // the foreground line object
-            weight: objects[2], // the weight object
-            label:  objects[3]  // the label object
         };
-        
-        $(document.body).append(
-            "<div id='edge_"+id+"_labels'>"+
-            "<table>"+
-            "    <tr>"+
-            "        <td>Label:</td>"+
-            "        <td><input id='edge_"+id+"_labels_text'></td>"+
-            "    </tr>"+
-            "    <tr>"+
-            "        <td>Weight:</td>"+
-            "        <td><input id='edge_"+id+"_labels_weight'></td>"+
-            "    </tr>"+
-            "</table>"+
-            "</div>"
-        );
-        
-        $("#edge_"+id+"_labels").data('assocEdge', this );
-        $("#edge_"+id+"_labels").dialog({
-            title: "Edit element label and weight",
-            autoOpen: false,
-            draggable: true,
-            resizable: false,
-            buttons:{
-                "OK": function()
-                {
-                    $("#edge_"+id+"_labels").data('assocEdge').weight.set( 
-                        $("#edge_"+id+"_labels_weight").val() 
-                    );
-                    $(this).dialog("close");
-                }
-            }
-        });
-        
-        // handle initial settings
-        if( attr.weight && attr.weight != "" ) 
-            this.weight.set( attr.weight );
         
         // set the interaction events for this new edge
         for( var i = 0; i<objects.length; i++ ){
@@ -1091,16 +1012,13 @@ function RaphGraph( surface )
             // when the edge is double clicked, open the label editing dialog
             $(objects[i].node).bind('dblclick', {edge:this}, function(e)
             {
-                $("#edge_"+e.data.edge.getID()+"_labels").dialog(
-                    "option", "position", [mousePos.x, mousePos.y]
-                );
-                $("#edge_"+e.data.edge.getID()+"_labels").dialog("open");
+                e.data.edge.label.openEditDialog();
             });
             
             objects[i].mousedown( function(e)
             {
                 // set the grabbed element to this edge
-                grabbedElement = currentEdge;
+                grabbedElement = thisEdge;
                 
                 // prevent the default event action
                 e.preventDefault();
@@ -1117,14 +1035,162 @@ function RaphGraph( surface )
         return this;
     };
     
-    function label( x, y, contents )
-    // a generic label class to display weights and text associated with edges
-    // and nodes
-    {
-        // Init
+    function elementLabel( attr )
+    // a label that displays the text and weight in the center of an element.
+    // Note: this has a horrible amount of dependancies on global data.
+    {        
+        // DATA ----------------------------------------------------------------
         
-        this.setPosition = function( x, y )
+        var consoleID = "graph.label: ";
+        
+        var id = null; // the element's ID
+        
+        var thisLabel = this;
+        
+        // create the text label
+        var text = surface.text( 0, 0 ).attr({
+            fill:"white",
+            'font-size': 12
+        });
+        
+        // create the weight label
+        var weight = surface.text( 0, 0 ).attr({
+            fill:"white",
+            'font-size': 12
+        });
+        
+        // extend the default attributes
+        var defaultAttr = {
+            element:    null,
+            weight:     null,
+            text:       null,
+            fgCol:      "white",
+            bgCol:      "black",
+            fgColSel:   "red",
+            bgColSel:   "black"
+        }
+        attr = $.extend( defaultAttr, attr );
+        
+        // FACILITATORS --------------------------------------------------------
+        
+        this.openEditDialog = function()
+        // open the edit dialog
+        {            
+            $("#elem_"+id+"_labelDialog").dialog(
+                "option", "position", [mousePos.x, mousePos.y]
+            );
+            $("#elem_"+id+"_labelDialog").dialog("open");
+        }
+        
+        this.select = function()
         {
+            weight.attr( "fill", attr.fgColSel );
+            text.attr( "fill", attr.fgColSel );
+        }
+        
+        this.deselect = function()
+        {
+            weight.attr( "fill", attr.fgCol );
+            text.attr( "fill", attr.fgCol );
+        }
+        
+        // GETTERS AND SETTERS -------------------------------------------------
+        
+        this.weight = {
+            set: function( w )
+            {
+                attr.weight = w;
+                weight.attr({text:w})
+            },
+            get: function(){ return attr.weight }
+        }
+        
+        this.text = {
+            set: function( t )
+            {
+                attr.text = t;
+                text.attr({text:t})
+            },
+            get: function(){ return attr.text }
+        }
+        
+        // POSITION UPDATER ----------------------------------------------------
+        
+        this.update = function()
+        // update the position of the label
+        {
+            var bb = attr.element.getBBox();
+            weight.attr("x", bb.x + bb.width/2);
+            text.attr("x", bb.x + bb.width/2);
+            
+            var offset = 0;
+            if( attr.weight && attr.text ) 
+                offset = 7;
+                
+            weight.attr("y", bb.y + bb.height/2 + offset);
+            text.attr("y", bb.y + bb.height/2 - offset);
+        }
+        
+        // INIT ----------------------------------------------------------------
+        
+        // Make sure the element is set
+        if( !attr.element )
+            console.error(consoleID+
+                "Element attribute is required for new labels");
+        else
+            init();
+            
+        function init()
+        {
+            id = attr.element.getID();
+            
+            // Create the edit dialog
+            $(document.body).append(
+                "<div id='elem_"+id+"_labelDialog'>"+
+                "<table>"+
+                "    <tr>"+
+                "        <td>Text:</td>"+
+                "        <td><input id='elem_"+id+"_labelDialog_text'></td>"+
+                "    </tr>"+
+                "    <tr>"+
+                "        <td>Weight:</td>"+
+                "        <td><input id='elem_"+id+"_labelDialog_weight'></td>"+
+                "    </tr>"+
+                "</table>"+
+                "</div>"
+            );
+            $("#elem_"+id+"_labelDialog").data('assocLabel', thisLabel );
+            $("#elem_"+id+"_labelDialog").dialog({
+                title: "Edit element label and weight",
+                autoOpen: false,
+                draggable: true,
+                resizable: false,
+                buttons:{
+                    "OK": function()
+                    {
+                        $("#elem_"+id+"_labelDialog").data('assocLabel').weight
+                            .set( $("#elem_"+id+"_labelDialog_weight").val() );
+                        $("#elem_"+id+"_labelDialog").data('assocLabel').text
+                            .set( $("#elem_"+id+"_labelDialog_text").val() );
+                        $(this).dialog("close");
+                    }
+                },
+                open: function()
+                {
+                    $("#elem_"+id+"_labelDialog_weight").val(
+                        $("#elem_"+id+"_labelDialog").data('assocLabel').weight
+                            .get()
+                    );
+                    $("#elem_"+id+"_labelDialog_text").val(
+                        $("#elem_"+id+"_labelDialog").data('assocLabel').text
+                            .get()
+                    );
+                }
+            });
+            
+            // set the initial label values
+            thisLabel.weight.set( attr.weight );
+            thisLabel.text.set( attr.text );
         }
     }
 }
