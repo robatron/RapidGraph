@@ -725,10 +725,10 @@ function RaphGraph( surface )
         {
             if( attr.node1 == node || attr.node2 == node )
                 return true;
-            return false
+            return false;
         }
         
-        this.isDirected(){ return attr.directed }
+        this.isDirected = function(){ return attr.directed }
         // returns if the edge is directed or not
         
         // SELECTION -----------------------------------------------------------
@@ -991,6 +991,11 @@ function RaphGraph( surface )
             weight.attr("y", bb.y + bb.height/2 + offset);
             text.attr("x", bb.x + bb.width/2);
             text.attr("y", bb.y + bb.height/2 - offset);
+
+            /*
+            // report that the label is visible or not
+            if( attr.weight == null
+            */
 
             // set the label text
             if( attr.weight != null ) 
