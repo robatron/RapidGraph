@@ -500,6 +500,8 @@ function RaphGraph( surface )
             object.attr( "fill", attr.selFill );
             object.attr( "stroke", attr.selStroke );
             
+            this.label.select();
+            
             var pos = this.getPosition();
             console.log(
                 consoleID + 
@@ -515,6 +517,8 @@ function RaphGraph( surface )
             object.attr( "fill", attr.fill );
             object.attr( "stroke", attr.stroke );
             
+            this.label.deselect();
+            
             console.log(consoleID+"deselect: Node %d deselected", this.getID());
         }
         
@@ -524,6 +528,7 @@ function RaphGraph( surface )
         // remove this node's objects from the Raphael surface
         {
             object.remove();
+            this.label.remove();
         }
         
         // INIT ----------------------------------------------------------------
@@ -565,37 +570,24 @@ function RaphGraph( surface )
             
             // change the mouseover cursor to the "move" symbol
             objects[i].node.style.cursor = "move";
+            
+            objects[i].mousedown( function(e)
+            // when the mouse button is pressed on this node...
+            { 
+                // set the grabbed node to this node
+                grabbedElement = currentNode;
+                
+                // set the node to the current mouse position
+                object.dx = e.clientX;
+                object.dy = e.clientY;
+                
+                // prevent the default event action
+                e.preventDefault();
+                
+                // reset the hasMoved flag
+                hasMoved = false;
+            });
         }
-        $(object.node).bind('mousedown', {node:this}, function(e)
-        {
-            grabbedElement = currentNode;
-            
-            this.dx = e.clientX;
-            this.dy = e.clientY;
-            
-            e.preventDefault();
-            hasMoved = false;
-        });
-        $(this.label.text.getObj().node).bind('mousedown', {node:this}, function(e)
-        {
-            grabbedElement = currentNode;
-            
-            e.data.node.getObject().dx = e.clientX;
-            e.data.node.getObject().dx = e.clientX;
-            
-            e.preventDefault();
-            hasMoved = false;
-        });
-        $(this.label.weight.getObj().node).bind('mousedown', {node:this}, function(e)
-        {
-            grabbedElement = currentNode;
-            
-            e.data.node.getObject().dx = e.clientX;
-            e.data.node.getObject().dx = e.clientX;
-        
-            e.preventDefault();
-            hasMoved = false;
-        });
         
         console.log(
             consoleID+"New node %d created at %d, %d", 
