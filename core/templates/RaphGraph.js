@@ -1043,10 +1043,12 @@ function RaphGraph( surface )
             {                
                 w = parseFloat( w );
                 if( isNaN(w) )
-                    w = "";
-                
+                    w = null;
                 attr.weight = w;
-                weight.attr({text:w});
+                if( w != null ) 
+                    weight.attr({text:w});
+                else
+                    weight.attr({text:""});
                 thisLabel.update();
             },
             get: function(){ return attr.weight },
@@ -1056,9 +1058,11 @@ function RaphGraph( surface )
         this.text = {
             set: function( t )
             {
-                if( !t ) t = ""; // if t is null, make it an empty string
                 attr.text = t;
-                text.attr({text:t});
+                if( t != null )
+                    text.attr({text:t});
+                else
+                    text.attr({text:""});
                 thisLabel.update();
             },
             get: function(){ return attr.text },
@@ -1077,12 +1081,12 @@ function RaphGraph( surface )
         // update the position of the label
         {
             var bb = attr.element.getBBox();
+            
             weight.attr("x", bb.x + bb.width/2);
             text.attr("x", bb.x + bb.width/2);
             
             var offset = 7;
-            if( !attr.weight || attr.weight == "" ||
-                !attr.text || attr.text == "" ) 
+            if( attr.weight == null || attr.weight == null ) 
                 offset = 0;
                 
             weight.attr("y", bb.y + bb.height/2 + offset);
