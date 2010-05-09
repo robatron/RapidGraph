@@ -851,7 +851,7 @@ function RaphGraph( surface )
             node2:      null,
             directed:   true,
             weight:     null,
-            text:      "Edge " + id,
+            text:       null,
             selected:   false,
             line:       "black",
             bg:         "white",
@@ -1083,12 +1083,14 @@ function RaphGraph( surface )
         }
         
         this.select = function()
+        // change the label to the selection color
         {
             weight.attr( "fill", attr.fgColSel );
             text.attr( "fill", attr.fgColSel );
         }
         
         this.deselect = function()
+        // change the label to the deselection color
         {
             weight.attr( "fill", attr.fgCol );
             text.attr( "fill", attr.fgCol );
@@ -1101,11 +1103,26 @@ function RaphGraph( surface )
             text.remove();
         }
         
+        // VISIBILITY ----------------------------------------------------------
+        
+        this.hide = function()
+        {
+            weight.hide();
+            text.hide();
+        }
+        
+        this.show = function()
+        {
+            weight.show();
+            text.show();
+        }
+        
         // GETTERS AND SETTERS -------------------------------------------------
         
         this.weight = {
             set: function( w )
             {
+                if( !w ) w = ""; // if w is null, make it an empty string
                 attr.weight = w;
                 weight.attr({text:w});
                 thisLabel.update();
@@ -1117,6 +1134,7 @@ function RaphGraph( surface )
         this.text = {
             set: function( t )
             {
+                if( !t ) t = ""; // if t is null, make it an empty string
                 attr.text = t;
                 text.attr({text:t});
                 thisLabel.update();
