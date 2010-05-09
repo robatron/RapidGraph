@@ -48,15 +48,14 @@ this.start = function()
 
     });
 
-    $("#find_route").click( function(){
+    $("#find_route").click( function() {
         // Find the shortest path between two selected nodes
         // using an implementation of the Dijkstra's
         // Shortest Path algorithm
 
-        console.log("In find route");
+        //console.log("In find route");
 
-        // Check that all edge weights are non-negative and
-        // non-null
+        // Check that all edge weights are non-negative and non-null
         edges = graph.edges.get.all();
         for( i = 0; i < edges.length; ++i ) {
             if( edges[i].weight.get() == null || edges[i].weight.get() < 0) {
@@ -65,7 +64,7 @@ this.start = function()
             }
         }
 
-        console.log("After edge check");
+        //console.log("After edge check");
 
         // Check to that the user has selected exactly two nodes
         selectedNodes = graph.nodes.get.selected();
@@ -77,7 +76,9 @@ this.start = function()
         // Initialize some variables
         var distance = new Array();
         var previous = new Array();
+        var nCopy = new Array();
         for( i = 0; i < graph.nodes.length; ++i ) {
+            nCopy[i] = deepCopy(graph.nodes[i]);
             previous[i] = null;
             if( selectedNodes[0] == graph.nodes[i] ) {
                 startIndex = i;
@@ -90,6 +91,58 @@ this.start = function()
                 endIndex = i;
             }
         }
+
+        // Make "infinity" larger than any possible distance between
+        //  two nodes
+        infinity = 1;
+        for( i = 0; i < edges.length; ++i )
+            infinity += edges[i].weight.get();
+
+        distance[startIndex] = 0;
+        while( nCopy.length != 0 ) {
+            //Find the node with the smallest distance from source
+            sval = infinity;
+            smallestIndex = null;
+            for( i = 0; i <= nCopy.length; ++i ) {
+                if( distance[i] < sval ) {
+                    smallestIndex = i;
+                    sval = distance[i];
+                }
+            }
+            
+            if( sval == infinity )
+                break;
+            node = nCopy[smallestIndex];
+            nCopy.splice(smallestIndex, smallestIndex);
+            distance.splice(smallestIndex, smallestIndex);
+            neighbors = getNeighbors( node, nCopy );
+            for( i = 0; i < neighbors.length; ++i ) {
+                distanceBetween = smallestEdge( node, nCopy[neighbors[i]], edges, infinity ).weight.get();
+                newDist = sval + distanceBetween;
+                if( newDist < distance[neighbors[i]] ) {
+                    distance[neighbors[i]] = newDist;
+                    previous[i] = node;
+                }
+            }
+        }
+        
+        cur = endIndex;
+        nodes = graph.nodes.get.all();
+        while( previous[cur] != null ) {
+            nodes[cur].select();
+            smallestEdge( nodes[cur], nodes[prev], edges, infinity ).select();
+            cur = previous[cur];
+        }
+        nodes[cur].select();
+    });
+
+        /*
+        S := empty sequence
+        u := target
+        while previous[u] is defined:
+            insert u at the beginning of S
+            u := previous[u]
+        */
 
         /*
         function Dijkstra(Graph, source):
@@ -112,15 +165,26 @@ this.start = function()
             return dist[]
         */
 
-        // Select the nodes and edges in the graph along the
-        // path, so that they are highlighted for the user
+    function getNeighbors(node, nodes) {
+        var neighbors = new Array();
+        for( i = 0; i < nodes.length; ++i ) {
+            if( nodes[i].attachedTo(node) )
+                neighbors.push(i);
+        }
+        return neighbors;
+    }
 
-        /*
-        S := empty sequence
-        u := target
-        while previous[u] is defined:
-            insert u at the beginning of S
-            u := previous[u]
-        */
-    });
+    function smallestEdge( n1, n2, edges, infinity ) {
+        distanceBetween = infinity;
+        smallestEdge = null;
+        for( i = 0; i < edges.length; ++j ) {
+            if( ( edges[i].attr.node1 == n1 && edges[i].attr.node2 == n2 ) ||
+                ( edges[i].attr.node2 == n1 && edges[i].attr.node1 == n2 ) && 
+                ( edges[i].weight.get() < distanceBetween ) ) {
+                    distanceBetween = edges[i].weight.get();
+                    smallestEdge = edges[i];
+            }
+        }
+        return smallestEdge;
+    }
 }
