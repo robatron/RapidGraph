@@ -977,17 +977,6 @@ function RaphGraph( surface )
             attr.node2.getID()
         );
         
-        // create a new label object
-        this.label = new elementLabel({
-            element:    this,
-            weight:     attr.weight,
-            text:       attr.text,
-            fgCol:      attr.bg,
-            bgCol:      attr.line,
-            fgColSel:   attr.selBg,
-            bgColSel:   attr.selLine
-        });
-        
         // create the foreground path
         objects[1] = surface.path().attr({
             stroke: attr.line,
@@ -1005,6 +994,17 @@ function RaphGraph( surface )
             bg:     objects[0], // the background line object
             line:   objects[1], // the foreground line object
         };
+        
+        // create a new label object
+        this.label = new elementLabel({
+            element:    this,
+            weight:     attr.weight,
+            text:       attr.text,
+            fgCol:      attr.bg,
+            bgCol:      attr.line,
+            fgColSel:   attr.selBg,
+            bgColSel:   attr.selLine
+        });
         
         // set the interaction events for this new edge
         for( var i = 0; i<objects.length; i++ ){
@@ -1100,7 +1100,8 @@ function RaphGraph( surface )
             set: function( w )
             {
                 attr.weight = w;
-                weight.attr({text:w})
+                weight.attr({text:w});
+                thisLabel.update();
             },
             get: function(){ return attr.weight }
         }
@@ -1109,7 +1110,8 @@ function RaphGraph( surface )
             set: function( t )
             {
                 attr.text = t;
-                text.attr({text:t})
+                text.attr({text:t});
+                thisLabel.update();
             },
             get: function(){ return attr.text }
         }
@@ -1123,12 +1125,15 @@ function RaphGraph( surface )
             weight.attr("x", bb.x + bb.width/2);
             text.attr("x", bb.x + bb.width/2);
             
-            var offset = 0;
-            if( attr.weight && attr.text ) 
-                offset = 7;
+            var offset = 7;
+            if( !attr.weight || attr.weight == "" ||
+                !attr.text || attr.text == "" ) 
+                offset = 0;
                 
             weight.attr("y", bb.y + bb.height/2 + offset);
             text.attr("y", bb.y + bb.height/2 - offset);
+
+            
         }
         
         // INIT ----------------------------------------------------------------
