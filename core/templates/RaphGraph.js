@@ -651,23 +651,28 @@ function RaphGraph( surface )
             // inscribe the node and the label inside of a box, and use the
             // box's dimentions as the bounding box. This is so the user can
             // always see the edge ends
-            var lbb1 = attr.node1.label.getBBox();
-            var lbb2 = attr.node2.label.getBBox();
-            if( lbb1.width > bb1.width ){
-                bb1.x = lbb1.x;
-                bb1.width = lbb1.width;
+            if( attr.node1.label.isVisible() ){
+                var lbb1 = attr.node1.label.getBBox();
+                if( lbb1.width > bb1.width ){
+                    bb1.x = lbb1.x;
+                    bb1.width = lbb1.width;
+                }
+                if( lbb1.height > bb1.height ){
+                    bb1.y = lbbl.y;
+                    bb1.height = lbb1.height;
+                }
             }
-            if( lbb1.height > bb1.height ){
-                bb1.y = lbbl.y;
-                bb1.height = lbb1.height;
-            }
-            if( lbb2.width > bb2.width ){
-                bb2.x = lbb2.x;
-                bb2.width = lbb2.width;
-            }
-            if( lbb2.height > bb2.height ){
-                bb2.y = lbbl.y;
-                bb2.height = lbb2.height;
+            
+            if( attr.node2.label.isVisible() ){
+                var lbb2 = attr.node2.label.getBBox();
+                if( lbb2.width > bb2.width ){
+                    bb2.x = lbb2.x;
+                    bb2.width = lbb2.width;
+                }
+                if( lbb2.height > bb2.height ){
+                    bb2.y = lbbl.y;
+                    bb2.height = lbb2.height;
+                }
             }
             
             // figure out if the path needs to be updated (if the path object
@@ -957,8 +962,6 @@ function RaphGraph( surface )
             {
                 if( t == "" )
                     t = null;
-                    
-                console.log( t );
                 attr.text = t;
                 thisLabel.update();
             },
@@ -976,6 +979,12 @@ function RaphGraph( surface )
         
         this.getBBox = function(){ return bg.getBBox() }
         // return the label's bounding box
+        
+        this.isVisible = function()
+        // return if this label is visible or not
+        { 
+            return attr.weight != null || attr.text != null; 
+        }
         
         // POSITION UPDATER ----------------------------------------------------
         
