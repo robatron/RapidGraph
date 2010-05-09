@@ -556,7 +556,6 @@ function RaphGraph( surface )
         
         // set up mouse functions common to all objects
         var objects = [object].concat( this.label.getObjs() );
-        console.log( objects );
         for( var i = 0; i<objects.length; i++ ){
             
             // when the node is double clicked, open the label editing dialog
@@ -778,6 +777,16 @@ function RaphGraph( surface )
             // grab the bounding box of each node's Raphael object
             var bb1 = attr.node1.getBBox();
             var bb2 = attr.node2.getBBox();
+            
+            /*
+            lbb = this.label.getBBox();
+            if( lbb.width > bb1.width )
+                bb1.x = lbb.x;
+                bb1.width = lbb.width;
+            if( lbb.height > bb1.height )
+                bb1.y = lbb.y;
+                bb1.height = lbb.height;
+            */
                 
             // figure out if the path needs to be updated (if the path object
             // has not yet been defined or the nodes have been moved since the
@@ -1069,6 +1078,9 @@ function RaphGraph( surface )
         
         this.getElement = function(){ return attr.element }
         // return a reference to the element
+        
+        this.getBBox = function(){ return bg.getBBox() }
+        // return the label's bounding box
         
         // POSITION UPDATER ----------------------------------------------------
         
