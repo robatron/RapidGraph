@@ -555,11 +555,8 @@ function RaphGraph( surface )
         });
         
         // set up mouse functions common to all objects
-        var objects = [
-            object,
-            this.label.text.getObj(),
-            this.label.weight.getObj()
-        ];
+        var objects = [object].concat( this.label.getObjs() );
+        console.log( objects );
         for( var i = 0; i<objects.length; i++ ){
             
             // when the node is double clicked, open the label editing dialog
@@ -912,12 +909,7 @@ function RaphGraph( surface )
         });
         
         // set the interaction events for this new edge
-        var objects = [
-            obj.line,
-            obj.bg,
-            this.label.text.getObj(),
-            this.label.weight.getObj()
-        ];
+        var objects = [obj.line, obj.bg].concat(this.label.getObjs());
         for( var i = 0; i<objects.length; i++ ){
             
             // when the edge is double clicked, open the label editing dialog
@@ -928,13 +920,8 @@ function RaphGraph( surface )
             
             objects[i].mousedown( function(e)
             {
-                // set the grabbed element to this edge
                 grabbedElement = thisEdge;
-                
-                // prevent the default event action
-                e.preventDefault();
-                
-                // clear the hasMoved flag
+                e.preventDefault(); // prevent the default event action
                 hasMoved = false;
             });
         }
@@ -956,18 +943,6 @@ function RaphGraph( surface )
         var id = null; // the element's ID
         var thisLabel = this;
         
-        // create the text label
-        var text = surface.text( 0, 0 ).attr({
-            fill:"white",
-            'font-size': 12
-        });
-        
-        // create the weight label
-        var weight = surface.text( 0, 0 ).attr({
-            fill:"white",
-            'font-size': 12
-        });
-        
         // extend the default attributes
         var defaultAttr = {
             element:    null,
@@ -980,6 +955,25 @@ function RaphGraph( surface )
         }
         attr = $.extend( defaultAttr, attr );
         
+        // create the label background
+        var bg = surface.rect().attr({
+            r:5,
+            fill:attr.bgCol,
+            stroke:attr.fgCol
+        });
+        
+        // create the text label
+        var text = surface.text( 0, 0 ).attr({
+            fill:attr.fgCol,
+            'font-size': 12
+        });
+        
+        // create the weight label
+        var weight = surface.text( 0, 0 ).attr({
+            fill:attr.fgCol,
+            'font-size': 12
+        });
+        
         // FACILITATORS --------------------------------------------------------
         
         this.openEditDialog = function()
@@ -990,7 +984,6 @@ function RaphGraph( surface )
                 x: $(surface.canvas).parent().position().left,
                 y: $(surface.canvas).parent().position().top
             };
-            console.log( $(surface.canvas).parent().position() )
             var windowPos = [
                 pos.x + bb.x + bb.width,
                 pos.y + bb.y + bb.height
@@ -1006,6 +999,7 @@ function RaphGraph( surface )
         {
             weight.attr( "fill", attr.fgColSel );
             text.attr( "fill", attr.fgColSel );
+            bg.attr( "stroke", attr.fgColSel );
         }
         
         this.deselect = function()
@@ -1013,6 +1007,7 @@ function RaphGraph( surface )
         {
             weight.attr( "fill", attr.fgCol );
             text.attr( "fill", attr.fgCol );
+            bg.attr( "stroke", attr.fgCol );
         }
         
         this.remove = function()
@@ -1020,6 +1015,7 @@ function RaphGraph( surface )
         {
             weight.remove();
             text.remove();
+            bg.remove();
         }
         
         // VISIBILITY ----------------------------------------------------------
@@ -1028,12 +1024,14 @@ function RaphGraph( surface )
         {
             weight.hide();
             text.hide();
+            bg.hide();
         }
         
         this.show = function()
         {
             weight.show();
             text.show();
+            bg.show();
         }
         
         // GETTERS AND SETTERS -------------------------------------------------
@@ -1045,52 +1043,99 @@ function RaphGraph( surface )
                 if( isNaN(w) )
                     w = null;
                 attr.weight = w;
-                if( w != null ) 
-                    weight.attr({text:w});
-                else
-                    weight.attr({text:""});
                 thisLabel.update();
             },
-            get: function(){ return attr.weight },
-            getObj: function() { return weight }
+            get: function(){ return attr.weight }
         }
         
         this.text = {
             set: function( t )
             {
+                if( t == "" )
+                    t = null;
+                    
+                console.log( t );
                 attr.text = t;
-                if( t != null )
-                    text.attr({text:t});
-                else
-                    text.attr({text:""});
                 thisLabel.update();
             },
-            get: function(){ return attr.text },
-            getObj: function() { return text }
+            get: function(){ return attr.text }
+        }
+        
+        this.getObjs = function()
+        // return an array containing the Raphael objects that make up the label
+        {
+            return [ text, weight, bg ];
         }
         
         this.getElement = function(){ return attr.element }
         // return a reference to the element
         
-        this.getType = function(){ return "label" }
-        // return a "label" as the object type
-        
         // POSITION UPDATER ----------------------------------------------------
         
         this.update = function()
-        // update the position of the label
+        // update the label
         {
+            // position the text and weight
             var bb = attr.element.getBBox();
-            
-            weight.attr("x", bb.x + bb.width/2);
-            text.attr("x", bb.x + bb.width/2);
-            
             var offset = 7;
-            if( attr.weight == null || attr.weight == null ) 
+            if( attr.weight == null || attr.text == null ) 
                 offset = 0;
-                
+            weight.attr("x", bb.x + bb.width/2);
             weight.attr("y", bb.y + bb.height/2 + offset);
+            text.attr("x", bb.x + bb.width/2);
             text.attr("y", bb.y + bb.height/2 - offset);
+
+            // set the label text
+            if( attr.weight != null ) 
+                weight.attr({text:attr.weight});
+            else
+                weight.attr({text:""});
+
+            if( attr.text != null )
+                text.attr({text:attr.text});
+            else
+                text.attr({text:""});
+
+            // position the background
+            var wbb = weight.getBBox();
+            var tbb = text.getBBox();
+            var h, w, x, y;
+            var padding = 3;
+            var showBg = true;
+            
+            // if both label elements are present, use both
+            if( attr.weight != null && attr.text != null ){
+                h = wbb.height + tbb.height;
+                w = Math.max( wbb.width, tbb.width );
+                x = tbb.x;
+                y = tbb.y;
+                
+            // if only the weight is present, use only the weight
+            } else if( attr.weight != null && attr.text == null ){
+                h = wbb.height;
+                w = wbb.width;
+                x = wbb.x;
+                y = wbb.y;
+                
+            // if only the text is present, use the text
+            } else if( attr.weight == null && attr.text != null ){
+                h = tbb.height;
+                w = tbb.width;
+                x = tbb.x;
+                y = tbb.y;
+                
+            // otherwise, no elements are present. Don't show the background.
+            } else
+                showBg = false;
+                
+            if( showBg ){
+                bg.attr("height", h + padding*2);
+                bg.attr("width", w + padding*2);
+                bg.attr("x", x-padding);
+                bg.attr("y", y-padding);
+                bg.show();
+            } else
+                bg.hide();
         }
         
         // INIT ----------------------------------------------------------------
@@ -1150,9 +1195,19 @@ function RaphGraph( surface )
                 }
             });
             
-            // set the initial label values
-            thisLabel.weight.set( attr.weight );
-            thisLabel.text.set( attr.text );
+            thisLabel.update();
+            
+            // when the label is double clicked, open the label editing dialog
+            objects = [
+                weight,
+                text,
+                bg
+            ];
+            for( var i = 0; i<objects.length; i++)
+                $(objects[i].node).bind('dblclick', {label:thisLabel}, function(e)
+                {
+                    e.data.label.openEditDialog();
+                });
         }
     }
 }
