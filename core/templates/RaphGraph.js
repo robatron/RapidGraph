@@ -984,9 +984,19 @@ function RaphGraph( surface )
         
         this.openEditDialog = function()
         // open the edit dialog
-        {            
+        {   
+            var bb = attr.element.getBBox();
+            var pos = {
+                x: $(surface.canvas).parent().position().left,
+                y: $(surface.canvas).parent().position().top
+            };
+            console.log( $(surface.canvas).parent().position() )
+            var windowPos = [
+                pos.x + bb.x + bb.width,
+                pos.y + bb.y + bb.height
+            ];
             $("#elem_"+id+"_labelDialog").dialog(
-                "option", "position", [mousePos.x, mousePos.y]
+                "option", "position", windowPos
             );
             $("#elem_"+id+"_labelDialog").dialog("open");
         }
@@ -1030,8 +1040,11 @@ function RaphGraph( surface )
         
         this.weight = {
             set: function( w )
-            {
-                if( !w ) w = ""; // if w is null, make it an empty string
+            {                
+                w = parseFloat( w );
+                if( isNaN(w) )
+                    w = "";
+                
                 attr.weight = w;
                 weight.attr({text:w});
                 thisLabel.update();
