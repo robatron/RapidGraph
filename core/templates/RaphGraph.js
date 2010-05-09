@@ -600,138 +600,6 @@ function RaphGraph( surface )
     // EDGE OBJECT DEFINITION //
     ////////////////////////////
     
-    function createEdgePath( bb1, bb2, directed )
-    // create an SVG path string for an edge from one bounding box to another.
-    // If directed is true, then it also draws an arrow.
-    {
-        // top, bottom, left, and right sides of each bounding box
-        var p = [
-        
-            // points for bounding box 1
-            {x: bb1.x + bb1.width / 2,  y: bb1.y - 1},              // top
-            {x: bb1.x + bb1.width / 2,  y: bb1.y + bb1.height + 1}, // bottom
-            {x: bb1.x - 1,              y: bb1.y + bb1.height / 2}, // left
-            {x: bb1.x + bb1.width + 1,  y: bb1.y + bb1.height / 2}, // right
-
-            // points for bounding box 2
-            {x: bb2.x + bb2.width / 2,  y: bb2.y - 1},              // top
-            {x: bb2.x + bb2.width / 2,  y: bb2.y + bb2.height + 1}, // bottom
-            {x: bb2.x - 1,              y: bb2.y + bb2.height / 2}, // left
-            {x: bb2.x + bb2.width + 1,  y: bb2.y + bb2.height / 2}  // right
-        ];
-        
-        // figure out which side (top, bottom, left or right) of each bounding 
-        // box to attach to
-        var d = {};
-        var dis = [];
-        for( var i = 0; i < 4; i++ )
-            for( var j = 4; j < 8; j++ ){
-                
-                var dx = Math.abs(p[i].x - p[j].x);
-                var dy = Math.abs(p[i].y - p[j].y);
-                
-                if( (i == j - 4) 
-                    || (((i != 3 && j != 6) || p[i].x < p[j].x) 
-                    && ((i != 2 && j != 7) || p[i].x > p[j].x) 
-                    && ((i != 0 && j != 5) || p[i].y > p[j].y) 
-                    && ((i != 1 && j != 4) || p[i].y < p[j].y))){
-                        
-                    dis.push(dx + dy);
-                    d[dis[dis.length - 1]] = [i, j];
-                }
-            }
-        
-        if (dis.length == 0)
-            var res = [0, 4];
-        else
-            var res = d[Math.min.apply(Math, dis)];
-        
-        var x1 = p[res[0]].x;
-        var y1 = p[res[0]].y;
-        var x4 = p[res[1]].x;
-        var y4 = p[res[1]].y;
-        var dx = Math.max(Math.abs(x1 - x4) / 2, 10);
-        var dy = Math.max(Math.abs(y1 - y4) / 2, 10);
-        var x2 = [x1, x1, x1-dx, x1+dx][res[0]].toFixed(3);
-        var y2 = [y1-dy, y1+dy, y1, y1][res[0]].toFixed(3);
-        var x3 = [0, 0, 0, 0, x4, x4, x4-dx, x4+dx][res[1]].toFixed(3);
-        var y3 = [0, 0, 0, 0, y1+dy, y1-dy, y4, y4][res[1]].toFixed(3);
-        
-        function attachedSide()
-        // Helper function to figure out which side of the destination node 
-        // the edge is attached to (top, bottom, left, or right)
-        {
-            if( p[4].x == x4.toFixed(3) && p[4].y == y4.toFixed(3) ) 
-                return "top";
-            else if( p[5].x == x4.toFixed(3) && p[5].y == y4.toFixed(3) ) 
-                return "bottom";
-            else if( p[6].x == x4.toFixed(3) && p[6].y == y4.toFixed(3) ) 
-                return "left";
-            else if( p[7].x == x4.toFixed(3) && p[7].y == y4.toFixed(3) ) 
-                return "right";
-        }
-        
-        // create the edge path
-        var path = [
-            "M", 
-            x1.toFixed(3), y1.toFixed(3), 
-            "C", 
-            x2, y2, 
-            x3, y3
-        ].join(",");
-        
-        // If the edge is not directed. Close up the edge normally.
-        if( !directed )
-            path += "," + x4.toFixed(3) + "," + y4.toFixed(3);
-            
-        // Otherwise, the edge is directed, so also draw the triangle
-        else {
-            var size = 5; // triangle leg size
-            
-            // adjust point 1 and 2 of the triangle depending on which side of
-            // the destination node the edge is attached to
-            var origX = parseInt( x4.toFixed(3) );
-            var origY = parseInt( y4.toFixed(3) );
-            var p0, p1, p2, p3, p4;
-            if( attachedSide() == "top" ){
-                p0 = { x:origX, y:origY-size-2 };
-                p1 = { x:size,  y:0 };
-                p2 = { x:-size, y:size };
-                p3 = { x:-size, y:-size};
-                p4 = { x:size,  y:0};
-            } else if( attachedSide() == "bottom" ){
-                p0 = { x:origX, y:origY+size+2 };
-                p1 = { x:-size, y:0 };
-                p2 = { x:size,  y:-size };
-                p3 = { x:size,  y:size};
-                p4 = { x:-size, y:0};
-            } else if( attachedSide() == "left" ){
-                p0 = { x:origX-size-2, y:origY };
-                p1 = { x:0,     y:-size };
-                p2 = { x:+size, y:+size };
-                p3 = { x:-size, y:+size};
-                p4 = { x:0,     y:-size};
-            } else if( attachedSide() == "right" ){
-                p0 = { x:origX+size+2, y:origY };
-                p1 = { x:0,     y:+size };
-                p2 = { x:-size, y:-size };
-                p3 = { x:+size, y:-size};
-                p4 = { x:0,     y:+size};
-            }
-            
-            path += "," + [
-                p0.x, p0.y,
-                "l",
-                p1.x, p1.y,
-                p2.x, p2.y,
-                p3.x, p3.y,
-                p4.x, p4.y,
-            ].join(",");
-        }
-        
-        return path;
-    }
-    
     function edge( attr )
     {        
         var consoleID = "graph.edge: ";
@@ -780,16 +648,27 @@ function RaphGraph( surface )
             var bb1 = attr.node1.getBBox();
             var bb2 = attr.node2.getBBox();
             
-            /*
-            lbb1 = attr.node1.label.getBBox();
+            // inscribe the node and the label inside of a box, and use the
+            // box's dimentions as the bounding box. This is so the user can
+            // always see the edge ends
+            var lbb1 = attr.node1.label.getBBox();
+            var lbb2 = attr.node2.label.getBBox();
             if( lbb1.width > bb1.width ){
                 bb1.x = lbb1.x;
                 bb1.width = lbb1.width;
             }
             if( lbb1.height > bb1.height ){
-                bb1.y = lbb.y;
+                bb1.y = lbbl.y;
+                bb1.height = lbb1.height;
             }
-            */
+            if( lbb2.width > bb2.width ){
+                bb2.x = lbb2.x;
+                bb2.width = lbb2.width;
+            }
+            if( lbb2.height > bb2.height ){
+                bb2.y = lbbl.y;
+                bb2.height = lbb2.height;
+            }
             
             // figure out if the path needs to be updated (if the path object
             // has not yet been defined or the nodes have been moved since the
@@ -950,6 +829,10 @@ function RaphGraph( surface )
             return this;
         }
     };
+    
+    //////////////////////////////
+    // ELEMENT HELPER FUNCTIONS //
+    //////////////////////////////
     
     function elementLabel( attr )
     // a label that displays the text and weight in the center of an element
@@ -1118,10 +1001,10 @@ function RaphGraph( surface )
                 text.attr({text:""});
 
             // position the background
+            var PADDING = 3;
             var wbb = weight.getBBox();
             var tbb = text.getBBox();
             var h, w, x, y;
-            var padding = 3;
             var showBg = true;
             
             // if both label elements are present, use both
@@ -1150,13 +1033,20 @@ function RaphGraph( surface )
                 showBg = false;
                 
             if( showBg ){
-                bg.attr("height", h + padding*2);
-                bg.attr("width", w + padding*2);
-                bg.attr("x", x-padding);
-                bg.attr("y", y-padding);
+                bg.attr("height", h + PADDING*2);
+                bg.attr("width", w + PADDING*2);
+                bg.attr("x", x-PADDING);
+                bg.attr("y", y-PADDING);
                 bg.show();
             } else
                 bg.hide();
+                
+            // if this element is a node, update the edge paths
+            if( attr.element.getType() == "node" ){
+                var edges = currentGraph.edges.get.all();
+                for( var i = 0; i<edges.length; i++ )
+                    edges[i].update();
+            }
         }
         
         // INIT ----------------------------------------------------------------
@@ -1230,5 +1120,137 @@ function RaphGraph( surface )
                     e.data.label.openEditDialog();
                 });
         }
+    }
+    
+    function createEdgePath( bb1, bb2, directed )
+    // create an SVG path string for an edge from one bounding box to another.
+    // If directed is true, then it also draws an arrow.
+    {
+        // top, bottom, left, and right sides of each bounding box
+        var p = [
+        
+            // points for bounding box 1
+            {x: bb1.x + bb1.width / 2,  y: bb1.y - 1},              // top
+            {x: bb1.x + bb1.width / 2,  y: bb1.y + bb1.height + 1}, // bottom
+            {x: bb1.x - 1,              y: bb1.y + bb1.height / 2}, // left
+            {x: bb1.x + bb1.width + 1,  y: bb1.y + bb1.height / 2}, // right
+
+            // points for bounding box 2
+            {x: bb2.x + bb2.width / 2,  y: bb2.y - 1},              // top
+            {x: bb2.x + bb2.width / 2,  y: bb2.y + bb2.height + 1}, // bottom
+            {x: bb2.x - 1,              y: bb2.y + bb2.height / 2}, // left
+            {x: bb2.x + bb2.width + 1,  y: bb2.y + bb2.height / 2}  // right
+        ];
+        
+        // figure out which side (top, bottom, left or right) of each bounding 
+        // box to attach to
+        var d = {};
+        var dis = [];
+        for( var i = 0; i < 4; i++ )
+            for( var j = 4; j < 8; j++ ){
+                
+                var dx = Math.abs(p[i].x - p[j].x);
+                var dy = Math.abs(p[i].y - p[j].y);
+                
+                if( (i == j - 4) 
+                    || (((i != 3 && j != 6) || p[i].x < p[j].x) 
+                    && ((i != 2 && j != 7) || p[i].x > p[j].x) 
+                    && ((i != 0 && j != 5) || p[i].y > p[j].y) 
+                    && ((i != 1 && j != 4) || p[i].y < p[j].y))){
+                        
+                    dis.push(dx + dy);
+                    d[dis[dis.length - 1]] = [i, j];
+                }
+            }
+        
+        if (dis.length == 0)
+            var res = [0, 4];
+        else
+            var res = d[Math.min.apply(Math, dis)];
+        
+        var x1 = p[res[0]].x;
+        var y1 = p[res[0]].y;
+        var x4 = p[res[1]].x;
+        var y4 = p[res[1]].y;
+        var dx = Math.max(Math.abs(x1 - x4) / 2, 10);
+        var dy = Math.max(Math.abs(y1 - y4) / 2, 10);
+        var x2 = [x1, x1, x1-dx, x1+dx][res[0]].toFixed(3);
+        var y2 = [y1-dy, y1+dy, y1, y1][res[0]].toFixed(3);
+        var x3 = [0, 0, 0, 0, x4, x4, x4-dx, x4+dx][res[1]].toFixed(3);
+        var y3 = [0, 0, 0, 0, y1+dy, y1-dy, y4, y4][res[1]].toFixed(3);
+        
+        function attachedSide()
+        // Helper function to figure out which side of the destination node 
+        // the edge is attached to (top, bottom, left, or right)
+        {
+            if( p[4].x == x4.toFixed(3) && p[4].y == y4.toFixed(3) ) 
+                return "top";
+            else if( p[5].x == x4.toFixed(3) && p[5].y == y4.toFixed(3) ) 
+                return "bottom";
+            else if( p[6].x == x4.toFixed(3) && p[6].y == y4.toFixed(3) ) 
+                return "left";
+            else if( p[7].x == x4.toFixed(3) && p[7].y == y4.toFixed(3) ) 
+                return "right";
+        }
+        
+        // create the edge path
+        var path = [
+            "M", 
+            x1.toFixed(3), y1.toFixed(3), 
+            "C", 
+            x2, y2, 
+            x3, y3
+        ].join(",");
+        
+        // If the edge is not directed. Close up the edge normally.
+        if( !directed )
+            path += "," + x4.toFixed(3) + "," + y4.toFixed(3);
+            
+        // Otherwise, the edge is directed, so also draw the triangle
+        else {
+            var size = 5; // triangle leg size
+            
+            // adjust point 1 and 2 of the triangle depending on which side of
+            // the destination node the edge is attached to
+            var origX = parseInt( x4.toFixed(3) );
+            var origY = parseInt( y4.toFixed(3) );
+            var p0, p1, p2, p3, p4;
+            if( attachedSide() == "top" ){
+                p0 = { x:origX, y:origY-size-2 };
+                p1 = { x:size,  y:0 };
+                p2 = { x:-size, y:size };
+                p3 = { x:-size, y:-size};
+                p4 = { x:size,  y:0};
+            } else if( attachedSide() == "bottom" ){
+                p0 = { x:origX, y:origY+size+2 };
+                p1 = { x:-size, y:0 };
+                p2 = { x:size,  y:-size };
+                p3 = { x:size,  y:size};
+                p4 = { x:-size, y:0};
+            } else if( attachedSide() == "left" ){
+                p0 = { x:origX-size-2, y:origY };
+                p1 = { x:0,     y:-size };
+                p2 = { x:+size, y:+size };
+                p3 = { x:-size, y:+size};
+                p4 = { x:0,     y:-size};
+            } else if( attachedSide() == "right" ){
+                p0 = { x:origX+size+2, y:origY };
+                p1 = { x:0,     y:+size };
+                p2 = { x:-size, y:-size };
+                p3 = { x:+size, y:-size};
+                p4 = { x:0,     y:+size};
+            }
+            
+            path += "," + [
+                p0.x, p0.y,
+                "l",
+                p1.x, p1.y,
+                p2.x, p2.y,
+                p3.x, p3.y,
+                p4.x, p4.y,
+            ].join(",");
+        }
+        
+        return path;
     }
 }
