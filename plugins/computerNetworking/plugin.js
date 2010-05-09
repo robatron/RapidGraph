@@ -8,13 +8,12 @@ this.settings =
     subtitle: "Shows the relationship between networking and a classic graph algorithm."
 }
 
-this.start = function()
-{
+this.start = function() {
     $("#make_network").click( function(){
         // Make a small random undirected edge-weighted graph
 
         GRAPH_SIZE = 9;     // The number of nodes in the graph
-        PERTURBATION = 0;   // The number of pixels that nodes can be randomly perturbed
+        PERTURBATION = 30;   // The number of pixels that nodes can be randomly perturbed
         NODE_RADIUS = 25;   // The radius of a node image
         boxX = api.ui.getMainPanelSize().width - (2 * NODE_RADIUS);
         boxY = api.ui.getMainPanelSize().height - (2 * NODE_RADIUS);
@@ -29,8 +28,7 @@ this.start = function()
             });
         }
         
-        // Connect some of the nodes in the graph with
-        // randomly weighted edges
+        // Connect some of the nodes in the graph with randomly weighted edges
         EDGE_PROB = 0.3   // The probability that two nodes within the graph will get connected by an edge
         var myEdges = new Array();
         for( i = 0; i < GRAPH_SIZE; ++i ) {
@@ -53,8 +51,6 @@ this.start = function()
         // using an implementation of the Dijkstra's
         // Shortest Path algorithm
 
-        //console.log("In find route");
-
         // Check that all edge weights are non-negative and non-null
         edges = graph.edges.get.all();
         for( i = 0; i < edges.length; ++i ) {
@@ -63,8 +59,6 @@ this.start = function()
                 return;
             }
         }
-
-        //console.log("After edge check");
 
         // Check to that the user has selected exactly two nodes
         selectedNodes = graph.nodes.get.selected();
@@ -76,21 +70,28 @@ this.start = function()
         // Initialize some variables
         var distance = new Array();
         var previous = new Array();
-        var nCopy = new Array();
-        for( i = 0; i < graph.nodes.length; ++i ) {
-            nCopy[i] = deepCopy(graph.nodes[i]);
+        var nList = new Array();
+        startIndex = -1;
+        endIndex = -1;
+        nodes = graph.nodes.get.all()
+console.log("All nodes: " + nodes);
+        for( i = 0; i < nodes.length; ++i ) {
+            nList.push(i);
             previous[i] = null;
-            if( selectedNodes[0] == graph.nodes[i] ) {
+            if( selectedNodes[0] == nodes[i] ) {
                 startIndex = i;
                 distance[i] = 0;
             }
             else {
                 distance[i] = -1;
             }
-            if( selectedNodes[1] == graph.nodes[i] ) {
+            if( selectedNodes[1] == nodes[i] ) {
                 endIndex = i;
             }
         }
+
+console.log("Start index: " + startIndex);
+console.log("End index: " + endIndex);
 
         // Make "infinity" larger than any possible distance between
         //  two nodes
@@ -99,25 +100,33 @@ this.start = function()
             infinity += edges[i].weight.get();
 
         distance[startIndex] = 0;
-        while( nCopy.length != 0 ) {
+        while( nList.length != 0 ) {
+console.log("nlist: " + nList);
             //Find the node with the smallest distance from source
             sval = infinity;
             smallestIndex = null;
-            for( i = 0; i <= nCopy.length; ++i ) {
-                if( distance[i] < sval ) {
-                    smallestIndex = i;
-                    sval = distance[i];
+            for( i = 0; i <= nList.length; ++i ) {
+                if( distance[nList[i]] < sval ) {
+                    smallestIndex = nList[i];
+                    sval = distance[nList[i]];
                 }
             }
             
             if( sval == infinity )
                 break;
-            node = nCopy[smallestIndex];
-            nCopy.splice(smallestIndex, smallestIndex);
-            distance.splice(smallestIndex, smallestIndex);
-            neighbors = getNeighbors( node, nCopy );
+            nIndex = smallestIndex;
+            
+            // Remove smallest nodes from array
+            for( i = 0; i < nList.length; ++i ) {
+                if( nList[i] == smallestIndex )
+                    nList.splice(i, i);
+            }
+            //distance.splice(smallestIndex, smallestIndex);
+            neighbors = getNeighbors( nIndex, nList, nodes );
+console.log("Current Node: " + nIndex);
+console.log("Neighbors: " + neighbors);
             for( i = 0; i < neighbors.length; ++i ) {
-                distanceBetween = smallestEdge( node, nCopy[neighbors[i]], edges, infinity ).weight.get();
+                distanceBetween = smallestEdge( nIndex, neighbors[i], edges, infinity ).weight.get();
                 newDist = sval + distanceBetween;
                 if( newDist < distance[neighbors[i]] ) {
                     distance[neighbors[i]] = newDist;
@@ -127,22 +136,14 @@ this.start = function()
         }
         
         cur = endIndex;
-        nodes = graph.nodes.get.all();
+        console.log(cur);
         while( previous[cur] != null ) {
             nodes[cur].select();
-            smallestEdge( nodes[cur], nodes[prev], edges, infinity ).select();
+            smallestEdge( nodes[cur], previous[cur], edges, infinity ).select();
             cur = previous[cur];
         }
         nodes[cur].select();
     });
-
-        /*
-        S := empty sequence
-        u := target
-        while previous[u] is defined:
-            insert u at the beginning of S
-            u := previous[u]
-        */
 
         /*
         function Dijkstra(Graph, source):
@@ -165,22 +166,35 @@ this.start = function()
             return dist[]
         */
 
-    function getNeighbors(node, nodes) {
+        /*
+        S := empty sequence
+        u := target
+        while previous[u] is defined:
+            insert u at the beginning of S
+            u := previous[u]
+        */
+
+    function getNeighbors(nIndex, nList, nodes) {
+        edges = graph.edges.get.all();
         var neighbors = new Array();
-        for( i = 0; i < nodes.length; ++i ) {
-            if( nodes[i].attachedTo(node) )
-                neighbors.push(i);
+
+        for( i = 0; i < nList.length; ++i ) {
+            for( j = 0; j < edges.length; ++j ) {
+                if( edges[j].attachedTo(nodes[nList[i]]) && edges[j].attachedTo(nodes[nIndex]) ) {
+                    neighbors.push(nList[i]);
+                }
+            }
         }
         return neighbors;
     }
 
     function smallestEdge( n1, n2, edges, infinity ) {
+        nodes = graph.nodes.get.all();
         distanceBetween = infinity;
         smallestEdge = null;
-        for( i = 0; i < edges.length; ++j ) {
-            if( ( edges[i].attr.node1 == n1 && edges[i].attr.node2 == n2 ) ||
-                ( edges[i].attr.node2 == n1 && edges[i].attr.node1 == n2 ) && 
-                ( edges[i].weight.get() < distanceBetween ) ) {
+        for( i = 0; i < edges.length; ++i ) {
+            if( edges[i].attachedTo(nodes[n1]) && edges[i].attachedTo(nodes[n2]) && 
+              ( edges[i].weight.get() < distanceBetween ) ) {
                     distanceBetween = edges[i].weight.get();
                     smallestEdge = edges[i];
             }
