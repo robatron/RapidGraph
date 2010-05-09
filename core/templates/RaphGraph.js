@@ -31,6 +31,10 @@ function RaphGraph( surface )
     // mouse handling data
     var grabbedElement = null;  // the currently grabbed element
     var hasMoved = true;        // did the object move between click & release?
+    var mousePos = {            // the current mouse position
+        x: null,
+        y: null
+    };
     
     var idCounter = 0; // an ID counter so every element may have a unique ID
     
@@ -47,6 +51,10 @@ function RaphGraph( surface )
         $(document).bind('mousemove', {graph:currentGraph}, function(e)
         // when the mouse moves...
         {
+            // update the current mouse position
+            mousePos.x = e.pageX;
+            mousePos.y = e.pageY;
+            
             // if there's a node under the cursor, move all of the selected
             // nodes to follow
             if( grabbedElement && grabbedElement.getType() == "node" ){
@@ -1041,53 +1049,56 @@ function RaphGraph( surface )
             label:  objects[3]  // the label object
         };
         
+        $(document.body).append(
+            "<div id='edge_"+id+"_labels'>"+
+            "<table>"+
+            "    <tr>"+
+            "        <td>Label:</td>"+
+            "        <td><input id='edge_"+id+"_labels_text'></td>"+
+            "    </tr>"+
+            "    <tr>"+
+            "        <td>Weight:</td>"+
+            "        <td><input id='edge_"+id+"_labels_weight'></td>"+
+            "    </tr>"+
+            "</table>"+
+            "</div>"
+        );
+        
+        $("#edge_"+id+"_labels").data('assocEdge', this );
+        $("#edge_"+id+"_labels").dialog({
+            title: "Edit element label and weight",
+            autoOpen: false,
+            draggable: true,
+            resizable: false,
+            buttons:{
+                "OK": function()
+                {
+                    $("#edge_"+id+"_labels").data('assocEdge').weight.set( 
+                        $("#edge_"+id+"_labels_weight").val() 
+                    );
+                    $(this).dialog("close");
+                }
+            }
+        });
+        
         // handle initial settings
-        if( attr.weight ) this.weight.set( attr.weight );
-        //if( attr.weightVis ) this.weight.show();
+        if( attr.weight && attr.weight != "" ) 
+            this.weight.set( attr.weight );
         
-        // set up edit events for weight and label editing
-        $(obj.weight.node).bind('dblclick', {node:this}, function(e)
-        {
-            var entry = 
-                parseInt(prompt("Enter a new weight: (Just integers for now!)"));
+        // set the interaction events for this new edge
+        for( var i = 0; i<objects.length; i++ ){
             
-            if( entry ) e.data.node.weight.set( entry );
-        });
-        
-        /*
-        $(obj.label.node).bind('dblclick', {node:this}, function(e)
-        {
-            var entry = prompt("Enter a new label:");
-            if( entry ) e.data.node.label.set( entry );
-        });
-        */
-        
-        $(obj.label.node).qtip({
-            content: "<input>"+attr.label+"</input>",
-            position: {
-               target: 'mouse',
-               adjust: { mouse: false }
-            },
-            show: { 
-                delay: 0,
-                when: { event: 'dblclick' } 
-            },
-            hide: 'unfocus'
-        });
-        
-        console.log( $(".editable_test") );
-        console.log( $("#edge_"+id) );
-        
-        /*
-        $("#edge_"+id).editInPlace({
-            callback:function(unused, enteredText){return enteredText}
-        });
-        */
-        
-        // set the mousedown for this new edge
-        for( var i = 0; i<objects.length; i++ )
-            objects[i].mousedown( function(e){
-                
+            // when the edge is double clicked, open the label editing dialog
+            $(objects[i].node).bind('dblclick', {edge:this}, function(e)
+            {
+                $("#edge_"+e.data.edge.getID()+"_labels").dialog(
+                    "option", "position", [mousePos.x, mousePos.y]
+                );
+                $("#edge_"+e.data.edge.getID()+"_labels").dialog("open");
+            });
+            
+            objects[i].mousedown( function(e)
+            {
                 // set the grabbed element to this edge
                 grabbedElement = currentEdge;
                 
@@ -1097,6 +1108,7 @@ function RaphGraph( surface )
                 // clear the hasMoved flag
                 hasMoved = false;
             });
+        }
         
         // finally, update the objects' positions
         this.update();
@@ -1104,4 +1116,15 @@ function RaphGraph( surface )
         // return the newly created edge
         return this;
     };
+    
+    function label( x, y, contents )
+    // a generic label class to display weights and text associated with edges
+    // and nodes
+    {
+        // Init
+        
+        this.setPosition = function( x, y )
+        {
+        }
+    }
 }
