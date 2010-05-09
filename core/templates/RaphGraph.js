@@ -534,6 +534,8 @@ function RaphGraph( surface )
         // INIT ----------------------------------------------------------------
         
         // create the main Raphael object
+        attr.x = Math.round( attr.x );
+        attr.y = Math.round( attr.y );
         object = surface.circle( 
             attr.x, 
             attr.y, 
@@ -781,10 +783,13 @@ function RaphGraph( surface )
             /*
             lbb1 = attr.node1.label.getBBox();
             if( lbb1.width > bb1.width ){
-                bb1.x = lbb.x;
-                bb1.width = lbb.width;
+                bb1.x = lbb1.x;
+                bb1.width = lbb1.width;
             }
-            */ 
+            if( lbb1.height > bb1.height ){
+                bb1.y = lbb.y;
+            }
+            */
             
             // figure out if the path needs to be updated (if the path object
             // has not yet been defined or the nodes have been moved since the
@@ -886,58 +891,64 @@ function RaphGraph( surface )
 
         // INITIALIZE ----------------------------------------------------------
 
-        console.log(
-            "%sCreating new edge %d from node %d to node %d",
-            consoleID, this.getID(), attr.node1.getID(), 
-            attr.node2.getID()
-        );
-        
-        // create the foreground path
-        obj.line = surface.path().attr({
-            stroke: attr.line,
-            'stroke-width': 2
-        }).toBack(); // move to back so they're behind the nodes
-        
-        // create the background path
-        obj.bg = surface.path().attr({
-            stroke: attr.bg,
-            'stroke-width': 4
-        }).toBack();
-        
-        // create a new label object
-        this.label = new elementLabel({
-            element:    this,
-            weight:     attr.weight,
-            text:       attr.text,
-            fgCol:      attr.bg,
-            bgCol:      attr.line,
-            fgColSel:   attr.selBg,
-            bgColSel:   attr.selLine
-        });
-        
-        // set the interaction events for this new edge
-        var objects = [obj.line, obj.bg].concat(this.label.getObjs());
-        for( var i = 0; i<objects.length; i++ ){
+        if( attr.node1 == null || attr.node2 == null )
+            console.error( consoleID + 
+                "Both nodes must be defined to create an edge.");
+        else {
             
-            // when the edge is double clicked, open the label editing dialog
-            $(objects[i].node).bind('dblclick', {edge:this}, function(e)
-            {
-                e.data.edge.label.openEditDialog();
+            console.log(
+                "%sCreating new edge %d from node %d to node %d",
+                consoleID, this.getID(), attr.node1.getID(), 
+                attr.node2.getID()
+            );
+            
+            // create the foreground path
+            obj.line = surface.path().attr({
+                stroke: attr.line,
+                'stroke-width': 2
+            }).toBack(); // move to back so they're behind the nodes
+            
+            // create the background path
+            obj.bg = surface.path().attr({
+                stroke: attr.bg,
+                'stroke-width': 4
+            }).toBack();
+            
+            // create a new label object
+            this.label = new elementLabel({
+                element:    this,
+                weight:     attr.weight,
+                text:       attr.text,
+                fgCol:      attr.bg,
+                bgCol:      attr.line,
+                fgColSel:   attr.selBg,
+                bgColSel:   attr.selLine
             });
             
-            objects[i].mousedown( function(e)
-            {
-                grabbedElement = thisEdge;
-                e.preventDefault(); // prevent the default event action
-                hasMoved = false;
-            });
+            // set the interaction events for this new edge
+            var objects = [obj.line, obj.bg].concat(this.label.getObjs());
+            for( var i = 0; i<objects.length; i++ ){
+                
+                // when the edge is double clicked, open the label editing dialog
+                $(objects[i].node).bind('dblclick', {edge:this}, function(e)
+                {
+                    e.data.edge.label.openEditDialog();
+                });
+                
+                objects[i].mousedown( function(e)
+                {
+                    grabbedElement = thisEdge;
+                    e.preventDefault(); // prevent the default event action
+                    hasMoved = false;
+                });
+            }
+            
+            // finally, update the objects' positions
+            this.update();
+            
+            // return the newly created edge
+            return this;
         }
-        
-        // finally, update the objects' positions
-        this.update();
-        
-        // return the newly created edge
-        return this;
     };
     
     function elementLabel( attr )

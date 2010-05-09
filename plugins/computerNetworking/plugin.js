@@ -24,7 +24,7 @@ this.start = function() {
             myNodes[i] = api.graph.nodes.createNew({
                 x: ( ((boxX - (PERTURBATION)) / (Math.ceil(Math.sqrt(GRAPH_SIZE)) - 1)) * (i % Math.ceil(Math.sqrt(GRAPH_SIZE))) + Math.random() * PERTURBATION + NODE_RADIUS),
                 y: ( ((boxY - (PERTURBATION)) / (Math.ceil(Math.sqrt(GRAPH_SIZE)) - 1)) * Math.floor(i / Math.ceil(Math.sqrt(GRAPH_SIZE))) + Math.random() * PERTURBATION + NODE_RADIUS),
-                label: null
+                text: null
             });
         }
         
@@ -38,11 +38,28 @@ this.start = function() {
                         node1: myNodes[i],
                         node2: myNodes[j],
                         weight: Math.floor(Math.random() * 9 + 1),
-                        label: null
+                        text: null
                     });
                 }
             }
         }
+        
+        /*
+        api.graph.edges.createNew({
+            node1: api.graph.nodes.createNew({
+                x: 76,
+                y: 46,
+                text:"Seaside"
+            }),
+            node2: api.graph.nodes.createNew({
+                x: 202,
+                y: 54,
+                text:"Portland"
+            }),
+            weight: 79,
+            text: "something"
+        });
+        */
 
     });
 
