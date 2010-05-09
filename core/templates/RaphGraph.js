@@ -626,7 +626,7 @@ function RaphGraph( surface )
         var defaultAttr = {
             node1:      null,
             node2:      null,
-            directed:   true,
+            directed:   false,
             weight:     null,
             text:       null,
             selected:   false,
@@ -727,6 +727,9 @@ function RaphGraph( surface )
                 return true;
             return false
         }
+        
+        this.isDirected(){ return attr.directed }
+        // returns if the edge is directed or not
         
         // SELECTION -----------------------------------------------------------
         

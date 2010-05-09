@@ -32,57 +32,58 @@ this.stop = function()
 function createSimpleOregonMap()
 // create a simple Oregon map
 {
+    var SCALE = 1.25;
+    
     var seaside     = api.graph.nodes.createNew({
-        x: 76,
-        y: 46,
+        x: 76*SCALE,
+        y: 46*SCALE,
         text:"Seaside"
     });
     var portland    = api.graph.nodes.createNew({
-        x: 202,
-        y: 54,
+        x: 202*SCALE,
+        y: 54*SCALE,
         text:"Portland"
     });
     var gresham     = api.graph.nodes.createNew({
-        x: 310,
-        y: 73,
+        x: 310*SCALE,
+        y: 73*SCALE,
         text:"Gresham"
     });
     var newport     = api.graph.nodes.createNew({
-        x: 74,
-        y: 156,
+        x: 74*SCALE,
+        y: 156*SCALE,
         text:"Newport"
     });
     var corvallis   = api.graph.nodes.createNew({
-        x: 202,
-        y: 164,
+        x: 202*SCALE,
+        y: 164*SCALE,
         text:"Corvallis"
     });
     var bend        = api.graph.nodes.createNew({
-        x: 394,
-        y: 203,
+        x: 394*SCALE,
+        y: 203*SCALE,
         text:"Bend"
     });
     var eugene      = api.graph.nodes.createNew({
-        x: 203,
-        y: 296,
+        x: 203*SCALE,
+        y: 296*SCALE,
         text:"Eugene"
     });
     var medford     = api.graph.nodes.createNew({
-        x: 306,
-        y: 332,
+        x: 306*SCALE,
+        y: 332*SCALE,
         text:"Medford"
     });
     var brookings   = api.graph.nodes.createNew({
-        x: 75,
-        y: 332,
+        x: 75*SCALE,
+        y: 332*SCALE,
         text:"Brookings"
     });
     
     api.graph.edges.createNew({
         node1: seaside,
         node2: portland,
-        weight: 79,
-        text: "something"
+        weight: 79
     });
     api.graph.edges.createNew({
         node1: portland,
