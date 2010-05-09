@@ -831,10 +831,9 @@ function RaphGraph( surface )
         
         this.label = null;          // this edge's label
         
-        // Raphael object data
-        var objects = [];           // the objects
-        var obj = {                 // name aliases
-            bg: null,           
+        // Raphael objects data
+        var obj = {
+            bg: null,
             line: null,
         };
         
@@ -876,7 +875,7 @@ function RaphGraph( surface )
             // has not yet been defined or the nodes have been moved since the
             // last update)
             if( 
-                !objects.length ||
+                !obj.bg || !obj.line ||
                 prevPos.node1.x != bb1.x ||
                 prevPos.node1.y != bb1.y ||
                 prevPos.node2.x != bb2.x ||
@@ -905,8 +904,9 @@ function RaphGraph( surface )
         this.remove = function()
         // removes this edge from the Raphael surface
         {
-            for( var i = 0; i<objects.length; i++ ) 
-                objects[i].remove();
+            obj.bg.remove();
+            obj.line.remove();
+            this.label.remove();
         }
         
         // GETTERS -------------------------------------------------------------
@@ -978,22 +978,16 @@ function RaphGraph( surface )
         );
         
         // create the foreground path
-        objects[1] = surface.path().attr({
+        obj.line = surface.path().attr({
             stroke: attr.line,
             'stroke-width': 2
         }).toBack(); // move to back so they're behind the nodes
         
         // create the background path
-        objects[0] = surface.path().attr({
+        obj.bg = surface.path().attr({
             stroke: attr.bg,
             'stroke-width': 4
         }).toBack();
-        
-        // set up object aliases
-        obj = {
-            bg:     objects[0], // the background line object
-            line:   objects[1], // the foreground line object
-        };
         
         // create a new label object
         this.label = new elementLabel({
@@ -1007,6 +1001,12 @@ function RaphGraph( surface )
         });
         
         // set the interaction events for this new edge
+        var objects = [
+            obj.line,
+            obj.bg,
+            this.label.text.getObj(),
+            this.label.weight.getObj()
+        ];
         for( var i = 0; i<objects.length; i++ ){
             
             // when the edge is double clicked, open the label editing dialog
@@ -1094,6 +1094,13 @@ function RaphGraph( surface )
             text.attr( "fill", attr.fgCol );
         }
         
+        this.remove = function()
+        // remove the label from the Raphael surface
+        {
+            weight.remove();
+            text.remove();
+        }
+        
         // GETTERS AND SETTERS -------------------------------------------------
         
         this.weight = {
@@ -1103,7 +1110,8 @@ function RaphGraph( surface )
                 weight.attr({text:w});
                 thisLabel.update();
             },
-            get: function(){ return attr.weight }
+            get: function(){ return attr.weight },
+            getObj: function() { return weight }
         }
         
         this.text = {
@@ -1113,7 +1121,8 @@ function RaphGraph( surface )
                 text.attr({text:t});
                 thisLabel.update();
             },
-            get: function(){ return attr.text }
+            get: function(){ return attr.text },
+            getObj: function() { return text }
         }
         
         // POSITION UPDATER ----------------------------------------------------
@@ -1132,8 +1141,6 @@ function RaphGraph( surface )
                 
             weight.attr("y", bb.y + bb.height/2 + offset);
             text.attr("y", bb.y + bb.height/2 - offset);
-
-            
         }
         
         // INIT ----------------------------------------------------------------
