@@ -30,12 +30,20 @@ function RaphGraph( surface )
     var edges = [];    // an array of the edges
     
     // mouse handling data
-    var grabbedElement = null;  // the currently grabbed element
-    var hasMoved = true;        // did the object move between click & release?
-    var mousePos = {            // the current mouse position
+    var grabbedElement = null;   // the currently grabbed element
+    var mouseOverElement = null; // the element the mouse is currently over
+    var hasMoved = true;         // did the object move between click & release?
+    var mousePos = {             // the current mouse position
         x: null,
         y: null
     };
+    
+    // edge creation data
+    var edgeCreation = {
+        inProgress: false,
+        handleNode: null,
+        originNode: null
+    }
     
     var idCounter = 0; // an ID counter so every element may have a unique ID
     
@@ -121,7 +129,8 @@ function RaphGraph( surface )
                 
                 // if the mouse hasn't moved between mouse down and up, toggle 
                 // the element's selection
-                if( !hasMoved ) grabbedElement.toggleSelect();
+                if( !hasMoved ) 
+                    grabbedElement.toggleSelect();
 
                 // if the grabbed element is a node and it's out of bounds, 
                 // remove it
@@ -133,6 +142,25 @@ function RaphGraph( surface )
                 
                 // clear the grabbed element
                 grabbedElement = null;
+            }
+            
+            // if edge creation is in progress
+            if( edgeCreation.inProgress ){
+            
+                // if user dropped the edge creation handle on a node, create
+                // an edge from the 
+                if( mouseOverElement != null ){
+                    
+                    currentGraph.edges.createNew({
+                        node1: edgeCreation.originNode,
+                        node2: mouseOverElement
+                    });
+                }
+                    
+                // Delete the edge creation node and its edges.
+                currentGraph.remove( edgeCreation.handleNode );
+            
+                edgeCreation.inProgress = false;
             }
         });
     }
@@ -178,6 +206,14 @@ function RaphGraph( surface )
             return true;
             
         return false;
+    }
+
+    function getSurfaceOffset()
+    {
+        return {
+            x: $(surface.canvas).parent().position().left,
+            y: $(surface.canvas).parent().position().top
+        }
     }
 
     ///////////////////////
@@ -412,7 +448,8 @@ function RaphGraph( surface )
         var id = idCounter++;       // the node's unique ID
         var elementType = "node";   // the type of this element
         var currentNode = this;     // capture this node
-        var object;                 // the node's Raphael object
+        var object = null;          // the node's Raphael object
+        var handle = null;          // the node's edge creation handle
         
         this.label = null;          // the node's label object
         
@@ -539,7 +576,7 @@ function RaphGraph( surface )
         // create the main Raphael object
         attr.x = Math.round( attr.x );
         attr.y = Math.round( attr.y );
-        if( attr.img != null )          // imbed an image if one's defined
+        if( attr.img != null ){          // imbed an image if one's defined
             object = surface.image(
                 attr.img,
                 attr.x,
@@ -547,15 +584,29 @@ function RaphGraph( surface )
                 attr.width,
                 attr.height
             );
-        else                            // otherwise, just make a circle
+        } else {                            // otherwise, just make a circle
             object = surface.circle( 
                 attr.x, 
                 attr.y, 
                 attr.radius 
-            ).attr({
-                fill: attr.fill,
-                stroke: attr.stroke
-            });
+            );
+        }
+        object.attr({
+            fill: attr.fill,
+            stroke: attr.stroke
+        });
+        
+        // setup the edge creation handle
+        var bb = object.getBBox();
+        handle = surface.rect(
+            bb.x,
+            bb.y,
+            bb.height,
+            bb.width
+        ).attr({
+            fill: attr.fill,
+            stroke: "blue",
+        }).toBack().rotate(45).hide();
         
         // create a new label object
         this.label = new elementLabel({
@@ -569,7 +620,22 @@ function RaphGraph( surface )
         });
         
         // set up mouse functions common to all objects
-        var objects = [object].concat( this.label.getObjs() );
+        var objects = [object, handle].concat( this.label.getObjs() );
+        function nodeMousedownHandler( obj, elem, e )
+        {
+            // set the grabbed node to this node
+            grabbedElement = elem;
+            
+            // set the node to the current mouse position
+            object.dx = e.clientX;
+            object.dy = e.clientY;
+            
+            // prevent the default event action
+            e.preventDefault();
+            
+            // reset the hasMoved flag
+            hasMoved = false;
+        }
         for( var i = 0; i<objects.length; i++ ){
             
             // when the node is double clicked, open the label editing dialog
@@ -581,23 +647,54 @@ function RaphGraph( surface )
             // change the mouseover cursor to the "move" symbol
             objects[i].node.style.cursor = "move";
             
+            // attach mousedown functionality to the current object
             objects[i].mousedown( function(e)
-            // when the mouse button is pressed on this node...
-            { 
-                // set the grabbed node to this node
-                grabbedElement = currentNode;
-                
-                // set the node to the current mouse position
-                object.dx = e.clientX;
-                object.dy = e.clientY;
-                
-                // prevent the default event action
-                e.preventDefault();
-                
-                // reset the hasMoved flag
-                hasMoved = false;
+            {
+                nodeMousedownHandler( objects[i], currentNode, e );
+            });
+
+            // make edge creation handles appear when mouse is over node, but
+            // not when the user's dragging the node. Also stop showing when
+            // the mouse is off the node entirely.
+            objects[i].hover( function(e)
+            {
+                mouseOverElement = currentNode;
+                if( grabbedElement == null ){
+                    handle.attr({
+                        x: object.getBBox().x,
+                        y: object.getBBox().y
+                    }).show();
+                } else
+                    handle.hide();
+            }, function(e)
+            {
+                mouseOverElement = null;
+                handle.hide();
             });
         }
+        
+        // when the mouse comes down on the edge creation handle, start the 
+        // edge creation process. Interacts with the 'mouseup' function above.
+        handle.mousedown( function(e)
+        {
+            edgeCreation.inProgress = true;
+            
+            edgeCreation.handleNode = currentGraph.nodes.createNew({
+                x: e.clientX-getSurfaceOffset().x,
+                y: e.clientY-getSurfaceOffset().y,
+                radius: 5
+            });
+            nodeMousedownHandler( 
+                edgeCreation.handleNode.getObject(), 
+                edgeCreation.handleNode, 
+                e 
+            );
+            currentGraph.edges.createNew({
+                node1: currentNode,
+                node2: edgeCreation.handleNode
+            });
+            edgeCreation.originNode = currentNode;
+        });
         
         console.log(
             consoleID+"New node %d created at %d, %d", 
@@ -902,8 +999,8 @@ function RaphGraph( surface )
         {   
             var bb = attr.element.getBBox();
             var pos = {
-                x: $(surface.canvas).parent().position().left,
-                y: $(surface.canvas).parent().position().top
+                x: getSurfaceOffset().x,
+                y: getSurfaceOffset().y
             };
             var windowPos = [
                 pos.x + bb.x + bb.width,
