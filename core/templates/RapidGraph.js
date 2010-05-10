@@ -20,9 +20,11 @@ function RapidGraph()
         plugman.init(); // initialize the plugin manager
         
         // DEBUG EXPERIMENTS
+        /*
         $(".editable_test").editInPlace({
             callback:function(unused, enteredText){return enteredText}
         });
+        */
     }
     
 }; RapidGraph = new RapidGraph(); // there can be only one RapidGraph instance
