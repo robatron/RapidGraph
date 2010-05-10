@@ -504,9 +504,9 @@ function RaphGraph( surface )
             weight:     null,
             text:       null,
             selected:   false,
-            fill:       "black",
-            stroke:     "white",
-            selFill:    "black",
+            fill:       "lightgrey",
+            stroke:     "black",
+            selFill:    "white",
             selStroke:  "red"
         }
         
@@ -664,7 +664,7 @@ function RaphGraph( surface )
             weight:     attr.weight,
             text:       attr.text,
             bgCol:      attr.stroke,
-            fgCol:      attr.fill,
+            fgCol:      "white",
             fgColSel:   attr.selStroke,
             bgColSel:   attr.selFill
         });
@@ -704,6 +704,8 @@ function RaphGraph( surface )
             // attach mousedown functionality to the current object
             objects[i].mousedown( function(e)
             {
+                handle.directed.hide();
+                handle.undirected.hide();
                 nodeMousedownHandler( objects[i], currentNode, e );
             });
 
@@ -831,9 +833,9 @@ function RaphGraph( surface )
             weight:     null,
             text:       null,
             selected:   false,
-            line:       "black",
-            bg:         "white",
-            selLine:    "black",
+            line:       "white",
+            bg:         "black",
+            selLine:    "white",
             selBg:      "red",
         }
         
@@ -1058,10 +1060,10 @@ function RaphGraph( surface )
             element:    null,
             weight:     null,
             text:       null,
-            fgCol:      "white",
-            bgCol:      "black",
+            fgCol:      "black",
+            bgCol:      "white",
             fgColSel:   "red",
-            bgColSel:   "black"
+            bgColSel:   "white"
         }
         attr = $.extend( defaultAttr, attr );
         
