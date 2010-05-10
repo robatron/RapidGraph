@@ -125,7 +125,7 @@ function RaphGraph( surface )
         $(document).bind('mouseup', {graph:currentGraph}, function(e)
         // when the mouse button is released...
         {    
-            // if there's a grabbed element...
+            // ELEMENT SELECTION
             if( grabbedElement ){
                 
                 // if the mouse hasn't moved between mouse down and up, toggle 
@@ -133,6 +133,7 @@ function RaphGraph( surface )
                 if( !hasMoved ) 
                     grabbedElement.toggleSelect();
 
+                /*
                 // if the grabbed element is a node and it's out of bounds, 
                 // remove it
                 if( 
@@ -140,12 +141,13 @@ function RaphGraph( surface )
                     !inBounds( grabbedElement ) 
                 )
                     e.data.graph.remove( grabbedElement );
+                */
                 
                 // clear the grabbed element
                 grabbedElement = null;
             }
             
-            // if edge creation is in progress
+            // EDGE CREATION
             if( edgeCreation.inProgress ){
             
                 // if user dropped the edge creation handle on a node, create
@@ -677,7 +679,11 @@ function RaphGraph( surface )
             // the mouse is off the node entirely.
             objects[i].hover( function(e)
             {
+                // record the element that the mouse is currently over
                 mouseOverElement = currentNode;
+                
+                // Show the edge creation handles if no elements are grabbed.
+                // Set the position of the handles to match thier nodes.
                 if( grabbedElement == null ){
                     handle.directed.attr({
                         x: object.getBBox().x,
@@ -687,10 +693,16 @@ function RaphGraph( surface )
                         x: object.getBBox().x,
                         y: object.getBBox().y
                     }).show();
+                    
+                // otherwise, there is a grabbed element. Hide the edge creation
+                // handles
                 } else {
                     handle.directed.hide();
                     handle.undirected.hide();
                 }
+                
+            // when the mouse leaves the current object, clear the mouseOver
+            // element, and hide the edge creation handles
             }, function(e)
             {
                 mouseOverElement = null;
@@ -703,28 +715,39 @@ function RaphGraph( surface )
         // edge creation process. Interacts with the 'mouseup' function above.
         function handleMouseDownHandler( directed, e )
         {
+            // flag that edge creation is in-progress
             edgeCreation.inProgress = true;
             
             edgeCreation.directed = directed;
             
+            // create a temporary "node handle" for the new edge to follow
             edgeCreation.handleNode = currentGraph.nodes.createNew({
                 x: e.clientX-getSurfaceOffset().x,
                 y: e.clientY-getSurfaceOffset().y,
-                radius: 5
+                radius: 1
             });
+            
+            // start moving the new node handle to follow the mouse
             nodeMousedownHandler( 
                 edgeCreation.handleNode.getObject(), 
                 edgeCreation.handleNode, 
                 e 
             );
+            
+            // create a new potential edge
             currentGraph.edges.createNew({
                 node1: currentNode,
-                node2: edgeCreation.handleNode
+                node2: edgeCreation.handleNode,
+                directed: directed
             });
+            
+            // set the originating node
             edgeCreation.originNode = currentNode;
         }
+        
+        // set the mousedown handler for the un/directed handles
         handle.directed.mousedown( function(e)
-        {
+        { 
             handleMouseDownHandler( true, e );
         });
         handle.undirected.mousedown( function(e)

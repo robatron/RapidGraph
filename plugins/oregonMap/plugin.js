@@ -42,9 +42,9 @@ function createSimpleOregonMap()
     var portland    = api.graph.nodes.createNew({
         x: 202*SCALE,
         y: 54*SCALE,
-        img: "static/plugins/oregonMap/bishop.jpg",
-        height: 80,
-        width: 80,
+        //img: "static/plugins/oregonMap/bishop.jpg",
+        //height: 80,
+        //width: 80,
         text:"Portland"
     });
     var gresham     = api.graph.nodes.createNew({
