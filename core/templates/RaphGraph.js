@@ -41,6 +41,7 @@ function RaphGraph( surface )
     // edge creation data
     var edgeCreation = {
         inProgress: false,
+        directed: false,
         handleNode: null,
         originNode: null
     }
@@ -153,7 +154,8 @@ function RaphGraph( surface )
                     
                     currentGraph.edges.createNew({
                         node1: edgeCreation.originNode,
-                        node2: mouseOverElement
+                        node2: mouseOverElement,
+                        directed: edgeCreation.directed
                     });
                 }
                     
@@ -449,7 +451,10 @@ function RaphGraph( surface )
         var elementType = "node";   // the type of this element
         var currentNode = this;     // capture this node
         var object = null;          // the node's Raphael object
-        var handle = null;          // the node's edge creation handle
+        var handle = {              // the node's edge creation handles
+            directed: null,
+            undirected: null
+        };
         
         this.label = null;          // the node's label object
         
@@ -596,9 +601,9 @@ function RaphGraph( surface )
             stroke: attr.stroke
         });
         
-        // setup the edge creation handle
+        // setup the edge creation handles
         var bb = object.getBBox();
-        handle = surface.rect(
+        handle.directed = surface.rect(
             bb.x,
             bb.y,
             bb.height,
@@ -606,7 +611,17 @@ function RaphGraph( surface )
         ).attr({
             fill: attr.fill,
             stroke: "blue",
-        }).toBack().rotate(45).hide();
+        }).toBack().rotate(-45/2).hide();
+        handle.undirected = surface.rect(
+            bb.x,
+            bb.y,
+            bb.height,
+            bb.width,
+            10
+        ).attr({
+            fill: attr.fill,
+            stroke: "blue",
+        }).toBack().rotate(45/2).hide();
         
         // create a new label object
         this.label = new elementLabel({
@@ -620,7 +635,11 @@ function RaphGraph( surface )
         });
         
         // set up mouse functions common to all objects
-        var objects = [object, handle].concat( this.label.getObjs() );
+        var objects = [
+            object, 
+            handle.directed, 
+            handle.undirected
+        ].concat( this.label.getObjs() );
         function nodeMousedownHandler( obj, elem, e )
         {
             // set the grabbed node to this node
@@ -660,24 +679,33 @@ function RaphGraph( surface )
             {
                 mouseOverElement = currentNode;
                 if( grabbedElement == null ){
-                    handle.attr({
+                    handle.directed.attr({
                         x: object.getBBox().x,
                         y: object.getBBox().y
                     }).show();
-                } else
-                    handle.hide();
+                    handle.undirected.attr({
+                        x: object.getBBox().x,
+                        y: object.getBBox().y
+                    }).show();
+                } else {
+                    handle.directed.hide();
+                    handle.undirected.hide();
+                }
             }, function(e)
             {
                 mouseOverElement = null;
-                handle.hide();
+                handle.directed.hide();
+                handle.undirected.hide();
             });
         }
         
         // when the mouse comes down on the edge creation handle, start the 
         // edge creation process. Interacts with the 'mouseup' function above.
-        handle.mousedown( function(e)
+        function handleMouseDownHandler( directed, e )
         {
             edgeCreation.inProgress = true;
+            
+            edgeCreation.directed = directed;
             
             edgeCreation.handleNode = currentGraph.nodes.createNew({
                 x: e.clientX-getSurfaceOffset().x,
@@ -694,6 +722,14 @@ function RaphGraph( surface )
                 node2: edgeCreation.handleNode
             });
             edgeCreation.originNode = currentNode;
+        }
+        handle.directed.mousedown( function(e)
+        {
+            handleMouseDownHandler( true, e );
+        });
+        handle.undirected.mousedown( function(e)
+        {
+            handleMouseDownHandler( false, e );
         });
         
         console.log(
