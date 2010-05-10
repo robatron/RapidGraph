@@ -43,7 +43,12 @@ def get_app_static_dirs():
     """
 
     paths = []
-    for app in settings.INSTALLED_APPS:
+    
+    def addToPath( app ):
+        """
+        this takes an application and attempts to find a static directory within
+        it. If successful, it adds the static directory to the path.
+        """
         
         # start with the document root
         path = '%s/' % settings.DOC_ROOT
@@ -58,5 +63,13 @@ def get_app_static_dirs():
         # if the static dir exists, add it to the list
         if os.path.exists(path):
             paths.append((app, path))
- 
+    
+    # look in the plugins directory
+    for plugin in os.listdir( settings.DOC_ROOT + "/plugins" ):
+        addToPath( "plugins." + plugin )
+    
+    # also look in the installed applications
+    for app in settings.INSTALLED_APPS:
+        addToPath( app )
+
     return paths

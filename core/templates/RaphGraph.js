@@ -14,8 +14,9 @@
  * 
  * Dependancies:
  * 
- *     - jQuery v1.4.2 or later
- *     - Raphael v1.3.1 or later
+ *     - jQuery   >= v1.4.2
+ *     - jQueryUI >= v1.8.0
+ *     - Raphael  >= v1.3.1
  */ 
 
 function RaphGraph( surface )
@@ -162,14 +163,13 @@ function RaphGraph( surface )
     function inBounds( object )
     // returns if the specified Raphael object is in-bounds
     {
-        var position = object.getPosition();
-        var dimensions = object.getDimensions();
+        var bb = object.getBBox();
         
-        var x = position.x;
-        var y = position.y;
+        var x = bb.x;
+        var y = bb.y;
         
-        var w = -dimensions.width/2;
-        var h = -dimensions.height/2;
+        var w = -bb.width/2;
+        var h = -bb.height/2;
         
         var W = surface.width - w;
         var H = surface.height - h;
@@ -420,9 +420,12 @@ function RaphGraph( surface )
 
         // default attributes
         var defaultAttr = {
-            radius:     20,
+            radius:     30,
+            img:        null,
             x:          surface.width/2,
             y:          surface.height/2,
+            height:     80,
+            width:      80,
             weight:     null,
             text:       null,
             selected:   false,
@@ -536,22 +539,31 @@ function RaphGraph( surface )
         // create the main Raphael object
         attr.x = Math.round( attr.x );
         attr.y = Math.round( attr.y );
-        object = surface.circle( 
-            attr.x, 
-            attr.y, 
-            attr.radius 
-        ).attr({
-            fill: attr.fill,
-            stroke: attr.stroke
-        });
+        if( attr.img != null )          // imbed an image if one's defined
+            object = surface.image(
+                attr.img,
+                attr.x,
+                attr.y,
+                attr.width,
+                attr.height
+            );
+        else                            // otherwise, just make a circle
+            object = surface.circle( 
+                attr.x, 
+                attr.y, 
+                attr.radius 
+            ).attr({
+                fill: attr.fill,
+                stroke: attr.stroke
+            });
         
         // create a new label object
         this.label = new elementLabel({
             element:    this,
             weight:     attr.weight,
             text:       attr.text,
-            fgCol:      attr.stroke,
-            bgCol:      attr.fill,
+            bgCol:      attr.stroke,
+            fgCol:      attr.fill,
             fgColSel:   attr.selStroke,
             bgColSel:   attr.selFill
         });
@@ -806,8 +818,8 @@ function RaphGraph( surface )
                 element:    this,
                 weight:     attr.weight,
                 text:       attr.text,
-                fgCol:      attr.bg,
-                bgCol:      attr.line,
+                bgCol:      attr.bg,
+                fgCol:      attr.line,
                 fgColSel:   attr.selBg,
                 bgColSel:   attr.selLine
             });
