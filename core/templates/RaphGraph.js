@@ -48,7 +48,7 @@ function RaphGraph( surface )
     
     var idCounter = 0; // an ID counter so every element may have a unique ID
     
-    var currentGraph = this; // a reference to this graph instance
+    var thisGraph = this; // a reference to this graph instance
     
     // run init as soon as a graph object is instantiated
     init();
@@ -65,7 +65,7 @@ function RaphGraph( surface )
     function initMouseEvents()
     // initialize the mouse events
     {
-        $(document).bind('mousemove', {graph:currentGraph}, function(e)
+        $(document).bind('mousemove', function(e)
         // when the mouse moves...
         {
             // update the current mouse position
@@ -81,7 +81,7 @@ function RaphGraph( surface )
                 /*
                 // also move selected nodes with it (need to fix, but low
                 // priority)
-                var selNodes = e.data.graph.nodes.get.selected();
+                var selNodes = thisGraph.nodes.get.selected();
                 for( var i = 0; i<selNodes.length; i++ ){
                     
                     var mousePos = { x: e.clientX, y: e.clientY }
@@ -101,7 +101,7 @@ function RaphGraph( surface )
                 grabbedElement.label.update();
 
                 // update the edge paths
-                for( var i = 0; i<e.data.graph.edges.get.all().length; i++ )
+                for( var i = 0; i<thisGraph.edges.get.all().length; i++ )
                     edges[i].update();
                 
                 // set the hasMoved flag, for the node has moved
@@ -109,7 +109,7 @@ function RaphGraph( surface )
             }
         });
         
-        $(surface.canvas).bind('mousedown', {graph:currentGraph}, function(e)
+        $(surface.canvas).bind('mousedown', function(e)
         // when the mouse button is pressed...
         {   
             var consoleID = "graph.surface.mousedown: ";
@@ -122,14 +122,14 @@ function RaphGraph( surface )
                     "Deselecting everything."
                 );
                 
-                e.data.graph.deselect(  e.data.graph.nodes.get.all() );
-                e.data.graph.deselect(  e.data.graph.edges.get.all() );
+                thisGraph.deselect(  thisGraph.nodes.get.all() );
+                thisGraph.deselect(  thisGraph.edges.get.all() );
             }
             
             // draw a selection box
         });
         
-        $(document).bind('mouseup', {graph:currentGraph}, function(e)
+        $(document).bind('mouseup', function(e)
         // when the mouse button is released...
         {    
             // ELEMENT SELECTION
@@ -147,7 +147,7 @@ function RaphGraph( surface )
                     grabbedElement.getType() == "node" && 
                     !inBounds( grabbedElement ) 
                 )
-                    e.data.graph.remove( grabbedElement );
+                    thisGraph.remove( grabbedElement );
                 */
                 
                 // clear the grabbed element
@@ -161,7 +161,7 @@ function RaphGraph( surface )
                 // an edge from the 
                 if( mouseOverElement != null ){
                     
-                    currentGraph.edges.createNew({
+                    thisGraph.edges.createNew({
                         node1: edgeCreation.originNode,
                         node2: mouseOverElement,
                         directed: edgeCreation.directed
@@ -169,7 +169,7 @@ function RaphGraph( surface )
                 }
                     
                 // Delete the edge creation node and its edges.
-                currentGraph.remove( edgeCreation.handleNode );
+                thisGraph.remove( edgeCreation.handleNode );
             
                 edgeCreation.inProgress = false;
             }
@@ -183,16 +183,16 @@ function RaphGraph( surface )
             // delete the selected element if any of the following buttons are
             // pushed: delete (8), or backspace (46)
             if( event.which == 8 || event.which == 46 ){
-                currentGraph.remove( 
-                    currentGraph.edges.get.selected().concat(
-                        currentGraph.nodes.get.selected() 
+                thisGraph.remove( 
+                    thisGraph.edges.get.selected().concat(
+                        thisGraph.nodes.get.selected() 
                     ) 
                 );
             }
             
             // if 'n' is pressed, create a new node at the mouse pointer
             if( event.which == 78 ){
-                currentGraph.nodes.createNew({
+                thisGraph.nodes.createNew({
                     x: mousePos.x - getSurfaceOffset().x,
                     y: mousePos.y - getSurfaceOffset().y
                 });
@@ -482,7 +482,7 @@ function RaphGraph( surface )
                 
         var id = idCounter++;       // the node's unique ID
         var elementType = "node";   // the type of this element
-        var currentNode = this;     // capture this node
+        var thisNode = this;     // capture this node
         var object = null;          // the node's Raphael object
         var handle = {              // the node's edge creation handles
             directed: null,
@@ -693,9 +693,9 @@ function RaphGraph( surface )
         for( var i = 0; i<objects.length; i++ ){
             
             // when the node is double clicked, open the label editing dialog
-            $(objects[i].node).bind('dblclick', {node:this}, function(e)
+            $(objects[i].node).bind('dblclick', function(e)
             {
-                e.data.node.label.openEditDialog();
+                thisNode.label.openEditDialog();
             });
             
             // change the mouseover cursor to the "move" symbol
@@ -706,7 +706,7 @@ function RaphGraph( surface )
             {
                 handle.directed.hide();
                 handle.undirected.hide();
-                nodeMousedownHandler( objects[i], currentNode, e );
+                nodeMousedownHandler( objects[i], thisNode, e );
             });
 
             // make edge creation handles appear when mouse is over node, but
@@ -715,7 +715,7 @@ function RaphGraph( surface )
             objects[i].hover( function(e)
             {
                 // record the element that the mouse is currently over
-                mouseOverElement = currentNode;
+                mouseOverElement = thisNode;
                 
                 // Show the edge creation handles if no elements are grabbed.
                 // Set the position of the handles to match thier nodes.
@@ -756,7 +756,7 @@ function RaphGraph( surface )
             edgeCreation.directed = directed;
             
             // create a temporary "node handle" for the new edge to follow
-            edgeCreation.handleNode = currentGraph.nodes.createNew({
+            edgeCreation.handleNode = thisGraph.nodes.createNew({
                 x: e.clientX-getSurfaceOffset().x,
                 y: e.clientY-getSurfaceOffset().y,
                 radius: 1
@@ -770,14 +770,14 @@ function RaphGraph( surface )
             );
             
             // create a new potential edge
-            currentGraph.edges.createNew({
-                node1: currentNode,
+            thisGraph.edges.createNew({
+                node1: thisNode,
                 node2: edgeCreation.handleNode,
                 directed: directed
             });
             
             // set the originating node
-            edgeCreation.originNode = currentNode;
+            edgeCreation.originNode = thisNode;
         }
         
         // set the mousedown handler for the un/directed handles
@@ -1020,9 +1020,9 @@ function RaphGraph( surface )
             for( var i = 0; i<objects.length; i++ ){
                 
                 // when the edge is double clicked, open the label editing dialog
-                $(objects[i].node).bind('dblclick', {edge:this}, function(e)
+                $(objects[i].node).bind('dblclick', function(e)
                 {
-                    e.data.edge.label.openEditDialog();
+                    thisEdge.label.openEditDialog();
                 });
                 
                 objects[i].mousedown( function(e)
@@ -1263,7 +1263,7 @@ function RaphGraph( surface )
                 
             // if this element is a node, update the edge paths
             if( attr.element.getType() == "node" ){
-                var edges = currentGraph.edges.get.all();
+                var edges = thisGraph.edges.get.all();
                 for( var i = 0; i<edges.length; i++ )
                     edges[i].update();
             }
@@ -1335,9 +1335,9 @@ function RaphGraph( surface )
                 bg
             ];
             for( var i = 0; i<objects.length; i++)
-                $(objects[i].node).bind('dblclick', {label:thisLabel}, function(e)
+                $(objects[i].node).bind('dblclick', function(e)
                 {
-                    e.data.label.openEditDialog();
+                    thisLabel.openEditDialog();
                 });
         }
     }
