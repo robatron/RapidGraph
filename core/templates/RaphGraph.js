@@ -58,6 +58,13 @@ function RaphGraph( surface )
     {
         var consoleID = "graph.init: ";
         
+        initMouseEvents();
+        initKeyboardEvents();
+    }
+
+    function initMouseEvents()
+    // initialize the mouse events
+    {
         $(document).bind('mousemove', {graph:currentGraph}, function(e)
         // when the mouse moves...
         {
@@ -165,6 +172,22 @@ function RaphGraph( surface )
                 currentGraph.remove( edgeCreation.handleNode );
             
                 edgeCreation.inProgress = false;
+            }
+        });
+    }
+
+    function initKeyboardEvents()
+    // initialize the keyboard shortcut events
+    {
+         $(document).keydown(function(event){
+            // delete the selected element if any of the following buttons are
+            // pushed: delete (8), or backspace (46)
+            if( event.which == 8 || event.which == 46 ){
+                currentGraph.remove( 
+                    currentGraph.edges.get.selected().concat(
+                        currentGraph.nodes.get.selected() 
+                    ) 
+                );
             }
         });
     }
@@ -575,6 +598,8 @@ function RaphGraph( surface )
         // remove this node's objects from the Raphael surface
         {
             object.remove();
+            handle.directed.remove();
+            handle.undirected.remove();
             this.label.remove();
         }
         
