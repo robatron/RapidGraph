@@ -3,11 +3,7 @@
 */
 
 *{
-    color:white;
-    background:black;
     font-family:monospace;
-    -webkit-border-radius: 5px;
-    -moz-border-radius: 5px;
 }
 
 .tempUIctrl{
@@ -26,10 +22,12 @@
     margin:0;
 }
 
+/*
 b{
     color:blue;
     font-weight:heavy;
 }
+*/
 
 /* user interface panels */
 .panel{
@@ -41,7 +39,10 @@ b{
     padding:1em;
     margin:1em;
 
-    border: 1px solid green;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+
+    border: 1px solid lightgrey;
 }
 
 #main{    
@@ -71,5 +72,3 @@ svg{
     border:1px solid blue;
 }
 */
-
-
