@@ -613,17 +613,17 @@ function RaphGraph( surface )
         ).attr({
             fill: attr.fill,
             stroke: "blue",
-        }).toBack().rotate(-45/2).hide();
+        }).toBack().rotate(45).hide();
         handle.undirected = surface.rect(
             bb.x,
             bb.y,
             bb.height,
             bb.width,
-            10
+            5
         ).attr({
             fill: attr.fill,
             stroke: "blue",
-        }).toBack().rotate(45/2).hide();
+        }).toBack().hide();
         
         // create a new label object
         this.label = new elementLabel({
