@@ -189,6 +189,14 @@ function RaphGraph( surface )
                     ) 
                 );
             }
+            
+            // if 'n' is pressed, create a new node at the mouse pointer
+            if( event.which == 78 ){
+                currentGraph.nodes.createNew({
+                    x: mousePos.x - getSurfaceOffset().x,
+                    y: mousePos.y - getSurfaceOffset().y
+                });
+            }
         });
     }
 
