@@ -9,11 +9,11 @@ this.settings =
 }
 
 this.start = function() {
-    $("#make_network").click( function(){
+    $("#make_network").click( function() {
         // Make a small random undirected edge-weighted graph
 
         GRAPH_SIZE = 9;     // The number of nodes in the graph
-        PERTURBATION = 30;   // The number of pixels that nodes can be randomly perturbed
+        PERTURBATION = 30;  // The number of pixels that nodes can be randomly perturbed
         NODE_RADIUS = 25;   // The radius of a node image
         boxX = api.ui.getMainPanelSize().width - (2 * NODE_RADIUS);
         boxY = api.ui.getMainPanelSize().height - (2 * NODE_RADIUS);
@@ -43,24 +43,6 @@ this.start = function() {
                 }
             }
         }
-        
-        /*
-        api.graph.edges.createNew({
-            node1: api.graph.nodes.createNew({
-                x: 76,
-                y: 46,
-                text:"Seaside"
-            }),
-            node2: api.graph.nodes.createNew({
-                x: 202,
-                y: 54,
-                text:"Portland"
-            }),
-            weight: 79,
-            text: "something"
-        });
-        */
-
     });
 
     $("#find_route").click( function() {
@@ -71,7 +53,7 @@ this.start = function() {
         // Check that all edge weights are non-negative and non-null
         edges = graph.edges.get.all();
         for( i = 0; i < edges.length; ++i ) {
-            if( edges[i].weight.get() == null || edges[i].weight.get() < 0) {
+            if( edges[i].label.weight.get() == null || edges[i].label.weight.get() < 0) {
                 alert("Graph edges must be weighted with positive values!");
                 return;
             }
@@ -91,6 +73,13 @@ this.start = function() {
         startIndex = -1;
         endIndex = -1;
         nodes = graph.nodes.get.all()
+
+        // Make "infinity" larger than any possible distance between
+        //  two nodes
+        infinity = 1;
+        for( i = 0; i < edges.length; ++i )
+            infinity += edges[i].label.weight.get();
+
 console.log("All nodes: " + nodes);
         for( i = 0; i < nodes.length; ++i ) {
             nList.push(i);
@@ -100,7 +89,7 @@ console.log("All nodes: " + nodes);
                 distance[i] = 0;
             }
             else {
-                distance[i] = -1;
+                distance[i] = infinity;
             }
             if( selectedNodes[1] == nodes[i] ) {
                 endIndex = i;
@@ -110,46 +99,51 @@ console.log("All nodes: " + nodes);
 console.log("Start index: " + startIndex);
 console.log("End index: " + endIndex);
 
-        // Make "infinity" larger than any possible distance between
-        //  two nodes
-        infinity = 1;
-        for( i = 0; i < edges.length; ++i )
-            infinity += edges[i].weight.get();
-
         distance[startIndex] = 0;
         while( nList.length != 0 ) {
 console.log("nlist: " + nList);
             //Find the node with the smallest distance from source
             sval = infinity;
-            smallestIndex = null;
+            nIndex = null;
             for( i = 0; i <= nList.length; ++i ) {
                 if( distance[nList[i]] < sval ) {
-                    smallestIndex = nList[i];
+                    nIndex = nList[i];
                     sval = distance[nList[i]];
                 }
             }
             
-            if( sval == infinity )
-                break;
-            nIndex = smallestIndex;
+console.log("Distances: " + distance);
             
-            // Remove smallest nodes from array
-            for( i = 0; i < nList.length; ++i ) {
-                if( nList[i] == smallestIndex )
-                    nList.splice(i, i);
+            if( sval >= infinity ) {
+console.log("Done");
+                break;
             }
-            //distance.splice(smallestIndex, smallestIndex);
+            
+            // Remove smallest node from array
+            for( i = 0; i < nList.length; ++i ) {
+                if( nList[i] == nIndex ) {
+                    nList.splice(i, i);
+                    break;
+                }
+            }
             neighbors = getNeighbors( nIndex, nList, nodes );
 console.log("Current Node: " + nIndex);
 console.log("Neighbors: " + neighbors);
             for( i = 0; i < neighbors.length; ++i ) {
-                distanceBetween = smallestEdge( nIndex, neighbors[i], edges, infinity ).weight.get();
+                distanceBetween = smallestEdge( nIndex, neighbors[i], edges, infinity ).label.weight.get();
                 newDist = sval + distanceBetween;
                 if( newDist < distance[neighbors[i]] ) {
                     distance[neighbors[i]] = newDist;
-                    previous[i] = node;
+                    previous[neighbors[i]] = nIndex;
                 }
+/*console.log("Neighbors: " + neighbors);
+console.log("neighbors.length: " + neighbors.length);
+console.log("i: " + i);
+console.log("neighbors[i]: " + neighbors[i]);
+console.log("distanceBetween node: " + nIndex + " and node " + neighbors[i] + " = " + distanceBetween);*/
             }
+//console.log("About to break");
+//break;
         }
         
         cur = endIndex;
@@ -193,12 +187,15 @@ console.log("Neighbors: " + neighbors);
 
     function getNeighbors(nIndex, nList, nodes) {
         edges = graph.edges.get.all();
+/*console.log("Neighbors... nodes: " + nodes);
+console.log("Neighbors... edges: " + edges);
+console.log("Neighbors... nList: " + nList);
+console.log("Neighbors... nIndex: " + nIndex);*/
         var neighbors = new Array();
-
-        for( i = 0; i < nList.length; ++i ) {
-            for( j = 0; j < edges.length; ++j ) {
-                if( edges[j].attachedTo(nodes[nList[i]]) && edges[j].attachedTo(nodes[nIndex]) ) {
-                    neighbors.push(nList[i]);
+        for( gn1_ = 0; gn1_ < nList.length; ++gn1_ ) {
+            for( gn2_ = 0; gn2_ < edges.length; ++gn2_ ) {
+                if( edges[gn2_].attachedTo(nodes[nList[gn1_]]) && edges[gn2_].attachedTo(nodes[nIndex]) ) {
+                    neighbors.push(nList[gn1_]);
                 }
             }
         }
@@ -208,14 +205,14 @@ console.log("Neighbors: " + neighbors);
     function smallestEdge( n1, n2, edges, infinity ) {
         nodes = graph.nodes.get.all();
         distanceBetween = infinity;
-        smallestEdge = null;
-        for( i = 0; i < edges.length; ++i ) {
-            if( edges[i].attachedTo(nodes[n1]) && edges[i].attachedTo(nodes[n2]) && 
-              ( edges[i].weight.get() < distanceBetween ) ) {
-                    distanceBetween = edges[i].weight.get();
-                    smallestEdge = edges[i];
+        result = null;
+        for( se_ = 0; se_ < edges.length; ++se_ ) {
+            if( edges[se_].attachedTo(nodes[n1]) && edges[se_].attachedTo(nodes[n2]) && 
+              ( edges[se_].label.weight.get() < distanceBetween ) ) {
+                    distanceBetween = edges[se_].label.weight.get();
+                    result = edges[se_];
             }
         }
-        return smallestEdge;
+        return result;
     }
 }
