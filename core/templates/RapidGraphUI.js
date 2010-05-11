@@ -18,22 +18,27 @@ function RapidGraphUI()
     // return the RaphGraph object
     
     this.installPlugins = function( plugins )
-    // installs a plugin into the RapidGraph UI
-    {   
-        var thisPlugin = null; // holds the current plugin
-        
+    // installs the plugins into the RapidGraph UI
+    {        
         // clear the plugins accordian so it can be filled from scratch
         $("#plugins_accordion").html("");
         
+        // for every plugin, write it into the accordian element, and attach
+        // start/stop hooks to the corresponding DOM element
         for( var i=0; i<plugins.length; i++ ){
             
+            // write the current plugin into the accordian element
             $("#plugins_accordion").append(
-                "<h3 id='"+plugins[i].hash+"'><a href='#'>"+plugins[i].title+"</a></h3>"+
+                "<h3 id='"+plugins[i].hash+"'>"+
+                "   <a href='#'>"+plugins[i].title+"</a>"+
+                "</h3>"+
                 "<div>"+
                     plugins[i].html+
                 "</div>"
             );
 
+            // write the current plugin and its start/stop hooks into its
+            // corresponding DOM element
             $("#"+plugins[i].hash).data('plugin', plugins[i]);
             $("#"+plugins[i].hash).data('start', function( p )
             {
@@ -66,6 +71,7 @@ function RapidGraphUI()
             }
         });
         
+        // reposition all of the panels since the DOM has changed
         positionPanels();
     }
     
