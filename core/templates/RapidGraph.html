@@ -69,31 +69,12 @@
         
         <div id='main' class='panel ui-widget ui-widget-content'></div>
         
-        <div id='left' class='panel ui-widget ui-widget-content'>
-            <h3>Temporary UI controls:</h3>
-            
-            <p align='center'>
-                <div id="nodes">
-                    <p id='createnew' class='tempUIctrl'>Create new node</p>
-                    <p id='selectall' class='tempUIctrl'>Select all nodes</p>
-                </div>
-            </p>
-            
-            <p align='center'>
-                <div id="edges">
-                    <p id='createnew' class='tempUIctrl'>Connect selected nodes<br>(max 2)</p>
-                    <p id='selectall' class='tempUIctrl'>Select all edges</p>              
-                </div>
-            </p>
-            
-            <p align='center'>
-                <div id="all">
-                    <p id='clear' class='tempUIctrl'>Clear all elements</p>
-                    <p id='selectall' class='tempUIctrl'>Select all elements</p>
-                    <p id='deleteselected' class='tempUIctrl'>Delete selected elements</p>               
-                </div>
-            </p>
-            
+        <div id='left' class='panel ui-widget ui-widget-content'>            
+            <div id='button_new'>Create a new node (n)</div>
+            <div id='button_delete'>Delete selected elements (delete/backspace)</div>
+            <div id='button_selectAll'>Select all elements (a)</div>
+            <div id='button_undo'>Undo (u)</div>
+            <div id='button_redo'>Redo (r)</div>
         </div>
 
         <div id='right' class='panel ui-widget ui-widget-content'>

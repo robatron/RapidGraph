@@ -11,31 +11,11 @@ function RapidGraphUI()
         graph = new RaphGraph( surface );
         
         initPanels();
-        
-        /*
-        // DEBUG TESTING STUFF
-        graph.edges.createNew({
-            node1: graph.nodes.createNew({
-                x: 100,
-                y: 100,
-                label: null
-            }),
-            node2: graph.nodes.createNew({
-                x: 200,
-                y: 200,
-                label: null
-            }),
-            directed: true,
-            label: null
-        });
-        */
+        initButtons();
     }
 
-    this.getGraph = function()
+    this.getGraph = function(){ return graph }
     // return the RaphGraph object
-    {
-        return graph;
-    }
     
     this.installPlugin = function( plugin )
     // installs a plugin into the RapidGraph UI
@@ -69,11 +49,13 @@ function RapidGraphUI()
         }
     }
     
+    // to get the viewport dimensions
+    function screenHeight(){ return Screen.getViewportHeight() };
+    function screenWidth(){ return Screen.getViewportWidth() };
+    
     function initPanels()
     // init panels
-    {        
-        initButtons();
-        
+    {                
         // position the panels, and do so everytime the window is resized
         positionPanels();
         $(window).resize( function(){ positionPanels() });
@@ -81,6 +63,41 @@ function RapidGraphUI()
     
     function initButtons()
     {       
+        $('#button_new').button({
+            text: false,
+            icons: { primary: 'ui-icon-plusthick' }
+        }).click(function()
+        {
+            graph.nodes.createNew();
+        });
+        
+        $('#button_delete').button({
+            text: false,
+            icons: { primary: 'ui-icon-trash' }
+        }).click(function()
+        {
+            graph.remove( graph.nodes.get.selected() );
+            graph.remove( graph.edges.get.selected() );
+        });
+        
+        $('#button_selectAll').button({
+            text: false,
+            icons: { primary: 'ui-icon-star' }
+        }).click(function()
+        {
+            graph.select( graph.nodes.get.all() );
+            graph.select( graph.edges.get.all() );
+        });
+        
+        $('#button_selectAll').button({
+            text: false,
+            icons: { primary: 'ui-icon-star' }
+        }).click(function()
+        {
+            graph.select( graph.nodes.get.all() );
+            graph.select( graph.edges.get.all() );
+        });
+        
         // all elements
         $('#all>#clear').click(function()
         {
@@ -173,8 +190,4 @@ function RapidGraphUI()
             ($('#right').outerHeight(true) - $('#right').height())
         );
     }
-
-    // to get the viewport dimensions
-    function screenHeight(){ return Screen.getViewportHeight() };
-    function screenWidth(){ return Screen.getViewportWidth() };
 }
