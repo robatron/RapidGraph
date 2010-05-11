@@ -42,10 +42,12 @@ function RapidGraphUI()
             $("#"+plugins[i].hash).data('plugin', plugins[i]);
             $("#"+plugins[i].hash).data('start', function( p )
             {
-                $("#plugins_title").html( 
-                    "<h2 id='plugin_title'>"+p.title+"</h2>" +
-                    "<p id='plugin_subtitle'>"+p.subtitle+"</p>"
-                );
+                $("#plugins_title").fadeOut("fast", function(){
+                    $(this).html( 
+                        "<h2 id='plugin_title'>"+p.title+"</h2>" +
+                        "<p id='plugin_subtitle'>"+p.subtitle+"</p>"
+                    ).fadeIn("fast");
+                });
                 
                 if( p.javascript.start )
                     p.javascript.start();
@@ -99,7 +101,7 @@ function RapidGraphUI()
     function initButtons()
     {       
         $('#button_new').button({
-            text: false,
+            
             icons: { primary: 'ui-icon-plusthick' }
         }).click(function()
         {
@@ -107,7 +109,7 @@ function RapidGraphUI()
         });
         
         $('#button_delete').button({
-            text: false,
+            
             icons: { primary: 'ui-icon-minusthick' }
         }).click(function()
         {
@@ -116,7 +118,7 @@ function RapidGraphUI()
         });
         
         $('#button_selectAll').button({
-            text: false,
+            
             icons: { primary: 'ui-icon-star' }
         }).click(function()
         {
@@ -125,7 +127,7 @@ function RapidGraphUI()
         });
         
         $('#button_undo').button({
-            text: false,
+            
             icons: { primary: 'ui-icon-seek-prev' }
         }).click(function()
         {
@@ -133,8 +135,7 @@ function RapidGraphUI()
         });
         
         $('#button_redo').button({
-            text: false,
-            icons: { primary: 'ui-icon-seek-next' }
+            icons: { primary:'ui-icon-seek-next' }
         }).click(function()
         {
             ;
@@ -143,7 +144,7 @@ function RapidGraphUI()
     
     function positionPanels()
     // position the panels on the screen
-    {
+    {        
         var topHeight = $('#top').outerHeight(true);
         
         // top panel
@@ -185,5 +186,8 @@ function RapidGraphUI()
             left: $('#left').outerWidth(true) 
         });
         surface.setSize( $('#main').innerWidth(), $('#main').innerHeight() );
+    
+        // resize the accordian
+        $("#plugins_accordion").accordion("resize");
     }
 }
