@@ -17,27 +17,42 @@ function RapidGraphUI()
     this.getGraph = function(){ return graph }
     // return the RaphGraph object
     
-    this.installPlugin = function( plugin )
+    this.installPlugins = function( plugins )
     // installs a plugin into the RapidGraph UI
-    {        
-        // install plugin into the dropdown menu
-        $("#plugins_dropdown").append(
-            "<option id='"+plugin.hash+"'>"+plugin.title+"</option>"
-        )
+    {   
+        var thisPlugin = null; // holds the current plugin
         
-        // fill in the plugin's HTML in the right panel when plugin is selected
-        $("#"+plugin.hash).click( function()
-        {
-            $("#plugins_title").html( 
-                "<h2 id='plugin_title'>"+plugin.title+"</h2>" +
-                "<p id='plugin_subtitle'>"+plugin.subtitle+"</p>"
+        // clear the plugins accordian so it can be filled from scratch
+        $("#plugins_accordion").html("");
+        
+        for( var i=0; i<plugins.length; i++ ){
+            
+            $("#plugins_accordion").append(
+                "<h3><a href='#' id='"+plugins[i].hash+"'>"+plugins[i].title+"</a></h3>"+
+                "<div>"+
+                    plugins[i].html+
+                "</div>"
             );
-            $("#right").html( plugin.html );
+            
+            $("#"+plugins[i].hash).bind('click', {thisPlugin:plugins[i]}, function(e)
+            {  
+                thisPlugin = e.data.thisPlugin;
+                              
+                $("#plugins_title").html( 
+                    "<h2 id='plugin_title'>"+thisPlugin.title+"</h2>" +
+                    "<p id='plugin_subtitle'>"+thisPlugin.subtitle+"</p>"
+                );
+            });
+         
+            if( plugins[i].javascript.start )
+                $("#"+plugins[i].hash).click( plugins[i].javascript.start );
+        }
+        
+        $("#plugins_accordion").accordion({
+            fillSpace: true
         });
         
-        // bind the plugin's start function to the plugin selection if defined
-        if( plugin.javascript.start )
-            $("#"+plugin.hash).click( plugin.javascript.start );
+        positionPanels();
     }
     
     this.getMainPanelSize = function()
@@ -73,7 +88,7 @@ function RapidGraphUI()
         
         $('#button_delete').button({
             text: false,
-            icons: { primary: 'ui-icon-trash' }
+            icons: { primary: 'ui-icon-minusthick' }
         }).click(function()
         {
             graph.remove( graph.nodes.get.selected() );
@@ -89,60 +104,21 @@ function RapidGraphUI()
             graph.select( graph.edges.get.all() );
         });
         
-        $('#button_selectAll').button({
+        $('#button_undo').button({
             text: false,
-            icons: { primary: 'ui-icon-star' }
+            icons: { primary: 'ui-icon-seek-prev' }
         }).click(function()
         {
-            graph.select( graph.nodes.get.all() );
-            graph.select( graph.edges.get.all() );
+            ;
         });
         
-        // all elements
-        $('#all>#clear').click(function()
+        $('#button_redo').button({
+            text: false,
+            icons: { primary: 'ui-icon-seek-next' }
+        }).click(function()
         {
-            graph.clear();
+            ;
         });
-        $('#all>#selectall').click(function()
-        {
-            graph.select( graph.nodes.get.all() );
-            graph.select( graph.edges.get.all() );
-        });
-        $('#all>#deleteselected').click(function()
-        {
-            graph.remove( graph.nodes.get.selected() );
-            graph.remove( graph.edges.get.selected() );
-        });
-
-        // nodes
-        $('#nodes>#createnew').click(function()
-        {
-            graph.nodes.createNew();
-        });
-        $('#nodes>#selectall').click(function()
-        {
-            graph.select( graph.nodes.get.all() );
-        });
-    
-        // edges
-        $('#edges>#createnew').click(function()
-        {
-            var selected = graph.nodes.get.selected();
-            if( selected.length == 2 ){
-                graph.edges.createNew({ 
-                    node1:selected[0],
-                    node2:selected[1]
-                });
-            } else
-                console.warn(
-                    "buttons:edges:connectSelected: Please select exactly "+
-                    "two nodes to connect."
-                );
-        });
-        $('#edges>#selectall').click(function()
-        {
-            graph.select( graph.edges.get.all() );
-        }); 
     }
     
     function positionPanels()
@@ -154,23 +130,6 @@ function RapidGraphUI()
         $('#top').width(
             screenWidth() - ($('#top').outerWidth(true) - $('#top').width())
         );
-        
-        // main panel
-        $('#main').width(
-            screenWidth() -
-            $('#left').outerWidth(true) - $('#right').outerWidth(true) -
-            ($('#main').outerWidth(true) - $('#main').width())
-        );
-        $('#main').height(
-            screenHeight() -
-            $('#top').outerHeight(true) -
-            ($('#main').outerHeight(true) - $('#main').height())
-        );               
-        $('#main').offset({
-            top: topHeight,
-            left: screenWidth()/2 - $('#main').outerWidth(true)/2
-        });
-        surface.setSize( $('#main').innerWidth(), $('#main').innerHeight() );
         
         // left panel
         $('#left').offset({
@@ -189,5 +148,22 @@ function RapidGraphUI()
             screenHeight() - topHeight -
             ($('#right').outerHeight(true) - $('#right').height())
         );
+        
+        // main panel
+        $('#main').width(
+            screenWidth() -
+            $('#left').outerWidth(true) - $('#right').outerWidth(true) -
+            ($('#main').outerWidth(true) - $('#main').width())
+        );
+        $('#main').height(
+            screenHeight() -
+            $('#top').outerHeight(true) -
+            ($('#main').outerHeight(true) - $('#main').height())
+        );               
+        $('#main').offset({
+            top: topHeight,
+            left: $('#left').outerWidth(true) 
+        });
+        surface.setSize( $('#main').innerWidth(), $('#main').innerHeight() );
     }
 }

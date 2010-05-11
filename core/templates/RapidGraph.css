@@ -38,8 +38,8 @@ b{
     
     overflow:hidden;
     
-    padding:1em;
-    margin:1em;
+    padding:10px;
+    margin:10px;
 
     -webkit-border-radius: 5px;
     -moz-border-radius: 5px;
@@ -56,12 +56,12 @@ b{
 
 #left{
     left:0;
-    width:16%;
+    width:200px;
 }
 
 #right{
     right:0;
-    width:16%;
+    width:300px;
 }
 
 #top{

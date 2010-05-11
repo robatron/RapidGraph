@@ -18,7 +18,7 @@ function RapidGraphPlugMan( ui )
     this.init = function()
     {
         getPlugins();
-        installPlugins();
+        ui.installPlugins( plugins );
         initPlugins();
     }
 
@@ -42,14 +42,6 @@ function RapidGraphPlugMan( ui )
                 
             {% endfor %}
         {% endautoescape %}
-    }
-    
-    function installPlugins()
-    // install the plugins in rapidgraph
-    {
-        // install the plugin names in the plugin list
-        for( var i=0; i<plugins.length; i++ )
-            ui.installPlugin( plugins[i] );
     }
     
     function initPlugins()

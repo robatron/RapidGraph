@@ -13,15 +13,15 @@ this.init = function()
     console.log("::plugin:: is initializing!");
     
     createSimpleOregonMap();
+    
+    $("#::plugin::_test").click( function(){
+        createSimpleOregonMap();
+    });
 }
 
 this.start = function()
 {
     console.log("::plugin:: is starting!");
-    
-    $("#::plugin::_test").click( function(){
-        createSimpleOregonMap();
-    });
 }
 
 this.stop = function()
