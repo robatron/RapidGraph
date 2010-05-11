@@ -25,6 +25,31 @@ function RaphGraph( surface )
     // GRAPH DATA //
     ////////////////
     
+    // default color settings
+    var COLOR = {
+        ELEMENT: {
+            LINE:           "black",
+            FILL:           "lightgrey",
+            SELECTED: {
+                LINE:       "red",
+                FILL:       "lightgrey"
+            }
+        },
+        LABEL: {
+            LINE:           "white",
+            FILL:           "black",
+            SELECTED: {
+                TEXT:       "red",
+                LINE:       "red",
+                FILL:       "black"
+            }
+        },
+        NEW_EDGE_HANDLE: {
+            LINE:           "blue",
+            FILL:           "lightgrey"
+        }
+    }
+    
     // nodes and edges arrays
     var nodes = [];    // an array of the nodes
     var edges = [];    // an array of the edges
@@ -504,10 +529,10 @@ function RaphGraph( surface )
             weight:     null,
             text:       null,
             selected:   false,
-            fill:       "lightgrey",
-            stroke:     "black",
-            selFill:    "white",
-            selStroke:  "red"
+            stroke:     COLOR.ELEMENT.LINE,
+            fill:       COLOR.ELEMENT.FILL,
+            selStroke:  COLOR.ELEMENT.SELECTED.LINE,
+            selFill:    COLOR.ELEMENT.SELECTED.FILL
         }
         
         // extend the default attributes with the passed-in attributes
@@ -644,8 +669,8 @@ function RaphGraph( surface )
             bb.height,
             bb.width
         ).attr({
-            fill: attr.fill,
-            stroke: "blue",
+            fill: COLOR.NEW_EDGE_HANDLE.FILL,
+            stroke: COLOR.NEW_EDGE_HANDLE.LINE,
         }).toBack().rotate(45).hide();
         handle.undirected = surface.rect(
             bb.x,
@@ -654,19 +679,15 @@ function RaphGraph( surface )
             bb.width,
             5
         ).attr({
-            fill: attr.fill,
-            stroke: "blue",
+            fill: COLOR.NEW_EDGE_HANDLE.FILL,
+            stroke: COLOR.NEW_EDGE_HANDLE.LINE,
         }).toBack().hide();
         
         // create a new label object
         this.label = new elementLabel({
             element:    this,
             weight:     attr.weight,
-            text:       attr.text,
-            bgCol:      attr.stroke,
-            fgCol:      "white",
-            fgColSel:   attr.selStroke,
-            bgColSel:   attr.selFill
+            text:       attr.text
         });
         
         // set up mouse functions common to all objects
@@ -833,10 +854,10 @@ function RaphGraph( surface )
             weight:     null,
             text:       null,
             selected:   false,
-            line:       "white",
-            bg:         "black",
-            selLine:    "white",
-            selBg:      "red",
+            line:       COLOR.ELEMENT.FILL,
+            bg:         COLOR.ELEMENT.LINE,
+            selLine:    COLOR.ELEMENT.SELECTED.FILL,
+            selBg:      COLOR.ELEMENT.SELECTED.LINE
         }
         
         // extend the default attributes with the passed-in attributes
@@ -1006,13 +1027,9 @@ function RaphGraph( surface )
             
             // create a new label object
             this.label = new elementLabel({
-                element:    this,
+                element:    thisEdge,
                 weight:     attr.weight,
-                text:       attr.text,
-                bgCol:      attr.bg,
-                fgCol:      attr.line,
-                fgColSel:   attr.selBg,
-                bgColSel:   attr.selLine
+                text:       attr.text
             });
             
             // set the interaction events for this new edge
@@ -1060,10 +1077,10 @@ function RaphGraph( surface )
             element:    null,
             weight:     null,
             text:       null,
-            fgCol:      "black",
-            bgCol:      "white",
-            fgColSel:   "red",
-            bgColSel:   "white"
+            fgCol:      COLOR.LABEL.LINE,
+            bgCol:      COLOR.LABEL.FILL,
+            fgColSel:   COLOR.LABEL.SELECTED.LINE,
+            bgColSel:   COLOR.LABEL.SELECTED.FILL
         }
         attr = $.extend( defaultAttr, attr );
         

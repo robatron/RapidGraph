@@ -6,6 +6,11 @@
     font-family:monospace;
 }
 
+body{
+    background-image:url('http://localhost:8000/static/core/css/jquery-ui-lightness/images/ui-bg_diagonals-thick_20_666666_40x40.png');
+    background-repeat:all;
+}
+
 .tempUIctrl{
     cursor:pointer;
     padding:0;
