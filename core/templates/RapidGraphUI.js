@@ -28,28 +28,42 @@ function RapidGraphUI()
         for( var i=0; i<plugins.length; i++ ){
             
             $("#plugins_accordion").append(
-                "<h3><a href='#' id='"+plugins[i].hash+"'>"+plugins[i].title+"</a></h3>"+
+                "<h3 id='"+plugins[i].hash+"'><a href='#'>"+plugins[i].title+"</a></h3>"+
                 "<div>"+
                     plugins[i].html+
                 "</div>"
             );
-            
-            $("#"+plugins[i].hash).bind('click', {thisPlugin:plugins[i]}, function(e)
-            {  
-                thisPlugin = e.data.thisPlugin;
-                              
+
+            $("#"+plugins[i].hash).data('plugin', plugins[i]);
+            $("#"+plugins[i].hash).data('start', function( p )
+            {
                 $("#plugins_title").html( 
-                    "<h2 id='plugin_title'>"+thisPlugin.title+"</h2>" +
-                    "<p id='plugin_subtitle'>"+thisPlugin.subtitle+"</p>"
+                    "<h2 id='plugin_title'>"+p.title+"</h2>" +
+                    "<p id='plugin_subtitle'>"+p.subtitle+"</p>"
                 );
+                
+                if( p.javascript.start )
+                    p.javascript.start();
             });
-         
-            if( plugins[i].javascript.start )
-                $("#"+plugins[i].hash).click( plugins[i].javascript.start );
+            $("#"+plugins[i].hash).data('stop', function( p )
+            {                
+                if( p.javascript.stop )
+                    p.javascript.stop();
+            });
         }
         
+        // initialize the accordian
         $("#plugins_accordion").accordion({
-            fillSpace: true
+            
+            // make sure it fills the entire container
+            fillSpace: true,
+            
+            // set up the start/stop hooks
+            changestart: function( event, ui )
+            {                
+                ui.newHeader.data('start')( ui.newHeader.data('plugin') );
+                ui.oldHeader.data('stop')( ui.oldHeader.data('plugin') );
+            }
         });
         
         positionPanels();

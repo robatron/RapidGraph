@@ -8,8 +8,11 @@ this.settings =
     subtitle: "Shows the relationship between networking and a classic graph algorithm."
 }
 
-this.start = function() {
-    $("#make_network").click( function() {
+this.init = function() { // Changed this to the INIT hook so the click wouldn't get registered every time the START hook was called. -Rob
+    
+    console.log("::plugin:: is initializing!");
+    
+    $("#::plugin::_make_network").click( function() { // DOM encapsulation. -Rob
         // Make a small random undirected edge-weighted graph
 
         GRAPH_SIZE = 9;     // The number of nodes in the graph
@@ -45,7 +48,7 @@ this.start = function() {
         }
     });
 
-    $("#find_route").click( function() {
+    $("#::plugin::_find_route").click( function() { // DOM encapsulation. -Rob
         // Find the shortest path between two selected nodes
         // using an implementation of the Dijkstra's
         // Shortest Path algorithm
@@ -215,4 +218,15 @@ console.log("Neighbors... nIndex: " + nIndex);*/
         }
         return result;
     }
+}
+
+// Adding for plugin management testing. -Rob
+this.start = function()
+{
+    console.log("::plugin:: is starting!");
+}
+
+this.stop = function()
+{
+    console.log("::plugin:: is stopping!");
 }
