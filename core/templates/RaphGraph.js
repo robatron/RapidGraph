@@ -204,10 +204,11 @@ function RaphGraph( surface )
     function initKeyboardEvents()
     // initialize the keyboard shortcut events
     {
-         $(document).keydown(function(event){
+         $(document).keydown(function(event)
+         {
             // delete the selected element if any of the following buttons are
-            // pushed: delete (8), or backspace (46)
-            if( event.which == 8 || event.which == 46 ){
+            // pushed: 'd' (68), delete (8), or backspace (46)
+            if( event.which == 68 || event.which == 8 || event.which == 46 ){
                 thisGraph.remove( 
                     thisGraph.edges.get.selected().concat(
                         thisGraph.nodes.get.selected() 
@@ -221,6 +222,12 @@ function RaphGraph( surface )
                     x: mousePos.x - getSurfaceOffset().x,
                     y: mousePos.y - getSurfaceOffset().y
                 });
+            }
+            
+            // if 'a' is pressed, select all elements
+            if( event.which == 65 ){
+                thisGraph.select( thisGraph.nodes.get.all() );
+                thisGraph.select( thisGraph.edges.get.all() );
             }
         });
     }
