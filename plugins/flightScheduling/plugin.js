@@ -15,6 +15,21 @@ this.init = function() {
     $("#::plugin::_make_map").click( function() {
         // Make a small random undirected edge-weighted graph
 
+// Seattle
+// Portland
+// LA
+// Billings
+// Denver
+// Mineapolis
+// Kansas City
+// Houstin
+// Chicago
+// Philidelphia
+// Montgomery
+// Miami
+// New York
+// Washington DC
+
 /*        GRAPH_SIZE = 9;     // The number of nodes in the graph
         PERTURBATION = 30;  // The number of pixels that nodes can be randomly perturbed
         NODE_RADIUS = 25;   // The radius of a node image
