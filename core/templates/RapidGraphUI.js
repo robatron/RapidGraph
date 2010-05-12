@@ -126,12 +126,18 @@ function RapidGraphUI()
             graph.select( graph.edges.get.all() );
         });
         
+        $('#button_reset').button({
+            icons: { primary: 'ui-icon-cancel' }
+        }).click(function()
+        {
+            graph.clear();
+        });
+        
         $('#button_undo').button({
-            
             icons: { primary: 'ui-icon-seek-prev' }
         }).click(function()
         {
-            ;
+            graph.undo();
         });
         
         $('#button_redo').button({

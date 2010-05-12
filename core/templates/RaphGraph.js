@@ -15,7 +15,7 @@
  * Dependancies:
  * 
  *     - jQuery   >= v1.4.2
- *     - jQueryUI >= v1.8.0
+ *     - jQueryUI >= v1.8.1
  *     - Raphael  >= v1.3.1
  */ 
 
@@ -50,9 +50,11 @@ function RaphGraph( surface )
         }
     }
     
-    // nodes and edges arrays
-    var nodes = [];    // an array of the nodes
-    var edges = [];    // an array of the edges
+    // core graph data
+    var idCounter = 0;      // to keep track of element IDs
+    var thisGraph = this;   // a reference to this graph instance
+    var nodes = [];         // an array of the nodes
+    var edges = [];         // an array of the edges
     
     // mouse handling data
     var grabbedElement = null;   // the currently grabbed element
@@ -66,14 +68,14 @@ function RaphGraph( surface )
     // edge creation data
     var edgeCreation = {
         inProgress: false,
-        directed: false,
+        directed:   false,
         handleNode: null,
         originNode: null
     }
     
-    var idCounter = 0; // an ID counter so every element may have a unique ID
-    
-    var thisGraph = this; // a reference to this graph instance
+    // undo/redo data
+    var undoStack = [];
+    var redoStack = [];
     
     // run init as soon as a graph object is instantiated
     init();
@@ -232,6 +234,37 @@ function RaphGraph( surface )
         });
     }
 
+    //////////////////////////
+    // UNDO/ REDO FUNCTIONS //
+    //////////////////////////
+    
+    this.undo = function()
+    // change the current canvas state to the last one
+    {
+        /*
+        // save the current state in the redo state, and delete it
+        redoStates.push( surface.canvas );
+        
+        console.log(window);
+        //delete surface.clear();
+        //alert(surface);
+        
+        // revert the current state
+        //surface.canvas = undoStates.pop();
+        */
+    }
+    this.redo = function()
+    {
+        /*
+        // save the current state in the redo state, and delete it
+        undoStates.push( surface.canvas );
+        delete surface.canvas;
+        
+        // revert the current state
+        surface.canvas = redoStates.pop();
+        */
+    }
+
     //////////////////////////////
     // PRIVATE HELPER FUNCTIONS //
     //////////////////////////////
@@ -289,9 +322,9 @@ function RaphGraph( surface )
     
     this.clear = function()
     // clear all elements from the graph
-    {
+    {        
         var consoleID = "graph.clear: ";
-
+            
         console.log(consoleID+"Clearing Raphael surface");
         surface.clear();
         
