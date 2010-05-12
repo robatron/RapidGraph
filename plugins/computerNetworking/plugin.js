@@ -8,11 +8,11 @@ this.settings =
     subtitle: "Shows the relationship between networking and a classic graph algorithm."
 }
 
-this.init = function() { // Changed this to the INIT hook so the click wouldn't get registered every time the START hook was called. -Rob
+this.init = function() {
     
     console.log("::plugin:: is initializing!");
     
-    $("#::plugin::_make_network").click( function() { // DOM encapsulation. -Rob
+    $("#::plugin::_make_network").click( function() {
         // Make a small random undirected edge-weighted graph
 
         GRAPH_SIZE = 9;     // The number of nodes in the graph
@@ -27,7 +27,10 @@ this.init = function() { // Changed this to the INIT hook so the click wouldn't 
             myNodes[i] = api.graph.nodes.createNew({
                 x: ( ((boxX - (PERTURBATION)) / (Math.ceil(Math.sqrt(GRAPH_SIZE)) - 1)) * (i % Math.ceil(Math.sqrt(GRAPH_SIZE))) + Math.random() * PERTURBATION + NODE_RADIUS),
                 y: ( ((boxY - (PERTURBATION)) / (Math.ceil(Math.sqrt(GRAPH_SIZE)) - 1)) * Math.floor(i / Math.ceil(Math.sqrt(GRAPH_SIZE))) + Math.random() * PERTURBATION + NODE_RADIUS),
-                text: null
+                text: null,
+                img: "static/plugins/computerNetworking/computer3.png",
+                height: 45,
+                width: 45
             });
         }
         
@@ -48,7 +51,7 @@ this.init = function() { // Changed this to the INIT hook so the click wouldn't 
         }
     });
 
-    $("#::plugin::_find_route").click( function() { // DOM encapsulation. -Rob
+    $("#::plugin::_find_route").click( function() {
         // Find the shortest path between two selected nodes
         // using an implementation of the Dijkstra's
         // Shortest Path algorithm
@@ -83,7 +86,6 @@ this.init = function() { // Changed this to the INIT hook so the click wouldn't 
         for( i = 0; i < edges.length; ++i )
             infinity += edges[i].label.weight.get();
 
-console.log("All nodes: " + nodes);
         for( i = 0; i < nodes.length; ++i ) {
             nList.push(i);
             previous[i] = null;
@@ -99,9 +101,6 @@ console.log("All nodes: " + nodes);
             }
         }
 
-console.log("Start index: " + startIndex);
-console.log("End index: " + endIndex);
-
         distance[startIndex] = 0;
         while( nList.length > 0 ) {
             //Find the node with the smallest distance from source
@@ -114,10 +113,7 @@ console.log("End index: " + endIndex);
                 }
             }
             
-console.log("Distances: " + distance);
-            
             if( sval >= infinity ) {
-console.log("Done");
                 break;
             }
             
@@ -129,8 +125,6 @@ console.log("Done");
                 }
             }
             neighbors = getNeighbors( nIndex, nList, nodes );
-console.log("Current Node: " + nIndex);
-console.log("Neighbors: " + neighbors);
             for( i = 0; i < neighbors.length; ++i ) {
                 distanceBetween = smallestEdge( nIndex, neighbors[i], edges, infinity ).label.weight.get();
                 newDist = sval + distanceBetween;
@@ -138,14 +132,7 @@ console.log("Neighbors: " + neighbors);
                     distance[neighbors[i]] = newDist;
                     previous[neighbors[i]] = nIndex;
                 }
-/*console.log("Neighbors: " + neighbors);
-console.log("neighbors.length: " + neighbors.length);
-console.log("i: " + i);
-console.log("neighbors[i]: " + neighbors[i]);
-console.log("distanceBetween node: " + nIndex + " and node " + neighbors[i] + " = " + distanceBetween);*/
             }
-//console.log("About to break");
-//break;
         }
         
         cur = endIndex;
@@ -158,41 +145,8 @@ console.log("distanceBetween node: " + nIndex + " and node " + neighbors[i] + " 
         nodes[cur].select();
     });
 
-        /*
-        function Dijkstra(Graph, source):
-            for each vertex v in Graph:           // Initializations
-                dist[v] := infinity               // Unknown distance function from source to v
-                previous[v] := undefined          // Previous node in optimal path from source
-            dist[source] := 0                     // Distance from source to source
-            Q := the set of all nodes in Graph
-            // All nodes in the graph are unoptimized - thus are in Q
-            while Q is not empty:                 // The main loop
-                u := vertex in Q with smallest dist[]
-                if dist[u] = infinity:
-                    break                         // all remaining vertices are inaccessible from source
-                remove u from Q
-                for each neighbor v of u:         // where v has not yet been removed from Q.
-                    alt := dist[u] + dist_between(u, v)
-                    if alt < dist[v]:             // Relax (u,v,a)
-                        dist[v] := alt
-                        previous[v] := u
-            return dist[]
-        */
-
-        /*
-        S := empty sequence
-        u := target
-        while previous[u] is defined:
-            insert u at the beginning of S
-            u := previous[u]
-        */
-
     function getNeighbors(nIndex, nList, nodes) {
         edges = graph.edges.get.all();
-/*console.log("Neighbors... nodes: " + nodes);
-console.log("Neighbors... edges: " + edges);
-console.log("Neighbors... nList: " + nList);
-console.log("Neighbors... nIndex: " + nIndex);*/
         var neighbors = new Array();
         for( gn1_ = 0; gn1_ < nList.length; ++gn1_ ) {
             for( gn2_ = 0; gn2_ < edges.length; ++gn2_ ) {
@@ -219,7 +173,6 @@ console.log("Neighbors... nIndex: " + nIndex);*/
     }
 }
 
-// Adding for plugin management testing. -Rob
 this.start = function()
 {
     console.log("::plugin:: is starting!");
