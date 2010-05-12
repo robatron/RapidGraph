@@ -103,8 +103,7 @@ console.log("Start index: " + startIndex);
 console.log("End index: " + endIndex);
 
         distance[startIndex] = 0;
-        while( nList.length != 0 ) {
-console.log("nlist: " + nList);
+        while( nList.length > 0 ) {
             //Find the node with the smallest distance from source
             sval = infinity;
             nIndex = null;
@@ -122,10 +121,10 @@ console.log("Done");
                 break;
             }
             
-            // Remove smallest node from array
+            // Remove node with smallest distance from the array
             for( i = 0; i < nList.length; ++i ) {
                 if( nList[i] == nIndex ) {
-                    nList.splice(i, i);
+                    nList.splice(i, 1);
                     break;
                 }
             }
@@ -153,7 +152,7 @@ console.log("distanceBetween node: " + nIndex + " and node " + neighbors[i] + " 
         console.log(cur);
         while( previous[cur] != null ) {
             nodes[cur].select();
-            smallestEdge( nodes[cur], previous[cur], edges, infinity ).select();
+            smallestEdge( cur, previous[cur], edges, infinity ).select();
             cur = previous[cur];
         }
         nodes[cur].select();
