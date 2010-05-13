@@ -13,8 +13,11 @@ this.init = function() {
     console.log("::plugin:: is initializing!");
     
     $("#::plugin::_make_locations").click( function() {
+    });
 
     $("#::plugin::_find_route").click( function() {
+    });
+};
 
 this.start = function()
 {
