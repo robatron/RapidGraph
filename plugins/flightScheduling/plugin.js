@@ -64,7 +64,8 @@ this.init = function() {
                 }
             }
         }
-    });*/
+*/
+    });
 
     $("#::plugin::_find_route").click( function() {
         // Find the shortest path between two selected nodes
