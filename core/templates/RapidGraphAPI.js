@@ -34,6 +34,19 @@ function RapidGraphAPI( ui )
         deselect: function(elems){ return graph.deselect(elems) },
         // deselect the specified node, nodes, edge, or edges
         
+        backgroundImg:
+        {
+            set: function( src, width, height )
+            // sets the background image of the graph. If no dimensions are
+            // supplied, it will use the size of the graph canvas.
+            {
+                return graph.backgroundImg.set( src, width, height );
+            }, 
+            
+            remove: function(){ return graph.backgroundImg.remove() }
+            // removes the background image (if any) from the graph
+        },
+        
         nodes: 
         // functions related to the nodes set
         {

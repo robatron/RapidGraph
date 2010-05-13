@@ -55,6 +55,8 @@ function RaphGraph( surface )
     var thisGraph = this;   // a reference to this graph instance
     var nodes = [];         // an array of the nodes
     var edges = [];         // an array of the edges
+    var bgImg =             // the graph's background image
+        surface.image(null,null,null,null,null);       
     
     // mouse handling data
     var grabbedElement = null;   // the currently grabbed element
@@ -233,10 +235,10 @@ function RaphGraph( surface )
     /////////////////////
     // COMMAND HISTORY //
     /////////////////////
-    
-    // public access to the undo and redo functions
-    this.undo = function(){ history.undo() }
-    this.redo = function(){ history.redo() }
+
+    // public access to undo/redo
+    this.undo = function(){ history.undo() };
+    this.redo = function(){ history.redo() };
 
     var history = new function()
     {
@@ -244,12 +246,16 @@ function RaphGraph( surface )
         var historyStack = [];
         var redoStack = [];
         
-        this.record = function( cmd, undoCmd )
+        this.record = function( params )
         // records a new history item consisting of a command, and it's undo
         // command.
         {            
             // push a new history item onto the history stack
-            historyStack.push({ cmd:cmd, undoCmd:undoCmd });
+            historyStack.push({ 
+                data: params.data, 
+                cmd:params.cmd, 
+                undoCmd:params.undoCmd
+            });
         }
         
         this.undo = function()
@@ -270,6 +276,34 @@ function RaphGraph( surface )
             // if there's something on the redo stack, execute it
             if( redoStack.length > 0 )
                 redoStack.pop()();
+        }
+    }
+
+    //////////////////////
+    // BACKGROUND IMAGE //
+    //////////////////////
+
+    this.backgroundImg = 
+    {
+        set:function( src, width, height )
+        // sets the background image of the graph. If no dimensions are
+        // supplied, it will use the size of the graph canvas.
+        {
+            if( width == undefined || width == null || width < 0 )
+                width = surface.width;
+            if( height == undefined || height == null || height < 0 )
+                height = surface.height;
+            
+            this.remove();
+            bgImg = surface.image( src, 0, 0, width, height );
+        }, 
+        
+        remove: function()
+        // removes the background image (if any) from the graph
+        {
+            if( bgImg != undefined )
+                bgImg.remove();
+            bgImg = surface.image(null,null,null,null,null);
         }
     }
 
@@ -300,19 +334,14 @@ function RaphGraph( surface )
     // returns if the specified Raphael object is in-bounds
     {
         var bb = object.getBBox();
-        
         var x = bb.x;
         var y = bb.y;
-        
         var w = -bb.width/2;
         var h = -bb.height/2;
-        
         var W = surface.width - w;
         var H = surface.height - h;
-        
         if( x >= w && y >= h && x < W && y < H )
             return true;
-            
         return false;
     }
 
@@ -330,15 +359,15 @@ function RaphGraph( surface )
     
     this.clear = function()
     // clear all elements from the graph
-    {        
-        var consoleID = "graph.clear: ";
-            
-        console.log(consoleID+"Clearing Raphael surface");
-        surface.clear();
-        
-        console.log(consoleID + "Purging the element sets");
-        nodes = [];
-        edges = [];
+    {
+        // SOMETHING'S UP WITH THE GET OR REMOVE FUNCTIONS. 
+        // I should be able to simply type this.remove( this.nodes.get.all() )
+        // but it's not working for some reason. The below is a quick fix hack.
+        this.select( this.edges.get.all() );
+        this.select( this.nodes.get.all() );
+        this.remove( this.edges.get.selected() );
+        this.remove( this.nodes.get.selected() );
+        this.backgroundImg.remove();
     }
 
     this.remove = function( elements )
@@ -347,7 +376,29 @@ function RaphGraph( surface )
         var consoleID = "graph.remove: ";
         
         // if elements is not an array, make it one (of length 1)
-        if( !$.isArray( elements ) ) elements = [elements];
+        if( !$.isArray( elements ) ) 
+            elements = [elements];
+ 
+        /* history system not quite working. There's scoping issues.
+        history.record({
+            data: {elements:elements},
+            cmd: function(){ thisGraph.remove( this.data.elements ) },
+            undoCmd: function()
+            {
+                for( var i=0; i<this.data.elements.length; i++ ){
+                    if( this.data.elements[i].getType() == "node" ){
+                        thisGraph.nodes.createNew(
+                            this.data.elements[i].getAttr()
+                        );
+                    }else if( this.data.elements[i].getType() == "edge" ) {
+                        thisGraph.edges.createNew(
+                            this.data.elements[i].getAttr()
+                        );
+                    }
+                }
+            }
+        });
+        */
         
         console.log(
             consoleID+"Preparing to remove "+elements.length+" elements"
@@ -611,6 +662,9 @@ function RaphGraph( surface )
         this.getType = function(){ return elementType }
         // returns the element's type
         
+        this.getAttr = function(){ return thisNode.attr }
+        // return this element's attributes
+        
         // POSITION AND SIZE --------------------------------------------------- 
         
         this.moveTo = function( x, y )
@@ -739,7 +793,7 @@ function RaphGraph( surface )
             ).attr({
                 fill: COLOR.NEW_EDGE_HANDLE.FILL,
                 stroke: COLOR.NEW_EDGE_HANDLE.LINE,
-            }).toBack().rotate(45).hide();
+            }).insertAfter(bgImg).rotate(45).hide();
             handle.undirected = surface.rect(
                 bb.x,
                 bb.y,
@@ -749,7 +803,7 @@ function RaphGraph( surface )
             ).attr({
                 fill: COLOR.NEW_EDGE_HANDLE.FILL,
                 stroke: COLOR.NEW_EDGE_HANDLE.LINE,
-            }).toBack().hide();
+            }).insertAfter(bgImg).hide();
             
             // create a new label object
             thisNode.label = new elementLabel({
@@ -1038,6 +1092,9 @@ function RaphGraph( surface )
         this.isDirected = function(){ return attr.directed }
         // returns if the edge is directed or not
         
+        this.getAttr = function(){ return thisEdge.attr }
+        // return this element's attributes
+        
         // SELECTION -----------------------------------------------------------
         
         this.isSelected = function(){ return attr.selected }
@@ -1095,13 +1152,13 @@ function RaphGraph( surface )
             obj.line = surface.path().attr({
                 stroke: attr.line,
                 'stroke-width': 2
-            }).toBack(); // move to back so they're behind the nodes
+            }).insertAfter(bgImg); // move to back so they're behind the nodes
             
             // create the background path
             obj.bg = surface.path().attr({
                 stroke: attr.bg,
                 'stroke-width': 4
-            }).toBack();
+            }).insertAfter(bgImg);
             
             // create a new label object
             this.label = new elementLabel({
