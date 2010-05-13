@@ -47,8 +47,6 @@ this.init = function() {
             });
         }*/
 
-        
-
 /*        // Connect some of the nodes in the graph with randomly weighted edges
         EDGE_PROB = 0.3   // The probability that two nodes within the graph will get connected by an edge
         var myEdges = new Array();
@@ -63,8 +61,7 @@ this.init = function() {
                     });
                 }
             }
-        }
-*/
+        }*/
     });
 
     $("#::plugin::_find_route").click( function() {
