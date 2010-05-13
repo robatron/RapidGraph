@@ -101,7 +101,6 @@ function RapidGraphUI()
     function initButtons()
     {       
         $('#button_new').button({
-            
             icons: { primary: 'ui-icon-plusthick' }
         }).click(function()
         {

@@ -12,6 +12,8 @@ this.init = function()
 {
     console.log("::plugin:: is initializing!");
     
+    api.graph.backgroundImg.set( "static/plugins/oregonMap/bishop.jpg" );
+    
     createSimpleOregonMap();
     
     $("#::plugin::_test").click( function(){
