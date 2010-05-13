@@ -144,7 +144,7 @@ function RapidGraphUI()
             icons: { primary:'ui-icon-seek-next' }
         }).click(function()
         {
-            ;
+            graph.redo();
         });
     }
     

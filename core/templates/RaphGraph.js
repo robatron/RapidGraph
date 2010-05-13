@@ -73,10 +73,6 @@ function RaphGraph( surface )
         originNode: null
     }
     
-    // undo/redo data
-    var undoStack = [];
-    var redoStack = [];
-    
     // run init as soon as a graph object is instantiated
     init();
 
@@ -234,35 +230,47 @@ function RaphGraph( surface )
         });
     }
 
-    //////////////////////////
-    // UNDO/ REDO FUNCTIONS //
-    //////////////////////////
+    /////////////////////
+    // COMMAND HISTORY //
+    /////////////////////
     
-    this.undo = function()
-    // change the current canvas state to the last one
+    // public access to the undo and redo functions
+    this.undo = function(){ history.undo() }
+    this.redo = function(){ history.redo() }
+
+    var history = new function()
     {
-        /*
-        // save the current state in the redo state, and delete it
-        redoStates.push( surface.canvas );
+        // history data
+        var historyStack = [];
+        var redoStack = [];
         
-        console.log(window);
-        //delete surface.clear();
-        //alert(surface);
+        this.record = function( cmd, undoCmd )
+        // records a new history item consisting of a command, and it's undo
+        // command.
+        {            
+            // push a new history item onto the history stack
+            historyStack.push({ cmd:cmd, undoCmd:undoCmd });
+        }
         
-        // revert the current state
-        //surface.canvas = undoStates.pop();
-        */
-    }
-    this.redo = function()
-    {
-        /*
-        // save the current state in the redo state, and delete it
-        undoStates.push( surface.canvas );
-        delete surface.canvas;
+        this.undo = function()
+        // un-does the last command
+        {
+            // if there's something on the history stack, pop it, push its redo
+            // command, and execute it
+            if( historyStack.length > 0 ){
+                var cur = historyStack.pop();
+                redoStack.push( cur.cmd );
+                cur.undoCmd();
+            }
+        }
         
-        // revert the current state
-        surface.canvas = redoStates.pop();
-        */
+        this.redo = function()
+        // re-does the last un-done command
+        {
+            // if there's something on the redo stack, execute it
+            if( redoStack.length > 0 )
+                redoStack.pop()();
+        }
     }
 
     //////////////////////////////
@@ -393,6 +401,11 @@ function RaphGraph( surface )
     // select the specified node, nodes, edge, or edges
     {
         var consoleID = "graph.select: ";
+        
+        history.record( 
+            function(){ thisGraph.select(elements) }, 
+            function(){ thisGraph.deselect(elements) }
+        );
         
         // if elements is not an array, make it one (of length 1)
         if( !$.isArray( elements ) ) elements = [elements];
