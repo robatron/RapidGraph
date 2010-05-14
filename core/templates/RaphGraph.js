@@ -204,8 +204,8 @@ function RaphGraph( surface )
     function initKeyboardEvents()
     // initialize the keyboard shortcut events
     {
-         $(document).keydown(function(event)
-         {
+        $(document).keydown(function(event)
+        {
             // delete the selected element if any of the following buttons are
             // pushed: 'd' (68), delete (8), or backspace (46)
             if( event.which == 68 || event.which == 8 || event.which == 46 ){
@@ -1242,7 +1242,7 @@ function RaphGraph( surface )
         
         this.openEditDialog = function()
         // open the edit dialog
-        {   
+        {              
             var bb = attr.element.getBBox();
             var pos = {
                 x: getSurfaceOffset().x,
@@ -1467,6 +1467,9 @@ function RaphGraph( surface )
                 },
                 open: function()
                 {
+                    // disable the keyboard shortcuts while the window is open
+                    $(document).unbind('keydown');
+                    
                     $("#elem_"+id+"_labelDialog_weight").val(
                         $("#elem_"+id+"_labelDialog").data('assocLabel').weight
                             .get()
@@ -1475,7 +1478,8 @@ function RaphGraph( surface )
                         $("#elem_"+id+"_labelDialog").data('assocLabel').text
                             .get()
                     );
-                }
+                },
+                close: initKeyboardEvents // re-enable the keyboard shortcuts
             });
             
             thisLabel.update();
