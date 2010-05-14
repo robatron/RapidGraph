@@ -14,7 +14,7 @@ this.init = function()
     
     //api.graph.backgroundImg.set( "static/plugins/oregonMap/bishop.jpg" );
     
-    createSimpleOregonMap();
+    //createSimpleOregonMap();
     
     $("#::plugin::_test").click( function(){
         createSimpleOregonMap();
