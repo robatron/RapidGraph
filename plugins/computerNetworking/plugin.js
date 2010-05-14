@@ -13,13 +13,15 @@ this.init = function() {
     console.log("::plugin:: is initializing!");
     
     $("#::plugin::_make_network").click( function() {
+        api.graph.backgroundImg.remove();
+
         // Make a small random undirected edge-weighted graph
 
         GRAPH_SIZE = 9;     // The number of nodes in the graph
-        PERTURBATION = 30;  // The number of pixels that nodes can be randomly perturbed
+        PERTURBATION = 50;  // The number of pixels that nodes can be randomly perturbed
         NODE_RADIUS = 25;   // The radius of a node image
-        boxX = api.ui.getMainPanelSize().width - (2 * NODE_RADIUS);
-        boxY = api.ui.getMainPanelSize().height - (2 * NODE_RADIUS);
+        boxX = api.ui.getMainPanelSize().width - (3 * NODE_RADIUS);
+        boxY = api.ui.getMainPanelSize().height - (3 * NODE_RADIUS);
         
         // Make some nodes
         var myNodes = new Array();
