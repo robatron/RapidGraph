@@ -150,7 +150,10 @@ function RapidGraphUI()
     function positionPanels()
     // position the panels on the screen
     {        
-        var topHeight = $('#top').outerHeight(true);
+        var topHeight = 
+            $('#top').outerHeight(true) + 
+            parseInt($('#top').css('top'));
+        var effectiveHeight = screenHeight()-$('#bottom').outerHeight(true);
         
         // top panel
         $('#top').width(
@@ -162,7 +165,7 @@ function RapidGraphUI()
             top: topHeight
         });
         $('#left').height(
-            screenHeight() - topHeight -
+            effectiveHeight - topHeight -
             ($('#left').outerHeight(true) - $('#left').height())
         );
         
@@ -171,7 +174,7 @@ function RapidGraphUI()
             top: topHeight
         });
         $('#right').height(
-            screenHeight() - topHeight -
+            effectiveHeight - topHeight -
             ($('#right').outerHeight(true) - $('#right').height())
         );
         
@@ -182,8 +185,7 @@ function RapidGraphUI()
             ($('#main').outerWidth(true) - $('#main').width())
         );
         $('#main').height(
-            screenHeight() -
-            $('#top').outerHeight(true) -
+            effectiveHeight - topHeight -
             ($('#main').outerHeight(true) - $('#main').height())
         );               
         $('#main').offset({

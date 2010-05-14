@@ -65,11 +65,31 @@ b{
 }
 
 #top{
-    top:0;
+    top:20px;
     left:0;
 }
 
-.left_panel_button {
+#bottom{
+    position: absolute;
+    bottom:0;
+    
+    padding-left: 10%;
+    padding-right: 10%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    
+    text-align: center;
+    
+    font-family: Trebuchet MS, Helvetica, Arial, sans-serif; 
+    font-size: 1.1em;
+    font-size: 1em;
+}
+
+#bottom a{
+    color: #333333;
+}
+
+.left_panel_button{
     text-align:left;
     width:120px;
 }
