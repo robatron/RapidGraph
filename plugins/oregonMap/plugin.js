@@ -34,6 +34,8 @@ this.stop = function()
 function createSimpleOregonMap()
 // create a simple Oregon map
 {
+    api.graph.backgroundImg.remove();
+    
     var SCALE = 1.25;
     
     var seaside     = api.graph.nodes.createNew({

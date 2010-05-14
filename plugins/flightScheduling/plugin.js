@@ -22,9 +22,10 @@ this.init = function() {
         /*
          * Make some city nodes
          */
+
+        var myNodes = new Array();
         
         // Seattle
-        var myNodes = new Array();
         myNodes[0] = api.graph.nodes.createNew({
             x: boxX / 10.3,
             y: boxY / 17.6,
