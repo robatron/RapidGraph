@@ -7,7 +7,6 @@ def get_plugins():
     plugins = []
     pluginDir = settings.DOC_ROOT + "/plugins"
     pluginList = os.listdir( pluginDir )
-    print pluginList
     
     # Make the welcome plugin come first, sort the other plugins by name
     WELCOME_PLUGIN = 'welcome'
