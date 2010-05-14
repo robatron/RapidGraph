@@ -10,15 +10,15 @@ this.settings =
 
 this.init = function()
 {
-    console.log("::plugin:: is initializing!");
+    safelog("::plugin:: is initializing!");
 }
 
 this.start = function()
 {
-    console.log("::plugin:: is starting!");
+    safelog("::plugin:: is starting!");
 }
 
 this.stop = function()
 {
-    console.log("::plugin:: is stopping!");
+    safelog("::plugin:: is stopping!");
 }

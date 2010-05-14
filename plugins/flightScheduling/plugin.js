@@ -10,14 +10,14 @@ this.settings =
 
 this.init = function() {
     
-    console.log("::plugin:: is initializing!");
+    safelog("::plugin:: is initializing!");
     
     $("#::plugin::_make_map").click( function() {
         api.graph.backgroundImg.set( "static/plugins/flightScheduling/usmap.png#jkjgf" );
 
         boxX = api.ui.getMainPanelSize().width;
         boxY = api.ui.getMainPanelSize().height;
-        console.log(boxX + ' ' + boxY);
+        safelog(boxX + ' ' + boxY);
 
         /*
          * Make some city nodes
@@ -365,7 +365,7 @@ this.init = function() {
         }
         
         cur = endIndex;
-        console.log(cur);
+        safelog(cur);
         while( previous[cur] != null ) {
             nodes[cur].select();
             smallestEdge( cur, previous[cur], edges, infinity ).select();
@@ -404,10 +404,10 @@ this.init = function() {
 
 this.start = function()
 {
-    console.log("::plugin:: is starting!");
+    safelog("::plugin:: is starting!");
 }
 
 this.stop = function()
 {
-    console.log("::plugin:: is stopping!");
+    safelog("::plugin:: is stopping!");
 }

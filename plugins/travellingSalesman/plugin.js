@@ -10,7 +10,7 @@ this.settings =
 
 this.init = function() {
     
-    console.log("::plugin:: is initializing!");
+    safelog("::plugin:: is initializing!");
     
     $("#::plugin::_make_locations").click( function() {
         api.graph.backgroundImg.set( "static/plugins/travellingSalesman/map.png" );
@@ -18,7 +18,7 @@ this.init = function() {
         GRAPH_SIZE = 7;
         boxX = api.ui.getMainPanelSize().width;
         boxY = api.ui.getMainPanelSize().height;
-        console.log(boxX + ' ' + boxY);
+        safelog(boxX + ' ' + boxY);
 
         var myNodes = new Array();
 
@@ -105,10 +105,10 @@ this.init = function() {
 
 this.start = function()
 {
-    console.log("::plugin:: is starting!");
+    safelog("::plugin:: is starting!");
 }
 
 this.stop = function()
 {
-    console.log("::plugin:: is stopping!");
+    safelog("::plugin:: is stopping!");
 }
