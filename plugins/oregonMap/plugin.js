@@ -4,7 +4,7 @@
 
 this.settings = 
 {
-    title: "Oregon map (sample plugin)",
+    title: "Oregon map",
     subtitle: "Creates a graph representing a simple Oregon map.",
 }
 
@@ -12,7 +12,7 @@ this.init = function()
 {
     console.log("::plugin:: is initializing!");
     
-    api.graph.backgroundImg.set( "static/plugins/oregonMap/bishop.jpg" );
+    //api.graph.backgroundImg.set( "static/plugins/oregonMap/bishop.jpg" );
     
     createSimpleOregonMap();
     
