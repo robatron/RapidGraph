@@ -12,7 +12,7 @@ this.init = function()
 {
     safelog("::plugin:: is initializing!");
     
-    $("#::plugin::_test").button().click( function(){
+    $("#::plugin::_test").click( function(){
         createSimpleOregonMap();
     });
 }
