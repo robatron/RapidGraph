@@ -142,139 +142,139 @@ this.init = function() {
         api.graph.edges.createNew({
             node1: myNodes[0],
             node2: myNodes[1],
-            weight: 300 + Math.ceil(Math.random() * 200 - 100),
+            weight: 300 + Math.ceil(Math.random() * 50 - 25),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[1],
             node2: myNodes[2],
-            weight: 1500 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1500 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[2],
             node2: myNodes[3],
-            weight: 1500 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1500 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[3],
             node2: myNodes[4],
-            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1000 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[4],
             node2: myNodes[5],
-            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1000 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[5],
             node2: myNodes[6],
-            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1000 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[6],
             node2: myNodes[7],
-            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1000 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[7],
             node2: myNodes[8],
-            weight: 1500 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1500 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[8],
             node2: myNodes[9],
-            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1000 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[9],
             node2: myNodes[12],
-            weight: 300 + Math.ceil(Math.random() * 200 - 100),
+            weight: 300 + Math.ceil(Math.random() * 50 - 25),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[10],
             node2: myNodes[11],
-            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1000 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[0],
             node2: myNodes[3],
-            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1000 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[1],
             node2: myNodes[3],
-            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1000 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[2],
             node2: myNodes[4],
-            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1000 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[3],
             node2: myNodes[5],
-            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1000 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[4],
             node2: myNodes[6],
-            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1000 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[4],
             node2: myNodes[7],
-            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1000 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[5],
             node2: myNodes[8],
-            weight: 500 + Math.ceil(Math.random() * 200 - 100),
+            weight: 500 + Math.ceil(Math.random() * 50 - 25),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[7],
             node2: myNodes[10],
-            weight: 400 + Math.ceil(Math.random() * 200 - 100),
+            weight: 400 + Math.ceil(Math.random() * 50 - 25),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[10],
             node2: myNodes[13],
-            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1000 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[11],
             node2: myNodes[13],
-            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1000 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[9],
             node2: myNodes[13],
-            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1000 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
         api.graph.edges.createNew({
             node1: myNodes[8],
             node2: myNodes[13],
-            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            weight: 1000 + Math.ceil(Math.random() * 400 - 200),
             text: null
         });
 
