@@ -12,11 +12,7 @@ this.init = function()
 {
     safelog("::plugin:: is initializing!");
     
-    //api.graph.backgroundImg.set( "static/plugins/oregonMap/bishop.jpg" );
-    
-    //createSimpleOregonMap();
-    
-    $("#::plugin::_test").click( function(){
+    $("#::plugin::_test").button().click( function(){
         createSimpleOregonMap();
     });
 }

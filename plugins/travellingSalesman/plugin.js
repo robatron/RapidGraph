@@ -12,7 +12,7 @@ this.init = function() {
     
     safelog("::plugin:: is initializing!");
     
-    $("#::plugin::_make_locations").click( function() {
+    $("#::plugin::_make_locations").button().click( function() {
         api.graph.backgroundImg.set( "static/plugins/travellingSalesman/map.png" );
 
         GRAPH_SIZE = 7;
@@ -81,7 +81,7 @@ this.init = function() {
         });
     });
     
-    $("#::plugin::_make_edges").click( function() {
+    $("#::plugin::_make_edges").button().click( function() {
         // Connect the nodes in the graph with randomly weighted edges
         myEdges = new Array();
         for( i = 0; i < GRAPH_SIZE; ++i ) {
@@ -99,7 +99,7 @@ this.init = function() {
         }
     });
 
-    $("#::plugin::_find_route").click( function() {
+    $("#::plugin::_find_route").button().click( function() {
         l = new Array();
         
         for( i = 0; i < GRAPH_SIZE; ++i )

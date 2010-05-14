@@ -12,7 +12,7 @@ this.init = function() {
     
     safelog("::plugin:: is initializing!");
     
-    $("#::plugin::_make_network").click( function() {
+    $("#::plugin::_make_network").button().click( function() {
         api.graph.backgroundImg.remove();
 
         // Make a small random undirected edge-weighted graph

@@ -12,7 +12,7 @@ this.init = function() {
     
     safelog("::plugin:: is initializing!");
     
-    $("#::plugin::_find_path").click( function() {
+    $("#::plugin::_find_path").button().click( function() {
         // Find the shortest path between two selected nodes
         // using an implementation of the Dijkstra's
         // Shortest Path algorithm

@@ -12,7 +12,7 @@ this.init = function() {
     
     safelog("::plugin:: is initializing!");
     
-    $("#::plugin::_make_map").click( function() {
+    $("#::plugin::_make_map").button().click( function() {
         api.graph.backgroundImg.set( "static/plugins/flightScheduling/usmap.png#jkjgf" );
 
         boxX = api.ui.getMainPanelSize().width;
