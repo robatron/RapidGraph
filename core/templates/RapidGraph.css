@@ -69,6 +69,11 @@ b{
     left:0;
 }
 
+.left_panel_button {
+    text-align:left;
+    width:120px;
+}
+
 /*
 svg{
     border:1px solid blue;

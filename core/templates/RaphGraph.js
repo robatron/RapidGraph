@@ -229,6 +229,11 @@ function RaphGraph( surface )
                 thisGraph.select( thisGraph.nodes.get.all() );
                 thisGraph.select( thisGraph.edges.get.all() );
             }
+
+            // if 'r' is pressed, clear everything
+            if( event.which == 82 ){
+                thisGraph.clear();
+            }
         });
     }
 
