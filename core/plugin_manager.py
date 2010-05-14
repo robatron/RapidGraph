@@ -9,7 +9,7 @@ def get_plugins():
     pluginList = os.listdir( pluginDir )
     print pluginList
     
-    # Make the welcome plugin come first. Sort the other plugins by name
+    # Make the welcome plugin come first, sort the other plugins by name
     WELCOME_PLUGIN = 'welcome'
     pluginList.remove(WELCOME_PLUGIN)
     pluginList.sort()
