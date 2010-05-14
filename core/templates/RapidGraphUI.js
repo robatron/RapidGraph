@@ -73,6 +73,11 @@ function RapidGraphUI()
             }
         });
         
+        // execute the start function of the first plugin
+        $('#'+plugins[0].hash).data('start')( 
+            $('#'+plugins[0].hash).data('plugin') 
+        );
+        
         // reposition all of the panels since the DOM has changed
         positionPanels();
     }
