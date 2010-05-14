@@ -37,7 +37,7 @@ function RapidGraphPlugMan( ui )
                     title:      {{plugin.hash}}.settings.title,
                     subtitle:   {{plugin.hash}}.settings.subtitle,
                     javascript: {{plugin.hash}},
-                    html:       (<r><![CDATA[{{plugin.ui}}]]></r>).toString()
+                    html:       {{plugin.ui}}
                 });
                 
             {% endfor %}
