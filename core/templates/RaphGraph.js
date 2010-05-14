@@ -913,7 +913,7 @@ function RaphGraph( surface )
                 edgeCreation.handleNode = thisGraph.nodes.createNew({
                     x: e.clientX-getSurfaceOffset().x,
                     y: e.clientY-getSurfaceOffset().y,
-                    radius: 1
+                    radius: 0.0001
                 });
                 
                 // start moving the new node handle to follow the mouse
