@@ -10,7 +10,7 @@ this.settings =
 
 this.init = function()
 {
-    console.log("::plugin:: is initializing!");
+    safelog("::plugin:: is initializing!");
     
     //api.graph.backgroundImg.set( "static/plugins/oregonMap/bishop.jpg" );
     
@@ -23,12 +23,12 @@ this.init = function()
 
 this.start = function()
 {
-    console.log("::plugin:: is starting!");
+    safelog("::plugin:: is starting!");
 }
 
 this.stop = function()
 {
-    console.log("::plugin:: is stopping!");
+    safelog("::plugin:: is stopping!");
 }
 
 function createSimpleOregonMap()

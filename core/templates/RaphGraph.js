@@ -112,8 +112,8 @@ function RaphGraph( surface )
                     var mousePos = { x: e.clientX, y: e.clientY }
                     var nodePos = selNodes[i].getPosition();
                     
-                    console.log( nodePos.x, nodePos.y  );
-                    //console.log( nodePos.x, nodePos.y );
+                    safelog( nodePos.x, nodePos.y  );
+                    //safelog( nodePos.x, nodePos.y );
                     
                     selNodes[i].moveTo( 
                         nodePos.x, 
@@ -142,7 +142,7 @@ function RaphGraph( surface )
             // if there are no elements under the cursor, deselect everything
             if( !grabbedElement ){
                 
-                console.log(
+                safelog(
                     consoleID+"no elements under cursor. "+
                     "Deselecting everything."
                 );
@@ -204,8 +204,8 @@ function RaphGraph( surface )
     function initKeyboardEvents()
     // initialize the keyboard shortcut events
     {
-         $(document).keydown(function(event)
-         {
+        $(document).keydown(function(event)
+        {
             // delete the selected element if any of the following buttons are
             // pushed: 'd' (68), delete (8), or backspace (46)
             if( event.which == 68 || event.which == 8 || event.which == 46 ){
@@ -400,7 +400,7 @@ function RaphGraph( surface )
         });
         */
         
-        console.log(
+        safelog(
             consoleID+"Preparing to remove "+elements.length+" elements"
         );
         
@@ -412,7 +412,7 @@ function RaphGraph( surface )
             // make sure element exists in one of the element arrays
             if( eIndex != -1 ){
                 
-                console.log(consoleID+"Removing "+e.getType()+" "+e.getID());
+                safelog(consoleID+"Removing "+e.getType()+" "+e.getID());
 
                 // remove the element from the Raphael surface
                 e.remove();
@@ -436,13 +436,13 @@ function RaphGraph( surface )
                     edges.splice( eIndex, 1 );
                     
                 else
-                    console.error(consoleID+
+                    safelogerror(consoleID+
                         "Received unexpected element type: "+e.getType()
                     );
             
             // otherwise, the element was not found. Error out.
             } else
-                console.error(
+                safelogerror(
                     consoleID+"Element not found in either element arrays."
                 );
         }
@@ -461,7 +461,7 @@ function RaphGraph( surface )
         // if elements is not an array, make it one (of length 1)
         if( !$.isArray( elements ) ) elements = [elements];
         
-        console.log(
+        safelog(
             consoleID+"Preparing to select "+elements.length+" elements."
         );
         
@@ -473,7 +473,7 @@ function RaphGraph( surface )
                 
             // otherwise, the element was not found. Error out.
             else
-                console.error(
+                safelogerror(
                     consoleID+"Element not found in element arrays."
                 );
         }
@@ -487,7 +487,7 @@ function RaphGraph( surface )
         // if elements is not an array, make it one (of length 1)
         if( !$.isArray( elements ) ) elements = [elements];
         
-        console.log(
+        safelog(
             consoleID+"Preparing to deselect "+elements.length+" elements."
         );
         
@@ -499,7 +499,7 @@ function RaphGraph( surface )
                 
             // otherwise, the element was not found. Error out.
             else
-                console.error(
+                safelogerror(
                     consoleID+"Element not found in element arrays."
                 );
         }
@@ -517,11 +517,11 @@ function RaphGraph( surface )
         {            
             var consoleID = "graph.nodes.createNew: ";
             
-            console.log(consoleID+"Creating a new node");
+            safelog(consoleID+"Creating a new node");
             
             var newNode = new node( attr );
             
-            console.log(consoleID+"Pushing the new node onto the stack");
+            safelog(consoleID+"Pushing the new node onto the stack");
             nodes.push( newNode );
 
             return newNode;   
@@ -563,11 +563,11 @@ function RaphGraph( surface )
         {
             var consoleID = "graph.edges.createNew: ";
             
-            console.log(consoleID+"Creating a new edge");
+            safelog(consoleID+"Creating a new edge");
             
             var newEdge = new edge( attr );
             
-            console.log(consoleID+"Pushing the new edge onto the stack");
+            safelog(consoleID+"Pushing the new edge onto the stack");
             edges.push( newEdge );
             
             return newEdge;   
@@ -725,7 +725,7 @@ function RaphGraph( surface )
             thisNode.label.select();
             
             var pos = thisNode.getPosition();
-            console.log(
+            safelog(
                 consoleID + 
                 "select: Node %d selected at %d, %d", thisNode.getID(), pos.x, pos.y
             );
@@ -741,7 +741,7 @@ function RaphGraph( surface )
             
             thisNode.label.deselect();
             
-            console.log(consoleID+"deselect: Node %d deselected", thisNode.getID());
+            safelog(consoleID+"deselect: Node %d deselected", thisNode.getID());
         }
         
         // ELEMENT REMOVAL -----------------------------------------------------
@@ -943,7 +943,7 @@ function RaphGraph( surface )
         createObjects();
         initMouseEvents();
                     
-        console.log(
+        safelog(
             consoleID+"New node %d created at %d, %d", 
             thisNode.getID(), attr.x, attr.y
         );
@@ -1119,7 +1119,7 @@ function RaphGraph( surface )
             
             this.label.select();
             
-            console.log(consoleID+"Edge %d selected", this.getID());
+            safelog(consoleID+"Edge %d selected", this.getID());
         }
         
         this.deselect = function()
@@ -1132,17 +1132,17 @@ function RaphGraph( surface )
             
             this.label.deselect();
             
-            console.log(consoleID+"Edge %d deselected", this.getID());
+            safelog(consoleID+"Edge %d deselected", this.getID());
         }
 
         // INITIALIZE ----------------------------------------------------------
 
         if( attr.node1 == null || attr.node2 == null )
-            console.error( consoleID + 
+            safelogerror( consoleID + 
                 "Both nodes must be defined to create an edge.");
         else {
             
-            console.log(
+            safelog(
                 "%sCreating new edge %d from node %d to node %d",
                 consoleID, this.getID(), attr.node1.getID(), 
                 attr.node2.getID()
@@ -1242,7 +1242,7 @@ function RaphGraph( surface )
         
         this.openEditDialog = function()
         // open the edit dialog
-        {   
+        {              
             var bb = attr.element.getBBox();
             var pos = {
                 x: getSurfaceOffset().x,
@@ -1425,7 +1425,7 @@ function RaphGraph( surface )
         
         // Make sure the element is set
         if( attr.element == null )
-            console.error(consoleID+
+            safelogerror(consoleID+
                 "Element attribute is required for new labels");
         else
             init();
@@ -1467,6 +1467,9 @@ function RaphGraph( surface )
                 },
                 open: function()
                 {
+                    // disable the keyboard shortcuts while the window is open
+                    $(document).unbind('keydown');
+                    
                     $("#elem_"+id+"_labelDialog_weight").val(
                         $("#elem_"+id+"_labelDialog").data('assocLabel').weight
                             .get()
@@ -1475,7 +1478,8 @@ function RaphGraph( surface )
                         $("#elem_"+id+"_labelDialog").data('assocLabel').text
                             .get()
                     );
-                }
+                },
+                close: initKeyboardEvents // re-enable the keyboard shortcuts
             });
             
             thisLabel.update();

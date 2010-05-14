@@ -21,6 +21,11 @@ def get_plugins():
             javascript = "function " + plugin + "(){ " + javascript + \
                 "} " + plugin + " = new " + plugin + "();"
             
+            # prepare ui HTML file as a one-line string
+            ui = ui.replace("\n"," ")
+            ui = ui.replace("\"","'")
+            ui = "\""+ui+"\""
+            
             # tag replacements
             javascript = javascript.replace("::plugin::", plugin)
             ui = ui.replace("::plugin::", plugin)

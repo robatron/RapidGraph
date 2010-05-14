@@ -22,12 +22,17 @@ var Util = {'$VERSION':1.06};
 
 // Only attempt to log to the console if one exists to avoid errors. By
 // Rob McGuire-Dale 9/18/2009. See comments above.
-function safelog( msg ){
-    var date = new Date();
+function safelog( msg )
+{
     if( window.console )
-        console.log( date.getFullYear() + "/" + date.getMonth() + "/" +
-            date.getDay() + " " + date.getHours() + ":" + date.getMinutes() + 
-            ":" + date.getSeconds() + " " + msg );
+        console.log( msg );
+    
+}
+function safelogerror( msg )
+{
+	if( window.console )
+		if( window.console.error )
+			console.error( msg );
 }
 
 // include a js file from within another js file. By Michael Sharman
