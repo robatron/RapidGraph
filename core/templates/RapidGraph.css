@@ -56,7 +56,6 @@ b{
 
 #left{
     left:0;
-    width:200px;
 }
 
 #right{
@@ -90,6 +89,7 @@ b{
 }
 
 .left_panel_button{
+    display:block;
     text-align:left;
     width:120px;
 }
