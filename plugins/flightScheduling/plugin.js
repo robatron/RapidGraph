@@ -5,7 +5,7 @@
 this.settings = 
 {
     title: "Flight Scheduling",
-    subtitle: "Creates a map of flight paths across the United States, represented as a graph."
+    subtitle: "Creates a map of flight paths across the United States, represented as a graph"
 }
 
 this.init = function() {

@@ -5,7 +5,7 @@
 this.settings = 
 {
     title: "Travelling Salesman",
-    subtitle: "Solves the well known travelling salesman problem."
+    subtitle: "Solves the well known travelling salesman problem"
 }
 
 this.init = function() {

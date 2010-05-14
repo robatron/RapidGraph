@@ -5,7 +5,7 @@
 this.settings = 
 {
     title: "Computer Networking",
-    subtitle: "Creates a computer network represented as a graph."
+    subtitle: "Creates a computer network represented as a graph"
 }
 
 this.init = function() {

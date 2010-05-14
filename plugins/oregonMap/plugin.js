@@ -5,7 +5,7 @@
 this.settings = 
 {
     title: "Oregon map",
-    subtitle: "Creates a graph representing a simple Oregon map.",
+    subtitle: "Creates a graph representing a simple Oregon map",
 }
 
 this.init = function()

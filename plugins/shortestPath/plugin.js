@@ -5,7 +5,7 @@
 this.settings = 
 {
     title: "Shortest Path",
-    subtitle: "Implements a classic graph algorithm."
+    subtitle: "Implements a classic graph algorithm"
 }
 
 this.init = function() {
