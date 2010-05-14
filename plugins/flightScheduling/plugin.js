@@ -13,55 +13,270 @@ this.init = function() {
     console.log("::plugin:: is initializing!");
     
     $("#::plugin::_make_map").click( function() {
-        // Make a small random undirected edge-weighted graph
+        api.graph.backgroundImg.set( "static/plugins/flightScheduling/usmap.png#jkjgf" );
 
-// Seattle
-// Portland
-// LA
-// Billings
-// Denver
-// Mineapolis
-// Kansas City
-// Houstin
-// Chicago
-// Philidelphia
-// Montgomery
-// Miami
-// New York
-// Washington DC
+        boxX = api.ui.getMainPanelSize().width;
+        boxY = api.ui.getMainPanelSize().height;
+        console.log(boxX + ' ' + boxY);
 
-/*        GRAPH_SIZE = 9;     // The number of nodes in the graph
-        PERTURBATION = 30;  // The number of pixels that nodes can be randomly perturbed
-        NODE_RADIUS = 25;   // The radius of a node image
-        boxX = api.ui.getMainPanelSize().width - (2 * NODE_RADIUS);
-        boxY = api.ui.getMainPanelSize().height - (2 * NODE_RADIUS);
+        /*
+         * Make some city nodes
+         */
         
-        // Make some nodes
+        // Seattle
         var myNodes = new Array();
-        for( i = 0; i < GRAPH_SIZE; ++i ) {
-            myNodes[i] = api.graph.nodes.createNew({
-                x: ( ((boxX - (PERTURBATION)) / (Math.ceil(Math.sqrt(GRAPH_SIZE)) - 1)) * (i % Math.ceil(Math.sqrt(GRAPH_SIZE))) + Math.random() * PERTURBATION + NODE_RADIUS),
-                y: ( ((boxY - (PERTURBATION)) / (Math.ceil(Math.sqrt(GRAPH_SIZE)) - 1)) * Math.floor(i / Math.ceil(Math.sqrt(GRAPH_SIZE))) + Math.random() * PERTURBATION + NODE_RADIUS),
-                text: null,
-                radius: 5,
-            });
-        }*/
+        myNodes[0] = api.graph.nodes.createNew({
+            x: boxX / 10.3,
+            y: boxY / 17.6,
+            text: null,
+            radius: 5,
+        });
+        
+        // Portland
+        myNodes[1] = api.graph.nodes.createNew({
+            x: boxX / 15.9,
+            y: boxY / 6.44,
+            text: null,
+            radius: 5,
+        });
+        
+        // Los Angeles
+        myNodes[2] = api.graph.nodes.createNew({
+            x: boxX / 12.6,
+            y: boxY / 1.68,
+            text: null,
+            radius: 5,
+        });
+        
+        // Billings
+        myNodes[3] = api.graph.nodes.createNew({
+            x: boxX / 3.18,
+            y: boxY / 4.9,
+            text: null,
+            radius: 5,
+        });
+        
+        // Denver
+        myNodes[4] = api.graph.nodes.createNew({
+            x: boxX / 3.01,
+            y: boxY / 2.13,
+            text: null,
+            radius: 5,
+        });
+        
+        // Mineapolis
+        myNodes[5] = api.graph.nodes.createNew({
+            x: boxX / 1.87,
+            y: boxY / 4.04,
+            text: null,
+            radius: 5,
+        });
+        
+        // Kansas City
+        myNodes[6] = api.graph.nodes.createNew({
+            x: boxX / 1.95,
+            y: boxY / 2,
+            text: null,
+            radius: 5,
+        });
+        
+        // Houstin
+        myNodes[7] = api.graph.nodes.createNew({
+            x: boxX / 1.96,
+            y: boxY / 1.19,
+            text: null,
+            radius: 5,
+        });
+        
+        // Chicago
+        myNodes[8] = api.graph.nodes.createNew({
+            x: boxX / 1.58,
+            y: boxY / 2.73,
+            text: null,
+            radius: 5,
+        });
+        
+        // Washington D.C.
+        myNodes[9] = api.graph.nodes.createNew({
+            x: boxX / 1.19,
+            y: boxY / 2.38,
+            text: null,
+            radius: 5,
+        });
+        
+        // Jackson
+        myNodes[10] = api.graph.nodes.createNew({
+            x: boxX / 1.63,
+            y: boxY / 1.34,
+            text: null,
+            radius: 5,
+        });
+        
+        // Miami
+        myNodes[11] = api.graph.nodes.createNew({
+            x: boxX / 1.21,
+            y: boxY / 1.074,
+            text: null,
+            radius: 5,
+        });
+        
+        // New York
+        myNodes[12] = api.graph.nodes.createNew({
+            x: boxX / 1.14,
+            y: boxY / 3.27,
+            text: null,
+            radius: 5,
+        });
+        
+        // Charleston
+        myNodes[13] = api.graph.nodes.createNew({
+            x: boxX / 1.24,
+            y: boxY / 1.5,
+            text: null,
+            radius: 5,
+        });
 
-/*        // Connect some of the nodes in the graph with randomly weighted edges
-        EDGE_PROB = 0.3   // The probability that two nodes within the graph will get connected by an edge
+        // Connect some of the cities by weighted flightpaths
         var myEdges = new Array();
-        for( i = 0; i < GRAPH_SIZE; ++i ) {
-            for( j = 0; j < GRAPH_SIZE; ++j ) {
-                if( i < j && Math.random() < EDGE_PROB ) {
-                    api.graph.edges.createNew({
-                        node1: myNodes[i],
-                        node2: myNodes[j],
-                        weight: Math.floor(Math.random() * 9 + 1),
-                        text: null
-                    });
-                }
-            }
-        }*/
+        api.graph.edges.createNew({
+            node1: myNodes[0],
+            node2: myNodes[1],
+            weight: 300 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[1],
+            node2: myNodes[2],
+            weight: 1500 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[2],
+            node2: myNodes[3],
+            weight: 1500 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[3],
+            node2: myNodes[4],
+            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[4],
+            node2: myNodes[5],
+            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[5],
+            node2: myNodes[6],
+            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[6],
+            node2: myNodes[7],
+            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[7],
+            node2: myNodes[8],
+            weight: 1500 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[8],
+            node2: myNodes[9],
+            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[9],
+            node2: myNodes[12],
+            weight: 300 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[10],
+            node2: myNodes[11],
+            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[0],
+            node2: myNodes[3],
+            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[1],
+            node2: myNodes[3],
+            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[2],
+            node2: myNodes[4],
+            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[3],
+            node2: myNodes[5],
+            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[4],
+            node2: myNodes[6],
+            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[4],
+            node2: myNodes[7],
+            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[5],
+            node2: myNodes[8],
+            weight: 500 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[7],
+            node2: myNodes[10],
+            weight: 400 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[10],
+            node2: myNodes[13],
+            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[11],
+            node2: myNodes[13],
+            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[9],
+            node2: myNodes[13],
+            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+        api.graph.edges.createNew({
+            node1: myNodes[8],
+            node2: myNodes[13],
+            weight: 1000 + Math.ceil(Math.random() * 200 - 100),
+            text: null
+        });
+
     });
 
     $("#::plugin::_find_route").click( function() {

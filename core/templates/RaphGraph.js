@@ -295,7 +295,7 @@ function RaphGraph( surface )
                 height = surface.height;
             
             this.remove();
-            bgImg = surface.image( src, 0, 0, width, height );
+            bgImg = surface.image( src, 0, 0, width, height ).toBack();
         }, 
         
         remove: function()
@@ -303,7 +303,7 @@ function RaphGraph( surface )
         {
             if( bgImg != undefined )
                 bgImg.remove();
-            bgImg = surface.image(null,null,null,null,null);
+            bgImg = surface.image(null,null,null,null,null).toBack();
         }
     }
 
