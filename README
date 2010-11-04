@@ -1,10 +1,10 @@
-~~~~~~~~~~~~~
- RapidGraph! 
-~~~~~~~~~~~~~
+# RapidGraph! #
 
 RapidGraph is an open-source, web-based, visual graph (as in graph theory) 
 creator and analyzer designed for rapid graph creation/analyzation and rapid, 
 modular, extendable, plugin-based development. 
+
+You can try a **live demo** at http://rapidgraph.osuosl.org/
 
 For more information, please visit http://trac.osuosl.org/rapidgraph.
 
